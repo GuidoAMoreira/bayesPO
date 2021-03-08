@@ -1,5 +1,9 @@
-#' Objects that
-#' @exportClass bayesPO_initial
+#' Class for the initial values for the MCMC for the bayesPO package
+#'
+#' @slot beta Initial values for beta.
+#' @slot delta Initial values for delta.
+#' @slot lambdaStar Initial values for lambdaStar.
+#' @slot tag Indicates the source of the initial values.
 methods::setClass("bayesPO_initial",
                   methods::representation(beta = "numeric",
                         delta = "numeric",
