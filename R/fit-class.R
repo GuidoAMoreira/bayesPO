@@ -2,7 +2,14 @@ methods::setOldClass("mcmc.list")
 methods::setOldClass("table")
 methods::setOldClass("list")
 
-#' @exportClass bayesPO_fit
+#' Class for the result of the MCMC procedure.
+#'
+#' @slot fit The actual fit from the model. It is of class \code{\link[coda]{mcmc.list}}, as generated from the \code{coda} package.
+#' @slot original The model used to generate the chains, an object with class \code{bayesPO_model}.
+#' @slot backgroundSummary A small summary of the original background covariates. This is to ensure that continuing the chains will use the identical background matrix.
+#' @slot area A positive number indicating the area measure of the region being studied.
+#' @slot parnames The names of the parameters. If the model used selects the covariates with column names, they are replicated here. If they are the column indexes, names are generated for identification.
+#' @slot mcmc_setup The original mcmc setup used.
 methods::setClass("bayesPO_fit",
                   representation(fit = "mcmc.list",
                                  original = "bayesPO_model",
@@ -157,11 +164,11 @@ methods::setMethod("$","bayesPO_fit",function(x,name) x[[name]])
 #' @export
 methods::setMethod("as.array","bayesPO_fit",function(x,...) as.array.bayesPO_fit(x,...))
 
-#' Put MCMC output in an \code{array}
+#' Put MCMC output in an \code{array}.
 #'
 #' Prepares the MCMC results to be used by plotting functions of the
 #' bayesplot package.
-#' @param x Output of the \code{\link{fit_bayesPO}} function
+#' @param x Output of the \code{\link{fit_bayesPO}} function.
 #' @param ... Ignored in this version.
 #' @return An \code{array} with dimensions I x C x P, where I stands for number of
 #' iterations, C for number of chains and P for total number of parameters.
@@ -190,7 +197,7 @@ as.array.bayesPO_fit <- function(x,...){
 ## as.matrix
 methods::setMethod("as.matrix","bayesPO_fit",function(x,...) as.matrix.bayesPO_fit(x,...))
 
-#' Put MCMC output in a \code{matrix}
+#' Put MCMC output in a \code{matrix}.
 #'
 #' Create a matrix with all the MCMC results.
 #' @param x Output of the \code{\link{fit_bayesPO}} function.
@@ -222,7 +229,7 @@ as.matrix.bayesPO_fit <- function(x,...){
 ## as.data.frame
 methods::setMethod("as.data.frame","bayesPO_fit",function(x,...) as.data.frame.bayesPO_fit(x, row.names = NULL, optional = FALSE, ...))
 
-#' Put MCMC output in a \code{data.frame}
+#' Put MCMC output in a \code{data.frame}.
 #'
 #' Create a \code{data.frame} with all the MCMC results.
 #' @param x Output of the \code{\link{fit_bayesPO}} function.
