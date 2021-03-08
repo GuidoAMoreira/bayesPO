@@ -2,17 +2,20 @@
 #'
 #' @slot po The matrix containing the covariates values for the data.
 #' @slot intensityLink A string informing about the chosen link for the intensity covariates. Current acceptable choice is only "logit"
-#' @slot intensitySelection A vector containing either the names of the columns chosen for intensity covariates or the number of the column indexes.
-#' @slot observabilityLink A string informing about the chosen link for the observability covariates. Current acceptable choice is only "logit"
+#' @slot intensitySelection A vector containing the indexes of the selected intensity columns in the \code{po} matrix.
+#' @slot observabilityLink A vector containing the indexes of the selected observability columns in the \code{po} matrix.
 #' @slot intensitySelection A vector containing either the names of the columns chosen for observability covariates or the number of the column indexes.
-#' @slot init 
+#' @slot init A list with objects of class \code{bayesPO_initial} indicating the initial values for each chain. The number of objects will indicate how many chains will be run.
+#' @slot prior An object of class \code{bayesPO_prior} which indicates the joint prior distribution for the model parameters.
+#' @slot iSelectedColumns If the intensity covariates selection was made with the name of the columns, they are stored in this slot.
+#' @slot iSelectedColumns If the observability covariates selection was made with the name of the columns, they are stored in this slot.
 methods::setClass("bayesPO_model",
                   methods::representation(po="matrix",
                         intensityLink="character",
                         intensitySelection="numeric",
                         observabilityLink="character",
                         observabilitySelection="numeric",
-                        init="list",
+                        init = "list",
                         prior = "bayesPO_prior",
                         iSelectedColumns = "character",
                         oSelectedColumns = "character"
