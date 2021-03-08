@@ -1,4 +1,11 @@
-#' @exportClass bayesPO_model
+#' Class that defines a model for the bayesPO package.
+#'
+#' @slot po The matrix containing the covariates values for the data.
+#' @slot intensityLink A string informing about the chosen link for the intensity covariates. Current acceptable choice is only "logit"
+#' @slot intensitySelection A vector containing either the names of the columns chosen for intensity covariates or the number of the column indexes.
+#' @slot observabilityLink A string informing about the chosen link for the observability covariates. Current acceptable choice is only "logit"
+#' @slot intensitySelection A vector containing either the names of the columns chosen for observability covariates or the number of the column indexes.
+#' @slot init 
 methods::setClass("bayesPO_model",
                   methods::representation(po="matrix",
                         intensityLink="character",
