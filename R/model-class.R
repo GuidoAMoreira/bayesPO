@@ -9,6 +9,7 @@
 #' @slot prior An object of class \code{bayesPO_prior} which indicates the joint prior distribution for the model parameters.
 #' @slot iSelectedColumns If the intensity covariates selection was made with the name of the columns, they are stored in this slot.
 #' @slot iSelectedColumns If the observability covariates selection was made with the name of the columns, they are stored in this slot.
+#' @include initial-class.R prior-class.R
 methods::setClass("bayesPO_model",
                   methods::representation(po="matrix",
                         intensityLink="character",
