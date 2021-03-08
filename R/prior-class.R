@@ -139,6 +139,7 @@ methods::setClass("GammaPrior",contains="LambdaStarPrior",
            for (par in c("shape","rate")){
              if (length(methods::slot(object,par)) > 1) stop(paste0("Prior parameter ",par," for lambdaStar must have length 1."))
              if (methods::slot(object,par) <= 0) stop("Prior parameters must be positive")
+           }
            TRUE
          })
 
