@@ -55,7 +55,7 @@ A few notes about properly feeding information to the model are provided
 here.
 ### data
 The data input must be a list with the following elements:
-\begin{itemize}
+\itemize{
 \item{observed}{A matrix containing the covariate values for the
 presence-only observed points.}
 \item{background}{A matrix containing the covariate values for the
@@ -84,7 +84,7 @@ the names of the columns to be included as observability covariates.
 Both \code{observed} and \code{background} must have the indicated columns,
 but they do not need to be in the same position. Parameters \code{delta}
 measure their effects in the model.}
-\end{itemize}
+}
 
 ### init
 The initial values for the MCMC chains can be chosen to be random with the
