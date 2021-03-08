@@ -50,10 +50,10 @@ methods::setGeneric("retrievePars",function(object){standardGeneric("retrievePar
 methods::setClass("BetaDeltaPrior",representation(family="character"))
 
 #' @export
-methods::setClass("show","BetaDeltaPrior",function(object) cat("Prior for Beta and Delta from the",methods::slot(object,"family"),"family.\n"))
+methods::setMethod("show","BetaDeltaPrior",function(object) cat("Prior for Beta and Delta from the",methods::slot(object,"family"),"family.\n"))
 
 #' @export
-methods::setClass("print","BetaDeltaPrior",function(x,...) show(x))
+methods::setMethod("print","BetaDeltaPrior",function(x,...) show(x))
 
 #' @export
 print.BetaDeltaPrior <- function(x,...) show(x)
@@ -123,8 +123,9 @@ methods::setClass("LambdaStarPrior",methods::representation(family = "character"
 methods::setClass("GammaPrior",contains="LambdaStarPrior",
                   representation = methods::representation(shape = "numeric", rate = "numeric"),
          validity = function(object){
-           for (par in c("shape","rate"))
+           for (par in c("shape","rate")){
              if (length(methods::slot(object,par)) > 1) stop(paste0("Prior parameter ",par," for lambdaStar must have length 1."))
+             if (methods::slot(object,par) <= 0) stop("Prior parameters must be positive")
            TRUE
          })
 
