@@ -1,8 +1,8 @@
-#' Joint prior class for the bayesPO package parameters
+#' Joint prior class for the bayesPO package parameters.
 #'
-#' @slot beta An object of BetaDeltaPrior S4 class with the appropriate Beta prior
-#' @slot delta An object of BetaDeltaPrior S4 class with the appropriate Delta prior
-#' @slot lambdaStar An object of LambdaStarPrior S4 class with the appropriate LambdaStar prior
+#' @slot beta An object of BetaDeltaPrior S4 class with the appropriate Beta prior.
+#' @slot delta An object of BetaDeltaPrior S4 class with the appropriate Delta prior.
+#' @slot lambdaStar An object of LambdaStarPrior S4 class with the appropriate LambdaStar prior.
 methods::setClass("bayesPO_prior",
                   methods::representation(
                         beta="BetaDeltaPrior",
@@ -46,13 +46,13 @@ setMethod("$<-","bayesPO_prior",function(x,name,value){
 })
 
 #### Individual priors ####
-# Get parameters in a list to make it easier to build C++ code
+# Get parameters in a list to make it easier to build C++ code.
 methods::setGeneric("retrievePars",function(object){standardGeneric("retrievePars")})
 
 #### Beta-Delta priors ####
-#' Generic class for the beta and delta parameters
+#' Generic class for the beta and delta parameters.
 #'
-#' @slot family The family of distributions of the prior
+#' @slot family The family of distributions of the prior.
 methods::setClass("BetaDeltaPrior",representation(family="character"))
 
 #' @export
@@ -64,10 +64,10 @@ methods::setMethod("print","BetaDeltaPrior",function(x,...) show(x))
 #' @export
 print.BetaDeltaPrior <- function(x,...) show(x)
 
-#' Normal prior class for Beta and Delta parameters
+#' Normal prior class for Beta and Delta parameters.
 #'
-#' @slot mu The mean vector for the prior
-#' @slot Sigma The covariance matrix for the prior
+#' @slot mu The mean vector for the prior.
+#' @slot Sigma The covariance matrix for the prior.
 methods::setClass("NormalPrior",contains="BetaDeltaPrior",
                   representation = methods::representation(mu="numeric",Sigma="matrix"),
          validity = function(object){
@@ -125,14 +125,14 @@ methods::setMethod("retrievePars","NormalPrior",function(object){
 })
 
 #### Lambda* priors ####
-#' Generic class for the LambdaStar parameters
+#' Generic class for the LambdaStar parameters.
 #'
-#' @slot mu The mean vector for the prior
+#' @slot mu The mean vector for the prior.
 methods::setClass("LambdaStarPrior",methods::representation(family = "character"))
 
-#' Gamma prior class for the LambdaStar parameter
+#' Gamma prior class for the LambdaStar parameter.
 #'
-#' @slot mu The mean vector for the prior
+#' @slot mu The mean vector for the prior.
 methods::setClass("GammaPrior",contains="LambdaStarPrior",
                   representation = methods::representation(shape = "numeric", rate = "numeric"),
          validity = function(object){
