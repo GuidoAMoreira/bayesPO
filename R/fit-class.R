@@ -10,6 +10,7 @@ methods::setOldClass("list")
 #' @slot area A positive number indicating the area measure of the region being studied.
 #' @slot parnames The names of the parameters. If the model used selects the covariates with column names, they are replicated here. If they are the column indexes, names are generated for identification.
 #' @slot mcmc_setup The original mcmc setup used.
+#' @include model-class.R
 methods::setClass("bayesPO_fit",
                   representation(fit = "mcmc.list",
                                  original = "bayesPO_model",
