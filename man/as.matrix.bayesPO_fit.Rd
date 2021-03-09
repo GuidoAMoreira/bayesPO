@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit-class.R
 \name{as.matrix.bayesPO_fit}
 \alias{as.matrix.bayesPO_fit}
-\title{Put MCMC output in a \code{matrix}}
+\title{Put MCMC output in a \code{matrix}.}
 \usage{
 \method{as.matrix}{bayesPO_fit}(x, ...)
 }

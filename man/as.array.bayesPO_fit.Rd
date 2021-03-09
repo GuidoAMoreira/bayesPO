@@ -2,12 +2,12 @@
 % Please edit documentation in R/fit-class.R
 \name{as.array.bayesPO_fit}
 \alias{as.array.bayesPO_fit}
-\title{Put MCMC output in an \code{array}}
+\title{Put MCMC output in an \code{array}.}
 \usage{
 \method{as.array}{bayesPO_fit}(x, ...)
 }
 \arguments{
-\item{x}{Output of the \code{\link{fit_bayesPO}} function}
+\item{x}{Output of the \code{\link{fit_bayesPO}} function.}
 
 \item{...}{Ignored in this version.}
 }

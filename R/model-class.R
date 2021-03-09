@@ -10,6 +10,8 @@
 #' @slot iSelectedColumns If the intensity covariates selection was made with the name of the columns, they are stored in this slot.
 #' @slot iSelectedColumns If the observability covariates selection was made with the name of the columns, they are stored in this slot.
 #' @include initial-class.R prior-class.R
+#' @export
+#' @exportClass bayesPO_model
 methods::setClass("bayesPO_model",
                   methods::representation(po="matrix",
                         intensityLink="character",
@@ -40,7 +42,20 @@ methods::setClass("bayesPO_model",
            TRUE
          })
 
+#' Initialize method for the bayesPO_model class.
+#'
+#' @param .Object The bayesPO_model object.
+#' @param po A matrix containing the covariates observed in the presence-only locations.
+#' @param intensityLink The link for the intensity component of the model.
+#' @param intensitySelection Column indexes in the \code{po} matrix for the intensity covariates.
+#' @param observabilityLink The link for the observability component of the model.
+#' @param observabilitySelection Column indexes in the \code{po} matrix for the observability covariates.
+#' @param init A list with initial values.
+#' @param prior An object with the joint prior.
+#' @param iSelectedColumn The names of the intensity columns selected.
+#' @param oSelectedColumn The names of the observability columns selected.
 #' @export
+#' @exportMethod initialize
 methods::setMethod("initialize","bayesPO_model",function(.Object,po,intensityLink,intensitySelection,
                                                 observabilityLink,observabilitySelection,
                                                 init,prior,iSelectedColumns,oSelectedColumns){
@@ -61,18 +76,33 @@ methods::setMethod("initialize","bayesPO_model",function(.Object,po,intensityLin
   .Object
 })
 
+#' Names method for the bayesPO_model class.
+#'
+#' @param x The bayesPO_model object.
 #' @export
+#' @exportMethod names
 methods::setMethod("names","bayesPO_model",
           function(x) c("po","intensityLink","intensitySelection",
                         "observabilityLink","observabilitySelection",
                         "initial values","prior"))
 
+#' The '$' method for the bayesPO_model class.
+#'
+#' @param x The bayesPO_model object.
+#' @param name The requested slot.
 #' @export
+#' @exportMethod $
 methods::setMethod("$","bayesPO_model",function(x,name){
   if (name %in% c("initial values","initial")) methods::slot(x,"init") else methods::slot(x,name)
 })
 
+#' The '$<-' method for the bayesPO_model class.
+#'
+#' @param x The bayesPO_model object.
+#' @param name The requested slot.
+#' @param value New value.
 #' @export
+#' @exportMethod $<-
 methods::setMethod("$<-","bayesPO_model",function(x,name,value){
   if (name %in% c("initial values","initial")) methods::slot(x,"init") = value else methods::slot(x,name) = value
   methods::validObject(x)

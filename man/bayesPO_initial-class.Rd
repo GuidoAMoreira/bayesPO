@@ -3,7 +3,19 @@
 \docType{class}
 \name{bayesPO_initial-class}
 \alias{bayesPO_initial-class}
-\title{Objects that}
+\title{Class for the initial values for the MCMC for the bayesPO package}
 \description{
-Objects that
+Class for the initial values for the MCMC for the bayesPO package
 }
+\section{Slots}{
+
+\describe{
+\item{\code{beta}}{Initial values for beta.}
+
+\item{\code{delta}}{Initial values for delta.}
+
+\item{\code{lambdaStar}}{Initial values for lambdaStar.}
+
+\item{\code{tag}}{Indicates the source of the initial values.}
+}}
+

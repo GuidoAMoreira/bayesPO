@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit-class.R
 \name{as.data.frame.bayesPO_fit}
 \alias{as.data.frame.bayesPO_fit}
-\title{Put MCMC output in a \code{data.frame}}
+\title{Put MCMC output in a \code{data.frame}.}
 \usage{
 \method{as.data.frame}{bayesPO_fit}(x, row.names = NULL, optional = FALSE, ...)
 }

@@ -113,7 +113,14 @@
 #' @export
 methods::setGeneric("fit_bayesPO",function(object,background,area = 1,mcmc_setup = list(n_iter = 5000)){standardGeneric("fit_bayesPO")})
 
-#' @export
+#' The fit_bayesPO method for the bayesPO_model class.
+#'
+#' @param object A bayesPO_model object.
+#' @param background A matrix with the covariates values in the region background.
+#' @param area A positive number with the region's area
+#' @param mcmc_setup A list with the components \code{burnin}, \code{thin} and
+#' \code{n_iter} where only the latter is mandatory.
+#' @include initial-class.R prior-class.R model-class.R
 methods::setMethod("fit_bayesPO",signature(object="bayesPO_model",background="matrix"),
           function(object,background,area = 1,mcmc_setup = list(n_iter = 5000)){
   ## Verifying background names if columns are selected by column name. Crewating background selection variables
