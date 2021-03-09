@@ -2,6 +2,9 @@ methods::setOldClass("mcmc.list")
 methods::setOldClass("table")
 methods::setOldClass("list")
 
+#' @include model-class.R
+NULL
+
 #' Class for the result of the MCMC procedure.
 #'
 #' @slot fit The actual fit from the model. It is of class \code{\link[coda]{mcmc.list}}, as generated from the \code{coda} package.
@@ -10,7 +13,6 @@ methods::setOldClass("list")
 #' @slot area A positive number indicating the area measure of the region being studied.
 #' @slot parnames The names of the parameters. If the model used selects the covariates with column names, they are replicated here. If they are the column indexes, names are generated for identification.
 #' @slot mcmc_setup The original mcmc setup used.
-#' @include model-class.R
 #' @export
 #' @exportClass bayesPO_fit
 methods::setClass("bayesPO_fit",

@@ -1,3 +1,6 @@
+#' @include initial-class.R prior-class.R model-class.R
+NULL
+
 #' Fit Presence-Only data using a Bayesian Poisson Process model
 #'
 #' The model uses a data augmentation scheme to avoid performing approximations
@@ -120,7 +123,6 @@ methods::setGeneric("fit_bayesPO",function(object,background,area = 1,mcmc_setup
 #' @param area A positive number with the region's area
 #' @param mcmc_setup A list with the components \code{burnin}, \code{thin} and
 #' \code{n_iter} where only the latter is mandatory.
-#' @include initial-class.R prior-class.R model-class.R
 methods::setMethod("fit_bayesPO",signature(object="bayesPO_model",background="matrix"),
           function(object,background,area = 1,mcmc_setup = list(n_iter = 5000)){
   ## Verifying background names if columns are selected by column name. Crewating background selection variables
