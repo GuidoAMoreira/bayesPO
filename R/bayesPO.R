@@ -152,7 +152,7 @@ methods::setMethod("fit_bayesPO",signature(object="bayesPO_model",background="ma
   time <- Sys.time()
   mcmcRun <- list()
   for (c in 1:chains){
-    if (chains > 1) cat("Starting chain",c,".\n")
+    if (chains > 1) cat("Starting chain ",c,".\n",sep="")
     mcmcRun[[c]] <- do.call(cbind,
                            runBayesPO(methods::slot(methods::slot(object,"init")[[c]],"beta"),
                                       methods::slot(methods::slot(object,"init")[[c]],"delta"),
@@ -174,7 +174,7 @@ methods::setMethod("fit_bayesPO",signature(object="bayesPO_model",background="ma
     )
     colnames(mcmcRun[[c]]) <- parnames
     mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]],thin = mcmc_setup$thin)
-    if (chains > 1) cat("Finished chain",c,".\n\n")
+    if (chains > 1) cat("Finished chain ",c,".\n\n",sep="")
   }
   if (chains > 1) cat("Total computation time:",format(unclass(Sys.time()-time), digits = 2),attr(Sys.time()-time,"units"),".\n")
 
