@@ -65,19 +65,22 @@ double logit_normal::update(const Eigen::MatrixXd& onesCov,
   xb1 = x1 * effects;
   xb0 = x0 * effects;
 
+
   // Calculating X' Omega X + B and X' kappa + B b
   // offset represents a Gaussian Process if it is in the model
   for (i = 0; i < n1; i++) // From the data matrix X
   {
-    polyagamma[i] = pg.draw_like_devroye(xb1(i) + offset(i));
-    V += polyagamma(i) * x1.row(i).transpose() * x1.row(i);
-    med += x1.row(i) * (0.5 - offset(i) * polyagamma(i));
+    //polyagamma[i] = pg.draw_like_devroye(xb1(i) + offset(i));
+    V += pg.draw_like_devroye(xb1(i)) * x1.row(i).transpose() * x1.row(i);
+    //med += x1.row(i) * (0.5 - offset(i) * polyagamma(i));
+    med += x1.row(i) * 0.5;
   }
   for (i = 0; i < n0; i++) // From the data matrix X
   {
-    polyagamma[i + n1] = pg.draw_like_devroye(xb0(i) + offset(i + n1));
-    V += polyagamma(i + n1) * x0.row(i).transpose() * x0.row(i);
-    med -= x0.row(i) * (0.5 + offset(i + n1) * polyagamma(i + n1));
+    //polyagamma[i + n1] = pg.draw_like_devroye(xb0(i) + offset(i + n1));
+    V += pg.draw_like_devroye(xb0(i)) * x0.row(i).transpose() * x0.row(i);
+    //med -= x0.row(i) * (0.5 + offset(i + n1) * polyagamma(i + n1));
+    med -= x0.row(i) * 0.5;
   }
   V = V.inverse();
   effects = sampleNormal(V) + V * med;
@@ -145,6 +148,7 @@ Eigen::MatrixXd logit_normal::link(const Eigen::MatrixXd& covs, bool complementa
 {
   Eigen::MatrixXd oneCov(covs.rows(), s);
 
+
   if (covs.cols() < s)
   {
     oneCov.leftCols(1) = Eigen::MatrixXd::Constant(covs.rows(), 1, 1);
@@ -154,9 +158,11 @@ Eigen::MatrixXd logit_normal::link(const Eigen::MatrixXd& covs, bool complementa
     oneCov = covs;
 
   if (complementary)
-    return (oneCov * effects + offset.bottomRows(covs.rows())).array().exp().log1p();
+    //return (oneCov * effects + offset.bottomRows(covs.rows())).array().exp().log1p();
+    return (oneCov * effects).array().exp().log1p();
   else
-    return (-(oneCov * effects + offset.topRows(covs.rows()))).array().exp().log1p();
+    //return (-(oneCov * effects + offset.topRows(covs.rows()))).array().exp().log1p();
+    return (-(oneCov * effects)).array().exp().log1p();
 }
 
 const Eigen::MatrixXd& Covariance::calcCovMatrix(const Eigen::MatrixXd& x,
