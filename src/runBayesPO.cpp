@@ -1,3 +1,5 @@
+#define ARMA_64BIT_WORD 1
+
 #include "auxiliary_functions.h"
 #include "covariates.h"
 #include "markovchain.h"
