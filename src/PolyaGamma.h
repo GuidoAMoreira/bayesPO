@@ -10,7 +10,8 @@
 #include <vector>
 //#include <stdio.h>
 #include <stdexcept>
-#include <RcppArmadillo.h>
+//#include <RcppArmadillo.h>
+#include <Rcpp.h>
 using namespace Rcpp;
 
 using std::vector;

@@ -133,7 +133,7 @@ summary.bayesPO_fit <- function(object,...){
   result[,6] <- coda::effectiveSize(methods::slot(object,"fit"))[1:npar]
   if (chains > 1){
     cols <- colnames(result)
-    result <- cbind(result,coda::gelman.diag(methods::slot(object,"fit"))$psrf[1:npar,])
+    result <- cbind(result, coda::gelman.diag(methods::slot(object,"fit"))$psrf[1:npar,])
     colnames(result) <- c(cols,"Estimated Rhat","Upper CI Rhat")
   }
   result

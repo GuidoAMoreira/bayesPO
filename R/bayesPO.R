@@ -143,8 +143,14 @@ methods::setMethod("fit_bayesPO",signature(object="bayesPO_model",background="ma
   chains <- length(methods::slot(object,"init"))
 
   # Set up parameter names to construct the coda::mcmc objects
-  if (length(methods::slot(object,"iSelectedColumns")>0)) betanames <- c("(Intensity intercept)",methods::slot(object,"iSelectedColumns")) else betanames = paste0("beta_",1:nb-1)
-  if (length(methods::slot(object,"oSelectedColumns")>0)) deltanames <- c("(Observability intercept)",methods::slot(object,"oSelectedColumns")) else deltanames = paste0("delta_",1:nd-1)
+  if (length(methods::slot(object,"iSelectedColumns")>0))
+    betanames <- c("(Intensity intercept)",
+                   methods::slot(object,"iSelectedColumns"))
+  else betanames = paste0("beta_",1:nb - 1)
+  if (length(methods::slot(object,"oSelectedColumns")>0))
+    deltanames <- c("(Observability intercept)",
+                    methods::slot(object,"oSelectedColumns"))
+  else deltanames = paste0("delta_",1:nd - 1)
   parnames <- c(betanames,deltanames,
                "lambdaStar","n_U","n_Xprime","log_Posterior"
   )
@@ -154,29 +160,57 @@ methods::setMethod("fit_bayesPO",signature(object="bayesPO_model",background="ma
   for (c in 1:chains){
     if (chains > 1) cat("Starting chain ",c,".\n",sep="")
     mcmcRun[[c]] <- do.call(cbind,
-                           runBayesPO(methods::slot(methods::slot(object,"init")[[c]],"beta"),
-                                      methods::slot(methods::slot(object,"init")[[c]],"delta"),
-                                      methods::slot(methods::slot(object,"init")[[c]],"lambdaStar"),
-                                      paste0(methods::slot(object,"intensityLink"),"_",
-                                             methods::slot(methods::slot(methods::slot(object,"prior"),"beta"),"family")),
-                                      paste0(methods::slot(object,"observabilityLink"),"_",
-                                             methods::slot(methods::slot(methods::slot(object,"prior"),"delta"),"family")),
-                                      methods::slot(methods::slot(methods::slot(object,"prior"),"lambdaStar"),"family"),
-                                      retrievePars(methods::slot(methods::slot(object,"prior"),"beta")),
-                                      retrievePars(methods::slot(methods::slot(object,"prior"),"delta")),
-                                      retrievePars(methods::slot(methods::slot(object,"prior"),"lambdaStar")),
-                                      ifelse(is.integer(background),"int_mat","num_mat"), background, area,
-                                      ifelse(is.integer(methods::slot(object,"po")),"int_mat","num_mat"),methods::slot(object,"po"),
-                                      backConfig$bIS-1,backConfig$bOS-1,
-                                      methods::slot(object,"intensitySelection")-1,
-                                      methods::slot(object,"observabilitySelection")-1,
-                                      mcmc_setup$burnin, mcmc_setup$thin, mcmc_setup$n_iter)
+                           runBayesPO(
+                             methods::slot(methods::slot( # Init beta
+                               object,"init")[[c]],"beta"),
+                             methods::slot(methods::slot(
+                               object,"init")[[c]],"delta"), # Init delta
+                             methods::slot(methods::slot(
+                               object,"init")[[c]],"lambdaStar"), # Init lambdaStar
+                             paste0(methods::slot( # intenisty Link + prior
+                               object,"intensityLink"),"_",
+                               methods::slot(methods::slot(
+                                 methods::slot(
+                                   object,"prior"),"beta"), "family")),
+                             paste0(methods::slot( # observability Link + prior
+                               object,"observabilityLink"),"_",
+                               methods::slot(
+                                 methods::slot(methods::slot(
+                                   object,"prior"),"delta"), "family")),
+                             methods::slot( # lambdaStar prior
+                               methods::slot(
+                                 methods::slot(
+                                   object,"prior"),"lambdaStar"), "family"),
+                             retrievePars(methods::slot( # beta prior parameters
+                               methods::slot(object,"prior"),"beta")),
+                             retrievePars(methods::slot( # delta prior parameters
+                               methods::slot(object,"prior"),"delta")),
+                             retrievePars( # lambdaStar prior parameters
+                               methods::slot(
+                                 methods::slot(
+                                   object,"prior"),"lambdaStar")),
+                             ifelse(is.integer(background), # background class
+                                    "int_mat", "num_mat"),
+                             background, # background data
+                             area, # region area
+                             ifelse(is.integer(methods::slot(object,"po")),
+                               "int_mat", "num_mat"), # po data class
+                             methods::slot(object,"po"), # po data
+                             backConfig$bIS-1, # background intensity columns
+                             backConfig$bOS-1, # background observability colmns
+                             methods::slot(object,"intensitySelection") - 1, # po intensity columns
+                             methods::slot(object,"observabilitySelection") - 1, # po obserability columns
+                             mcmc_setup$burnin, # MCMC burn-in
+                             mcmc_setup$thin, # MCMC thin
+                             mcmc_setup$n_iter) # MCMC iterations
     )
     colnames(mcmcRun[[c]]) <- parnames
     mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]],thin = mcmc_setup$thin)
     if (chains > 1) cat("Finished chain ",c,".\n\n",sep="")
   }
-  if (chains > 1) cat("Total computation time:",format(unclass(Sys.time()-time), digits = 2),attr(Sys.time()-time,"units"),".\n")
+  if (chains > 1) cat("Total computation time: ",format(unclass(Sys.time()-time),
+                                                       digits = 2)," ",
+                      attr(Sys.time()-time,"units"),".\n",sep="")
 
   return(methods::new("bayesPO_fit",
          fit = do.call(coda::mcmc.list,mcmcRun),

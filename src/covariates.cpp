@@ -1,77 +1,95 @@
 #include "covariates.h"
 
 //// Constructors ////
-retrievCovs::retrievCovs(std::vector<R_xlen_t> si,
-                         std::vector<R_xlen_t> so) : selInt(si),selObs(so) {}
+retrievCovs::retrievCovs(std::vector<long> si,
+                         std::vector<long> so) : selInt(si),selObs(so) {}
 retrievCovs::retrievCovs() {}
 
-retrievCovs_intMatrix::retrievCovs_intMatrix(SEXP inp, std::vector<R_xlen_t> si,
-                                             std::vector<R_xlen_t> so) : retrievCovs(si,so)
+retrievCovs_intMatrix::retrievCovs_intMatrix(SEXP inp, std::vector<long> si,
+                                             std::vector<long> so) :
+  retrievCovs(si,so)
 {covs = inp; c = INTEGER(covs); SEXP dim = Rf_getAttrib( inp, R_DimSymbol ) ;
- ncell = INTEGER(dim)[0];nvar = INTEGER(dim)[1];}
+ ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];}
 
 retrievCovs_doubleMatrix::retrievCovs_doubleMatrix(SEXP inp,
-                                                   std::vector<R_xlen_t> si,
-                                                   std::vector<R_xlen_t> so) : retrievCovs(si,so)
+                                                   std::vector<long> si,
+                                                   std::vector<long> so) :
+  retrievCovs(si,so)
 {covs = inp; c = REAL(covs); SEXP dim = Rf_getAttrib( inp, R_DimSymbol ) ;
- ncell = INTEGER(dim)[0];nvar = INTEGER(dim)[1];}
+ ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];}
 
-retrievCovs_normal::retrievCovs_normal(std::vector<R_xlen_t> si,
-                                       std::vector<R_xlen_t> so,R_xlen_t ni,
-                                       R_xlen_t no) : retrievCovs(si,so),n_var_intens(ni),n_var_obs(no) {}
+retrievCovs_normal::retrievCovs_normal(std::vector<long> si,
+                                       std::vector<long> so, long ni,
+                                       long no) : retrievCovs(si,so),
+                                       n_var_intens(ni),n_var_obs(no) {}
 
 //// Methods ////
-// Integer Matrix
-vec retrievCovs_intMatrix::retrieveInt(R_xlen_t ind)
+//// Base class ////
+long retrievCovs::pickRandomPoint()
+{return long(R::runif(0,1) * ncell);}
+
+Eigen::VectorXi retrievCovs::pickRandomPoint(long n)
 {
-  vec output(selInt.size());
-  for (long unsigned i = 0;i<selInt.size();++i)
+  Eigen::VectorXi out(n);
+  for (R_xlen_t i = 0; i < n; i++)
+    out[i] = pickRandomPoint();
+
+  return out;
+}
+
+// Integer Matrix
+Eigen::VectorXd retrievCovs_intMatrix::retrieveInt(long ind)
+{
+  Eigen::VectorXd output(selInt.size());
+  for (R_xlen_t i = 0; i < selInt.size(); ++i)
     output[i] = double(c[selInt[i]*ncell + ind]);
 
   return output;
 }
 
-vec retrievCovs_intMatrix::retrieveObs(R_xlen_t ind)
+Eigen::VectorXd retrievCovs_intMatrix::retrieveObs(long ind)
 {
-  vec output(selObs.size());
-  for (long unsigned i = 0;i<selObs.size();++i)
+  Eigen::VectorXd output(selObs.size());
+  for (R_xlen_t i = 0; i < selObs.size(); ++i)
     output[i] = double(c[selObs[i]*ncell + ind]);
 
   return output;
 }
 
 // Double Matrix
-vec retrievCovs_doubleMatrix::retrieveInt(R_xlen_t ind)
+Eigen::VectorXd retrievCovs_doubleMatrix::retrieveInt(long ind)
 {
-  vec output(selInt.size());
-  for (long unsigned i = 0;i<selInt.size();++i)
+  Eigen::VectorXd output(selInt.size());
+  for (R_xlen_t i = 0; i < selInt.size(); ++i)
     output[i] = c[selInt[i]*ncell + ind];
 
   return output;
 }
 
-vec retrievCovs_doubleMatrix::retrieveObs(R_xlen_t ind)
+Eigen::VectorXd retrievCovs_doubleMatrix::retrieveObs(long ind)
 {
-  vec output(selObs.size());
-  for (long unsigned i = 0;i<selObs.size();++i)
+  Eigen::VectorXd output(selObs.size());
+  for (R_xlen_t i = 0; i < selObs.size(); ++i)
     output[i] = c[selObs[i]*ncell + ind];
 
   return output;
 }
 
 // Normal
-vec retrievCovs_normal::retrieveInt(R_xlen_t ind)
+Eigen::VectorXd retrievCovs_normal::retrieveInt(long ind)
 {
-  vec output(n_var_intens);
-  output = arma::randn(n_var_intens);
+  Eigen::VectorXd output(n_var_intens);
+  for (R_xlen_t i = 0; i < n_var_intens; i++)
+   output[i] = R::rnorm(0,1);
 
   return output;
 }
 
-vec retrievCovs_normal::retrieveObs(R_xlen_t ind)
+Eigen::VectorXd retrievCovs_normal::retrieveObs(long ind)
 {
-  vec output(n_var_obs);
-  output = arma::randn(n_var_obs);
+  Eigen::VectorXd output(n_var_obs);
+  for (R_xlen_t i = 0; i < n_var_obs; i++)
+    output[i] = R::rnorm(0,1);
 
   return output;
 }

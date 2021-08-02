@@ -2,6 +2,7 @@ library(bayesPO)
 library(bayesplot)
 library(ggplot2)
 library(coda)
+library(dplyr)
 
 
 
@@ -51,26 +52,29 @@ geraPO = function(b,d,ls = 1e4,covcom=0,link="logit"){
   return(list(zx=ZX[,-1],wx=WX[,-1],zXp=ZXl[,-1],wXp=WXl[,-1],zU=ZU[,-1]))
 }
 
-set.seed(123)
-background = matrix(rnorm(4e6),ncol=2)
-betas = 1:2; deltas = 1:2; truels = 1e3
+
+set.seed(1234)
+background = matrix(rnorm(3e6),ncol=3)
+betas = 1:3; deltas = 1:2; truels = 1e3
 obs = geraPO(betas,deltas,truels)
 obs_mat = cbind(obs$zx,obs$wx)
 areaD = 1
 
-model = bayesPO_model(po = obs_mat,intensitySelection = 1,
-                      observabilitySelection = 2,
+model = bayesPO_model(po = obs_mat, intensitySelection = 1:2,
+                      observabilitySelection = 2:3,
                       initial_values = 4)
 
-output = fit_bayesPO(model,background,mcmc_setup = list(burnin = 5e3,n_iter = 5e3))
+#output = fit_bayesPO(model,background,mcmc_setup = list(n_iter = 2))
+
+output = fit_bayesPO(model,background,
+                     mcmc_setup = list(burnin = 5e3, n_iter = 5e3, thin = 5))
 
 output
 
-post = as.array(output)
+post = as.array(output); color_scheme_set(scheme = "green")
 mcmc_trace(post)
 mcmc_dens(post)
 mcmc_pairs(post)
+mcmc_pairs(post, pars = c("beta_0", "beta_1", "delta_0", "delta_1", "delta_2", "lambdaStar"))
 
 post_df = as.data.frame(output)
-ggplot(post_df,aes(beta_0,beta_1))+theme_bw()+geom_point(aes(color=chain),size=0.3)
-

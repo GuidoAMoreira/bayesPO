@@ -1,8 +1,6 @@
 #ifndef __RETRIEVE_COVARIATES_BAYESPO_H__
 #define __RETRIEVE_COVARIATES_BAYESPO_H__
-#include <RcppArmadillo.h>
-using arma::vec;
-using arma::mat;
+#include <RcppEigen.h>
 
 /*
 To retrieve the covariates regardless of its class, define a generic class with a virtual
@@ -13,15 +11,19 @@ class retrievCovs
 {
 public:
   // Attributes
-  const std::vector<R_xlen_t> selInt, selObs;
-  R_xlen_t ncell, nvar;
+  const std::vector<long> selInt, selObs;
+  long ncell, nvar;
 
   // Virtual methods
-  virtual vec retrieveInt(R_xlen_t ind) {vec out; return out;} // Unused definition
-  virtual vec retrieveObs(R_xlen_t ind) {vec out; return out;} // Unused definition
+  virtual Eigen::VectorXd retrieveInt(long ind) = 0;
+  virtual Eigen::VectorXd retrieveObs(long ind) = 0;
+
+  // Universal methods
+  virtual long pickRandomPoint();
+  virtual Eigen::VectorXi pickRandomPoint(long n);
 
   // Constructor
-  retrievCovs(std::vector<R_xlen_t> si, std::vector<R_xlen_t> so);
+  retrievCovs(std::vector<long> si, std::vector<long> so);
   retrievCovs();
 
 protected:
@@ -33,12 +35,13 @@ protected:
 class retrievCovs_intMatrix : public retrievCovs
 {
 public:
-
-  vec retrieveInt(R_xlen_t ind);
-  vec retrieveObs(R_xlen_t ind);
+  // Methods
+  Eigen::VectorXd retrieveInt(long ind);
+  Eigen::VectorXd retrieveObs(long ind);
 
   // Constructor
-  retrievCovs_intMatrix(SEXP inp, std::vector<R_xlen_t> si, std::vector<R_xlen_t> so);
+  retrievCovs_intMatrix(SEXP inp, std::vector<long> si,
+                        std::vector<long> so);
 
 private:
   int *c;
@@ -49,11 +52,13 @@ class retrievCovs_doubleMatrix : public retrievCovs
 {
 public:
 
-  vec retrieveInt(R_xlen_t ind);
-  vec retrieveObs(R_xlen_t ind);
+  // Methods
+  Eigen::VectorXd retrieveInt(long ind);
+  Eigen::VectorXd retrieveObs(long ind);
 
   // Constructor
-  retrievCovs_doubleMatrix(SEXP inp, std::vector<R_xlen_t> si, std::vector<R_xlen_t> so);
+  retrievCovs_doubleMatrix(SEXP inp, std::vector<long> si,
+                           std::vector<long> so);
 };
 
 // When the covariates are standard normal
@@ -61,13 +66,15 @@ class retrievCovs_normal : public retrievCovs
 {
 public:
   // Only sizes matter
-  R_xlen_t n_var_intens, n_var_obs;
+  long n_var_intens, n_var_obs;
 
-  vec retrieveInt(R_xlen_t ind);
-  vec retrieveObs(R_xlen_t ind);
+  // Methods
+  Eigen::VectorXd retrieveInt(long ind);
+  Eigen::VectorXd retrieveObs(long ind);
 
   // Constructor
-  retrievCovs_normal(std::vector<R_xlen_t> si, std::vector<R_xlen_t> so,R_xlen_t ni, R_xlen_t no);
+  retrievCovs_normal(std::vector<long> si,
+                     std::vector<long> so,long ni, long no);
 };
 
 #endif
