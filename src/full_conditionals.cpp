@@ -159,10 +159,10 @@ Eigen::MatrixXd logit_normal::link(const Eigen::MatrixXd& covs, bool complementa
 
   if (complementary)
     //return (oneCov * effects + offset.bottomRows(covs.rows())).array().exp().log1p();
-    return (oneCov * effects).array().exp().log1p();
+    return -(oneCov * effects).array().exp().log1p();
   else
     //return (-(oneCov * effects + offset.topRows(covs.rows()))).array().exp().log1p();
-    return (-(oneCov * effects)).array().exp().log1p();
+    return -(-(oneCov * effects)).array().exp().log1p();
 }
 
 const Eigen::MatrixXd& Covariance::calcCovMatrix(const Eigen::MatrixXd& x,

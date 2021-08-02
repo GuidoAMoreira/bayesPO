@@ -29,7 +29,7 @@ void mcStep::applyTransitionKernel()
   logPosterior = FullConditional_processes();
   logPosterior += lambda->update(X.size() + Xprime.size() + U.size(), area);
   logPosterior += beta->update(zXXp, zU);
-  logPosterior += delta->update(wXp, wXp);
+  logPosterior += delta->update(wX, wXp);
   PutRNGstate();
 }
 
