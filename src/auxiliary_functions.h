@@ -2,6 +2,11 @@
 #include "markovchain.h"
 #include "full_conditionals.h"
 #include "link_functions.h"
+
+#ifndef ARMA_64BIT_WORD
+#define ARMA_64BIT_WORD
+#endif
+
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 using arma::mat;

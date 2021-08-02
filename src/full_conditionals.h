@@ -1,7 +1,11 @@
 #ifndef __FULL_CONDITIONALS_BAYESPO_H__
 #define __FULL_CONDITIONALS_BAYESPO_H__
 
+#ifndef ARMA_64BIT_WORD
+#define ARMA_64BIT_WORD
+#endif
 #include <RcppArmadillo.h>
+
 #include "PolyaGamma.h"
 #include "covariates.h"
 using namespace arma;
