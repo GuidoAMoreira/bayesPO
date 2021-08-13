@@ -29,7 +29,7 @@ public:
 protected:
   SEXP covs;
   double *c;
-};
+}; // retrievCovs
 
 // When the covariates are in an integer matrix
 class retrievCovs_intMatrix : public retrievCovs
@@ -45,7 +45,7 @@ public:
 
 private:
   int *c;
-};
+}; // retrievCovs_intMatrix
 
 // When the covariates are in an double matrix
 class retrievCovs_doubleMatrix : public retrievCovs
@@ -59,7 +59,7 @@ public:
   // Constructor
   retrievCovs_doubleMatrix(SEXP inp, std::vector<long> si,
                            std::vector<long> so);
-};
+}; // retrievCovs_doubleMatrix
 
 // When the covariates are standard normal
 class retrievCovs_normal : public retrievCovs
@@ -75,6 +75,6 @@ public:
   // Constructor
   retrievCovs_normal(std::vector<long> si,
                      std::vector<long> so,long ni, long no);
-};
+}; // retrievCovs_normal
 
 #endif
