@@ -1,4 +1,4 @@
-#' @include initial-class.R prior-class.R model-class.R
+#' @include initial-class.R prior-class.R model-class.R fit-class.R
 NULL
 
 #' Fit Presence-Only data using a Bayesian Poisson Process model
@@ -23,7 +23,7 @@ NULL
 #' a list for each of the parameters \code{beta}, \code{delta} and
 #' \code{lambdaStar}. See details for more information.
 #' @param mcmc_setup MCMC configuration in the form of a list containing
-#' elements burnin, thin and n_iter. See details for more information.
+#' elements burnin, thin and iter. See details for more information.
 #' @param chains Number of independent chains to run. If more than 1 are
 #' requested and argument \code{init} is not \code{"random"}, initial values
 #' must be provided for all chains. See details for more instructions about
@@ -114,7 +114,9 @@ NULL
 #'
 #' @importFrom coda mcmc mcmc.list
 #' @export
-methods::setGeneric("fit_bayesPO",function(object,background,area = 1,mcmc_setup = list(n_iter = 5000)){standardGeneric("fit_bayesPO")})
+methods::setGeneric("fit_bayesPO", function(object, background,
+                                            mcmc_setup = list(iter = 5000), ...)
+  standardGeneric("fit_bayesPO"))
 
 #' The fit_bayesPO method for the bayesPO_model class.
 #'
@@ -122,37 +124,51 @@ methods::setGeneric("fit_bayesPO",function(object,background,area = 1,mcmc_setup
 #' @param background A matrix with the covariates values in the region background.
 #' @param area A positive number with the region's area
 #' @param mcmc_setup A list with the components \code{burnin}, \code{thin} and
-#' \code{n_iter} where only the latter is mandatory.
-methods::setMethod("fit_bayesPO",signature(object="bayesPO_model",background="matrix"),
-          function(object,background,area = 1,mcmc_setup = list(n_iter = 5000)){
+#' \code{iter} where only the latter is mandatory.
+#' @name fit_bayesPO
+methods::setMethod("fit_bayesPO", signature(object="bayesPO_model",
+                                            background="matrix"),
+          function(object, background, mcmc_setup, area = 1){
   ## Verifying background names if columns are selected by column name. Crewating background selection variables
-  backConfig <- checkFormatBackground(object,background)
+  backConfig <- checkFormatBackground(object, background)
+
+  # Helper function
+  s <- function(n) methods::slot(object, n)
 
   ## Verifying area
-  if (length(area) > 1) stop("Argument area must have length 1.")
-  if (area <= 0) stop("Argument area must be positive.")
-  ## Verifying mcmc_setup
+  stopifnot(length(area) == 1, area > 0)
+  ## Verifying mcmc_setup - begin
   if (is.null(mcmc_setup$burnin)) mcmc_setup$burnin <- 0
   if (is.null(mcmc_setup$thin)) mcmc_setup$thin <- 1
-  mcmc_setup <- checkMCMCSetup(mcmc_setup)
+  mcmc_setup$burnin <- as.numeric(mcmc_setup$burnin)
+  mcmc_setup$thin <- as.numeric(mcmc_setup$thin)
+  mcmc_setup$iter <- as.numeric(mcmc_setup$iter)
+  stopifnot("iter" %in% names(mcmc_setup), !is.na(mcmc_setup$burnin),
+            length(mcmc_setup$burnin) == 1, mcmc_setup$burnin == floor(mcmc_setup$burnin),
+            mcmc_setup$burnin >= 0, !is.na(mcmc_setup$thin), length(mcmc_setup$thin) == 1,
+            mcmc_setup$thin == floor(mcmc_setup$thin), mcmc_setup$thin > 0,
+            !is.na(mcmc_setup$iter), length(mcmc_setup$iter) == 1,
+            mcmc_setup$iter == floor(mcmc_setup$iter), mcmc_setup$iter > 0,
+            mcmc_setup$iter >= mcmc_setup$thin)
+  ## Verifying mcmc_setup - end
 
   # Helper parameters
-  nb <- length(methods::slot(object,"intensitySelection"))+1
-  nd <- length(methods::slot(object,"observabilitySelection"))+1
-  npar <- nb+nd+4
-  chains <- length(methods::slot(object,"init"))
+  nb <- length(s("intensitySelection")) + 1
+  nd <- length(s("observabilitySelection")) + 1
+  npar <- nb + nd + 4
+  chains <- length(s("init"))
 
   # Set up parameter names to construct the coda::mcmc objects
-  if (length(methods::slot(object,"iSelectedColumns")>0))
+  if (length(s("iSelectedColumns") > 0))
     betanames <- c("(Intensity intercept)",
-                   methods::slot(object,"iSelectedColumns"))
-  else betanames = paste0("beta_",1:nb - 1)
-  if (length(methods::slot(object,"oSelectedColumns")>0))
+                   s("iSelectedColumns"))
+  else betanames = paste0("beta_", 1:nb - 1)
+  if (length(s("oSelectedColumns") > 0))
     deltanames <- c("(Observability intercept)",
-                    methods::slot(object,"oSelectedColumns"))
-  else deltanames = paste0("delta_",1:nd - 1)
+                    s("oSelectedColumns"))
+  else deltanames = paste0("delta_", 1:nd - 1)
   parnames <- c(betanames,deltanames,
-               "lambdaStar","n_U","n_Xprime","log_Posterior"
+               "lambdaStar", "n_U", "n_Xprime", "log_Posterior"
   )
 
   time <- Sys.time()
@@ -161,59 +177,50 @@ methods::setMethod("fit_bayesPO",signature(object="bayesPO_model",background="ma
     if (chains > 1) cat("Starting chain ",c,".\n",sep="")
     mcmcRun[[c]] <- do.call(cbind,
                            runBayesPO(
-                             methods::slot(methods::slot( # Init beta
-                               object,"init")[[c]],"beta"),
-                             methods::slot(methods::slot(
-                               object,"init")[[c]],"delta"), # Init delta
-                             methods::slot(methods::slot(
-                               object,"init")[[c]],"lambdaStar"), # Init lambdaStar
-                             paste0(methods::slot( # intenisty Link + prior
-                               object,"intensityLink"),"_",
-                               methods::slot(methods::slot(
-                                 methods::slot(
-                                   object,"prior"),"beta"), "family")),
-                             paste0(methods::slot( # observability Link + prior
-                               object,"observabilityLink"),"_",
+                             methods::slot(s("init")[[c]],"beta"),
+                             methods::slot(s("init")[[c]],"delta"), # Init delta
+                             methods::slot(s("init")[[c]],"lambdaStar"), # Init lambdaStar
+                             paste0(s("intensityLink"), "_", # intenisty Link + prior
                                methods::slot(
-                                 methods::slot(methods::slot(
-                                   object,"prior"),"delta"), "family")),
+                                 methods::slot(s("prior"), "beta"), "family")),
+                             paste0(s("observabilityLink"),"_", # observability Link + prior
+                               methods::slot(
+                                 methods::slot(s("prior"), "delta"), "family")),
                              methods::slot( # lambdaStar prior
                                methods::slot(
-                                 methods::slot(
-                                   object,"prior"),"lambdaStar"), "family"),
+                                 s("prior"),"lambdaStar"), "family"),
                              retrievePars(methods::slot( # beta prior parameters
-                               methods::slot(object,"prior"),"beta")),
+                               s("prior"),"beta")),
                              retrievePars(methods::slot( # delta prior parameters
-                               methods::slot(object,"prior"),"delta")),
+                               s("prior"),"delta")),
                              retrievePars( # lambdaStar prior parameters
                                methods::slot(
-                                 methods::slot(
-                                   object,"prior"),"lambdaStar")),
+                                 s("prior"),"lambdaStar")),
                              ifelse(is.integer(background), # background class
                                     "int_mat", "num_mat"),
                              background, # background data
                              area, # region area
-                             ifelse(is.integer(methods::slot(object,"po")),
+                             ifelse(is.integer(s("po")),
                                "int_mat", "num_mat"), # po data class
-                             methods::slot(object,"po"), # po data
-                             backConfig$bIS-1, # background intensity columns
-                             backConfig$bOS-1, # background observability colmns
-                             methods::slot(object,"intensitySelection") - 1, # po intensity columns
-                             methods::slot(object,"observabilitySelection") - 1, # po obserability columns
+                             s("po"), # po data
+                             backConfig$bIS - 1, # background intensity columns
+                             backConfig$bOS - 1, # background observability colmns
+                             s("intensitySelection") - 1, # po intensity columns
+                             s("observabilitySelection") - 1, # po obserability columns
                              mcmc_setup$burnin, # MCMC burn-in
                              mcmc_setup$thin, # MCMC thin
-                             mcmc_setup$n_iter) # MCMC iterations
+                             mcmc_setup$iter) # MCMC iterations
     )
     colnames(mcmcRun[[c]]) <- parnames
-    mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]],thin = mcmc_setup$thin)
+    mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
     if (chains > 1) cat("Finished chain ",c,".\n\n",sep="")
   }
-  if (chains > 1) cat("Total computation time: ",format(unclass(Sys.time()-time),
-                                                       digits = 2)," ",
-                      attr(Sys.time()-time,"units"),".\n",sep="")
+  if (chains > 1) cat("Total computation time: ", format(unclass(Sys.time()-time),
+                                                       digits = 2), " ",
+                      attr(Sys.time() - time, "units"), ".\n", sep="")
 
   return(methods::new("bayesPO_fit",
-         fit = do.call(coda::mcmc.list,mcmcRun),
+         fit = do.call(coda::mcmc.list, mcmcRun),
          original = object,
          backgroundSummary = summary(background),
          area = area,
@@ -221,69 +228,143 @@ methods::setMethod("fit_bayesPO",signature(object="bayesPO_model",background="ma
          mcmc_setup = mcmc_setup))
 })
 
+methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
+                                            background = "matrix"),
+                   function(object, background,
+                            mcmc_setup = list(iter = object$mcmc_setup$iter)){
+  # Helper function
+  s <- function(n) methods::slot(object, n)
+  so <- function(n) methods::slot(s("original"), n)
+  backConfig <- checkFormatBackground(s("original"), background)
+
+  # Check background differences
+  cat("Performing error check...\n")
+  stopifnot(all.equal(s("backgroundSummary"), summary(background)),
+            "iter" %in% names(mcmc_setup), !is.na(mcmc_setup$iter),
+            length(mcmc_setup$iter) == 1,
+            mcmc_setup$iter == floor(mcmc_setup$iter), mcmc_setup$iter > 0,
+            mcmc_setup$iter >= mcmc_setup$thin)
+  if ("thin" %in% names(mcmc_setup))
+    stopifnot(mcmc_setup$thin == s("mcmc_setup")$thin)
+  if ("burnin" %in% names(mcmc_setup))
+    warning("Burnin is disabled when continuing MCMC procedure.")
+  mcmc_setup$burnin = 0
+
+  # Helper parameters
+  betaPos <- grep("beta", colnames(s("fit")[[1]]))
+  deltaPos <- grep("delta", colnames(s("fit")[[1]]))
+  lambdaPos <- grep("lambdaStar", colnames(s("fit")[[1]]))
+  chains <- length(s("fit"))
+  lastPoint <- nrow(s("fit")[[1]])
+  lastPoint <- s("fit")[[1]][lastPoint, ]
+
+  time <- Sys.time()
+  mcmcRun <- list()
+  for (c in 1:chains){
+    if (chains > 1) cat("Starting chain ",c,".\n",sep="")
+    mcmcRun[[c]] <- do.call(cbind,
+                            runBayesPO(
+                              lastPoint[betaPos], # Starting at last stored point
+                              lastPoint[deltaPos], # Starting at last stored point
+                              lastPoint[lambdaPos], # Starting at last stored point
+                              paste0(so("intensityLink"), "_", # intenisty Link + prior
+                                     methods::slot(so("prior"), "beta"), "family"),
+                              paste0(s("observabilityLink"),"_", # observability Link + prior
+                                     methods::slot(
+                                       methods::slot(so("prior"), "delta"), "family")),
+                              methods::slot( # lambdaStar prior
+                                methods::slot(
+                                  so("prior"),"lambdaStar"), "family"),
+                              retrievePars(methods::slot( # beta prior parameters
+                                so("prior"),"beta")),
+                              retrievePars(methods::slot( # delta prior parameters
+                                so("prior"),"delta")),
+                              retrievePars( # lambdaStar prior parameters
+                                methods::slot(
+                                  so("prior"),"lambdaStar")),
+                              ifelse(is.integer(background), # background class
+                                     "int_mat", "num_mat"),
+                              background, # background data
+                              s("area"), # region area
+                              ifelse(is.integer(so("po")),
+                                     "int_mat", "num_mat"), # po data class
+                              so("po"), # po data
+                              backConfig$bIS - 1, # background intensity columns
+                              backConfig$bOS - 1, # background observability colmns
+                              so("intensitySelection") - 1, # po intensity columns
+                              so("observabilitySelection") - 1, # po obserability columns
+                              0, # MCMC burn-in
+                              mcmc_setup$thin, # MCMC thin
+                              mcmc_setup$iter) # MCMC iterations
+    )
+    colnames(mcmcRun[[c]]) <- s("parnames")
+    mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
+    if (chains > 1) cat("Finished chain ",c,".\n\n",sep="")
+  }
+  if (chains > 1) cat("Total computation time: ", format(unclass(Sys.time()-time),
+                                                         digits = 2), " ",
+                      attr(Sys.time() - time, "units"), ".\n", sep="")
+
+  return(methods::new("bayesPO_fit",
+                      fit = coda::mcmc.list(
+                        lapply(1:chains, function(i)
+                          rbind(s("fit")[[i]], mcmcRun[[i]]))
+                      ),
+                      original = s("original"),
+                      backgroundSummary = s("backgroundSummary"),
+                      area = s("area"),
+                      parnames = s("parnames"),
+                      mcmc_setup = list(
+                        burnin = s("mcmc_setup")$burnin,
+                        thin = mcmc_setup$thin,
+                        iter = s("mcmc_setup")$iter + mcmc_setup$iter
+                      )))
+} )
+
+# Auxiliary function
 checkFormatBackground <- function(object,background){
+  # Helper function
+  s <- function(n) methods::slot(object, n)
+
   # Intensity
-  if (length(methods::slot(object,"iSelectedColumns")) > 0){
+  if (length(s("iSelectedColumns")) > 0){
     backIntensitySelection <- c()
-    for (col in methods::slot(object,"iSelectedColumns")){
+    for (col in s("iSelectedColumns")){
       if (col %in% colnames(background))
         backIntensitySelection <- c(backIntensitySelection, which(col == colnames(background)))
       else stop(paste0("Column ",col," not found in the background covariates"))
     }
   } else
-    if (max(methods::slot(object,"intensitySelection")) > ncol(background))
-      stop(paste0("Requested background column ",max(methods::slot(object,"intensitySelection")),
+    if (max(s("intensitySelection")) > ncol(background))
+      stop(paste0("Requested background column ", max(s(object,"intensitySelection")),
                   " not available in background which only has ",ncol(background)," columns."))
-    else backIntensitySelection = methods::slot(object,"intensitySelection")
+    else backIntensitySelection = s("intensitySelection")
 
   # Observability
-  if (length(methods::slot(object,"oSelectedColumns")) > 0){
+  if (length(s("oSelectedColumns")) > 0){
     backObservabilitySelection <- c()
-    for (col in methods::slot(object,"oSelectedColumns")){
+    for (col in s("oSelectedColumns")){
       if (col %in% colnames(background))
         backObservabilitySelection <- c(backObservabilitySelection, which(col == colnames(background)))
       else stop(paste0("Column ",col," not found in the background covariates"))
     }
   } else
-    if (max(methods::slot(object,"observabilitySelection")) > ncol(background))
-      stop(paste0("Requested background column ",max(methods::slot(object,"observabilitySelection")),
+    if (max(s("observabilitySelection")) > ncol(background))
+      stop(paste0("Requested background column ", max(s("observabilitySelection")),
                   " not available in background which only has ",ncol(background)," columns."))
   else
-    backObservabilitySelection <- methods::slot(object,"observabilitySelection")
+    backObservabilitySelection <- s("observabilitySelection")
 
   return(list(bIS = backIntensitySelection, bOS = backObservabilitySelection))
 }
 
-checkMCMCSetup <- function(setup){
-  if (!("n_iter" %in% names(setup))) stop("MCMC setup must contain n_iter.")
-  setup$burnin <- as.numeric(setup$burnin)
-  if (is.na(setup$burnin)) stop("Could not turn MCMC configuration parameter burnin to number.")
-  if (length(setup$burnin) > 1) stop("MCMC configuration parameter burnin must have length 1.")
-  if (setup$burnin != floor(setup$burnin)) stop("MCMC configuration parameter burnin must be a posivite integer")
-  if (setup$burnin < 0) stop("MCMC configuration parameter burnin must be a non-negative integer.")
-  setup$thin <- as.numeric(setup$thin)
-  if (is.na(setup$thin)) stop("Could not turn MCMC configuration parameter thin to number.")
-  if (length(setup$thin)>1) stop("MCMC configuration parameter thin must have length 1.")
-  if (setup$thin != floor(setup$thin)) stop("MCMC configuration parameter thin must be a posivite integer")
-  if (setup$thin <= 0) stop("MCMC configuration parameter thin must be a posivite integer.")
-  setup$n_iter = as.numeric(setup$n_iter)
-  if (is.na(setup$n_iter)) stop("Could not turn MCMC configuration parameter n_iter to number.")
-  if (length(setup$n_iter)>1) stop("MCMC configuration parameter n_iter must have length 1.")
-  if (setup$n_iter != floor(setup$n_iter)) stop("MCMC configuration parameter n_iter must be a posivite integer.")
-  if (setup$n_iter <= 0) stop("MCMC configuration parameter n_iter must be a posivite integer.")
-  if (setup$n_iter<setup$thin) stop("MCMC configuration parameter thin is too large. It cannot be larger than n_iter. No MCMC performed.")
-
-  setup
-}
-
-
 #' @export
-bayesPO_model = function(po,intensitySelection,
+bayesPO_model = function(po, intensitySelection,
                          observabilitySelection,
-                         intensityLink = "logit",observabilityLink = "logit",
-                         initial_values = initial(length(intensitySelection)+1,
-                                                  length(observabilitySelection)+1,
-                                                  nrow(po),random=TRUE),
+                         intensityLink = "logit", observabilityLink = "logit",
+                         initial_values = initial(length(intensitySelection) + 1,
+                                                  length(observabilitySelection) + 1,
+                                                  nrow(po), random=TRUE),
                          joint_prior = prior(
                            beta = NormalPrior(
                              rep(0,length(intensitySelection) + 1),
@@ -323,10 +404,14 @@ bayesPO_model = function(po,intensitySelection,
   if (is(initial_values,"bayesPO_initial"))
     initial_values = list(initial_values)
   if (is.numeric(initial_values))
-    initial_values = initial(length(intensitySelection)+1,
-                             length(observabilitySelection)+1,
-                             nrow(po),random=TRUE) * initial_values
-  return(methods::new("bayesPO_model",po=po,intensityLink=intensityLink,intensitySelection=intensitySelection,
-               observabilityLink=observabilityLink,observabilitySelection=observabilitySelection,
-               init=initial_values,prior=joint_prior,iSelectedColumns=icharSel,oSelectedColumns=ocharSel))
+    initial_values = initial(length(intensitySelection) + 1,
+                             length(observabilitySelection) + 1,
+                             nrow(po), random=TRUE) * initial_values
+
+  return(methods::new("bayesPO_model", po=po, intensityLink = intensityLink,
+                      intensitySelection = intensitySelection,
+                      observabilityLink = observabilityLink,
+                      observabilitySelection = observabilitySelection,
+                      init = initial_values, prior = joint_prior,
+                      iSelectedColumns = icharSel, oSelectedColumns = ocharSel))
 }

@@ -65,7 +65,6 @@ double logit_normal::update(const Eigen::MatrixXd& onesCov,
   xb1 = x1 * effects;
   xb0 = x0 * effects;
 
-
   // Calculating X' Omega X + B and X' kappa + B b
   // offset represents a Gaussian Process if it is in the model
   for (i = 0; i < n1; i++) // From the data matrix X
@@ -96,6 +95,7 @@ double logit_normal::update(const Eigen::MatrixXd& onesCov,
 double BetaDelta::updateCovariance()
 {return covariance->update(this);}
 
+// INCOMPLETE
 double logit_normal::updateGPx(const Eigen::MatrixXd& xCovar)
 {
   if (!covariance->used) return 0.;
@@ -116,6 +116,7 @@ double logit_normal::updateGPx(const Eigen::MatrixXd& xCovar)
   return -0.5 * xMarks.transpose() * covars.inverse() * xMarks;
 }
 
+// INCOMPLETE
 double logit_normal::updateGP(const Eigen::MatrixXd &pos,
                               const Eigen::MatrixXd &onesC,
                               const Eigen::MatrixXd &zerosC)
@@ -137,6 +138,7 @@ double logit_normal::updateGP(const Eigen::MatrixXd &pos,
   return 0.;
 }
 
+// INCOMPLETE
 double Exponential_Covariance::update(BetaDelta* points)
 {
   double proposal = R::rnorm(phi, 0.3), temp = phi, propDens, pastDens, alpha;

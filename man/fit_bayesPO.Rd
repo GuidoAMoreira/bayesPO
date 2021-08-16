@@ -4,11 +4,19 @@
 \alias{fit_bayesPO}
 \title{Fit Presence-Only data using a Bayesian Poisson Process model}
 \usage{
-fit_bayesPO(object, background, area = 1, mcmc_setup = list(n_iter = 5000))
+fit_bayesPO(object, background, mcmc_setup = list(iter = 5000), ...)
+
+\S4method{fit_bayesPO}{bayesPO_model,matrix}(object, background, mcmc_setup, area = 1)
 }
 \arguments{
-\item{mcmc_setup}{MCMC configuration in the form of a list containing
-elements burnin, thin and n_iter. See details for more information.}
+\item{object}{A bayesPO_model object.}
+
+\item{background}{A matrix with the covariates values in the region background.}
+
+\item{mcmc_setup}{A list with the components \code{burnin}, \code{thin} and
+\code{iter} where only the latter is mandatory.}
+
+\item{area}{A positive number with the region's area}
 
 \item{data}{A list containing a matrix with the covariates for the observed
 points, a matrix with the covariates for the background, the region's area

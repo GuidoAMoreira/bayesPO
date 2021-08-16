@@ -25,5 +25,7 @@ void determineX(Eigen::VectorXd x, R_xlen_t nb, R_xlen_t nd,
                       std::vector<R_xlen_t> &x_data, Eigen::MatrixXd &zx_data,
                       Eigen::MatrixXd &wx_data);
 
-// Sampling
-Eigen::VectorXd sampleNormal(const Eigen::MatrixXd& Sigma);
+// Sampling. Simple inline function
+inline Eigen::VectorXd sampleNormal(const Eigen::MatrixXd& Sigma)
+{return Sigma.llt().matrixL() *
+  Rcpp::as<Eigen::Map<Eigen::VectorXd> >(Rcpp::rnorm(Sigma.rows(), 0, 1));}

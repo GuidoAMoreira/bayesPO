@@ -158,9 +158,12 @@ methods::setMethod("names","bayesPO_fit",function(x){
 #' @export
 #' @exportMethod [[
 methods::setMethod("[[","bayesPO_fit",function(x,i){
-  nb <- length(methods::slot(methods::slot(x,"original"),"intensitySelection"))+1
-  nd <- length(methods::slot(methods::slot(x,"original"),"observabilitySelection"))+1
-  npar <- nb+nd+1 # +1 from lambdaStar
+  # Helper function
+  s <- function(n) methods::slot(x, n)
+
+  nb <- length(methods::slot(s("original"),"intensitySelection")) + 1
+  nd <- length(methods::slot(s("original"),"observabilitySelection")) + 1
+  npar <- nb + nd + 1 # +1 from lambdaStar
   summ <- summary(x)
 
   if (i == "parameters"){
@@ -179,12 +182,12 @@ methods::setMethod("[[","bayesPO_fit",function(x,i){
     output <- summ[,8]
     names(output) <- rownames(summ)
   } else
-  if (i == "mcmc_chains") output <- methods::slot(x,"fit") else
-  if (i == "model") output <- methods::slot(x,"original") else
-  if (i == "initial values") output <- methods::slot(methods::slot(x,"original"),"init") else
-  if (i == "mcmc setup") output <- methods::slot(x,"mcmc_setup") else
+  if (i == "mcmc_chains") output <- s("fit") else
+  if (i == "model") output <- s("original") else
+  if (i == "initial values") output <- methods::slot(s("original"),"init") else
+  if (i == "mcmc setup") output <- s("mcmc_setup") else
   if (i == "log_posterior") output <- as.data.frame(x)$log_Posterior else
-  if (i == "area") output <- methods::slot(x,"area")
+  if (i == "area") output <- s("area")
 
   output
 })

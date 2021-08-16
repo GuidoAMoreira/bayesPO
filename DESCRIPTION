@@ -28,5 +28,5 @@ Collate:
     'prior-class.R'
     'initial-class.R'
     'model-class.R'
-    'bayesPO.R'
     'fit-class.R'
+    'bayesPO.R'

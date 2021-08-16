@@ -110,7 +110,3 @@ void determineX(Eigen::VectorXd x, long nb,
   zx_data = zX;
   wx_data = wX;
 }
-
-Eigen::VectorXd sampleNormal(const Eigen::MatrixXd& Sigma)
-{return Sigma.llt().matrixL() *
-    Rcpp::as<Eigen::Map<Eigen::VectorXd> >(Rcpp::rnorm(Sigma.rows(), 0, 1));}
