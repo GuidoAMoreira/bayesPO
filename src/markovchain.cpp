@@ -38,13 +38,12 @@ double mcStep::FullConditional_processes()
 {
   // Selecting candidate cells and associating them with processes
   long nTotal = R::rpois(area * lambda->l), i, candidate, iXp = 0, iU = 0;
-  Xprime = std::vector<long>();
-  U = std::vector<long>();
-  std::vector<long> Utemp(nTotal), Xptemp(nTotal);
+  //std::vector<long> Utemp(nTotal), Xptemp(nTotal);
+  std::vector<long> temp(nTotal);
   double unif, q, p;
   Eigen::VectorXd tempInt(beta->s - 1), tempObs(delta->s - 1);
-  Eigen::MatrixXd temp_wXp(nTotal, delta->s - 1), temp_zXp(nTotal, beta->s - 1),
-      temp_zU(nTotal, beta->s - 1);
+  /*Eigen::MatrixXd temp_wXp(nTotal, delta->s - 1), temp_zXp(nTotal, beta->s - 1),
+      temp_zU(nTotal, beta->s - 1);*/
 
   for (i = 0; i < nTotal; i++){
     candidate = background->pickRandomPoint();
@@ -54,28 +53,45 @@ double mcStep::FullConditional_processes()
     tempInt = background->retrieveInt(candidate);
     q = beta->link(tempInt.transpose(), false)(0);
     if (unif > q){ // Accept U
-      Utemp[iU] = candidate;
-      temp_zU.row(iU++) = tempInt;
+      //Utemp[iU] = candidate;
+      //temp_zU.row(iU++) = tempInt;
+      temp[iU++] = candidate;
     } else { // Reject U
       tempObs = background->retrieveObs(candidate);
       p = delta->link(tempObs.transpose(), false)(0);
       if (unif > p + q) { // Accept X'
-        Xptemp[iXp] = candidate;
-        temp_zXp.row(iXp) = tempInt;
-        temp_wXp.row(iXp++) = tempObs;
+        //Xptemp[iXp] = candidate;
+        //temp_zXp.row(iXp) = tempInt;
+        //temp_wXp.row(iXp++) = tempObs;
+        temp[nTotal - 1 - iXp++] = candidate;
       }
     } // If neither U nor X' is accepted, point is discarded
   }
 
-  U = std::vector<long>(&Utemp[0], &Utemp[iU]);
-  Xprime = std::vector<long>(&Xptemp[0], &Xptemp[iXp]);
+  //U = std::vector<long>(&Utemp[0], &Utemp[iU]);
+  //Xprime = std::vector<long>(&Xptemp[0], &Xptemp[iXp]);
+  U = std::vector<long>(&temp[0], &temp[iU]);
+  Xprime = std::vector<long>(&temp[nTotal - iXp], &temp[nTotal]);
   zXXp.resize(X.size() + iXp, beta->s - 1);
   zXXp.topRows(X.size()) = zX;
-  zXXp.bottomRows(iXp) = temp_zXp.topRows(iXp);
-  wXp.resize(iXp, delta->s - 1);
-  wXp = temp_wXp.topRows(iXp);
-  zU.resize(iU, beta->s - 1);
-  zU = temp_zU.topRows(iU);
+  //zXXp.bottomRows(iXp) = temp_zXp.topRows(iXp);
+  if (iXp){
+    background->putInt(zXXp, temp, nTotal - iXp, nTotal - 1, X.size());
+    wXp.resize(iXp, delta->s - 1);
+    background->putObs(wXp, temp, nTotal - iXp, nTotal - 1, 0);
+  }
+  else
+    wXp = Eigen::MatrixXd(0, delta->s - 1);
+  if (iU){
+    zU.resize(iU, beta->s - 1);
+    background->putInt(zU, temp, 0, iU - 1, 0);
+  }
+  else
+    zU = Eigen::MatrixXd(0, beta->s - 1);
+  //wXp.resize(iXp, delta->s - 1);
+  //wXp = temp_wXp.topRows(iXp);
+  //zU.resize(iU, beta->s - 1);
+  //zU = temp_zU.topRows(iU);
 
   return - lgamma(iXp + 1) - lgamma(iU + 1);
 }

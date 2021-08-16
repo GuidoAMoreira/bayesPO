@@ -49,8 +49,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
   } else if (covsClass == "int_mat")
   {
     covs = new retrievCovs_intMatrix(covariates,iC,oC);
-  } else if (covsClass == "std_normal") {covs = new retrievCovs_normal(iC,oC,
-             beta.size()-1,delta.size()-1);}
+  } else if (covsClass == "std_normal") {covs = new retrievCovs_normal(iC,oC);}
   else {Rcpp::stop("Unidentified background data type - C++ level");}
 
   // Starting up MCMC

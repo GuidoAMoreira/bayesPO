@@ -15,8 +15,10 @@ public:
   long ncell, nvar;
 
   // Virtual methods
-  virtual Eigen::VectorXd retrieveInt(long ind) = 0;
-  virtual Eigen::VectorXd retrieveObs(long ind) = 0;
+  virtual Eigen::VectorXd retrieveInt(long) = 0;
+  virtual Eigen::VectorXd retrieveObs(long) = 0;
+  void putInt(Eigen::MatrixXd&, std::vector<long>&, long, long, long);
+  void putObs(Eigen::MatrixXd&, std::vector<long>&, long, long, long);
 
   // Universal methods
   virtual long pickRandomPoint();
@@ -29,6 +31,8 @@ public:
 protected:
   SEXP covs;
   double *c;
+  long nInt;
+  long nObs;
 }; // retrievCovs
 
 // When the covariates are in an integer matrix
@@ -65,16 +69,12 @@ public:
 class retrievCovs_normal : public retrievCovs
 {
 public:
-  // Only sizes matter
-  long n_var_intens, n_var_obs;
-
   // Methods
   Eigen::VectorXd retrieveInt(long ind);
   Eigen::VectorXd retrieveObs(long ind);
 
   // Constructor
-  retrievCovs_normal(std::vector<long> si,
-                     std::vector<long> so,long ni, long no);
+  retrievCovs_normal(std::vector<long> si, std::vector<long> so);
 }; // retrievCovs_normal
 
 #endif

@@ -2,7 +2,8 @@
 
 //// Constructors ////
 retrievCovs::retrievCovs(std::vector<long> si,
-                         std::vector<long> so) : selInt(si),selObs(so) {}
+                         std::vector<long> so) : selInt(si),selObs(so),
+                         nInt(si.size()), nObs(so.size()){}
 retrievCovs::retrievCovs() {}
 
 retrievCovs_intMatrix::retrievCovs_intMatrix(SEXP inp, std::vector<long> si,
@@ -19,9 +20,8 @@ retrievCovs_doubleMatrix::retrievCovs_doubleMatrix(SEXP inp,
  ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];}
 
 retrievCovs_normal::retrievCovs_normal(std::vector<long> si,
-                                       std::vector<long> so, long ni,
-                                       long no) : retrievCovs(si,so),
-                                       n_var_intens(ni),n_var_obs(no) {}
+                                       std::vector<long> so) :
+  retrievCovs(si,so) {}
 
 //// Methods ////
 //// Base class ////
@@ -37,10 +37,26 @@ Eigen::VectorXi retrievCovs::pickRandomPoint(long n)
   return out;
 }
 
+void retrievCovs::putInt(Eigen::MatrixXd& covs, std::vector<long>& ind,
+                                         long start, long finish, long startMat)
+{
+  long starter = startMat - start;
+  for (R_xlen_t i = start; i <= finish ; i++)
+    covs.row(starter + i) = retrieveInt(ind[i]);
+}
+
+void retrievCovs::putObs(Eigen::MatrixXd& covs, std::vector<long>& ind,
+                                         long start, long finish, long startMat)
+{
+  long starter = startMat - start;
+  for (R_xlen_t i = start; i <= finish ; i++)
+    covs.row(starter + i) = retrieveObs(ind[i]);
+}
+
 // Integer Matrix
 Eigen::VectorXd retrievCovs_intMatrix::retrieveInt(long ind)
 {
-  Eigen::VectorXd output(selInt.size());
+  Eigen::VectorXd output(nInt);
   for (R_xlen_t i = 0; i < selInt.size(); ++i)
     output[i] = double(c[selInt[i]*ncell + ind]);
 
@@ -49,7 +65,7 @@ Eigen::VectorXd retrievCovs_intMatrix::retrieveInt(long ind)
 
 Eigen::VectorXd retrievCovs_intMatrix::retrieveObs(long ind)
 {
-  Eigen::VectorXd output(selObs.size());
+  Eigen::VectorXd output(nObs);
   for (R_xlen_t i = 0; i < selObs.size(); ++i)
     output[i] = double(c[selObs[i]*ncell + ind]);
 
@@ -59,7 +75,7 @@ Eigen::VectorXd retrievCovs_intMatrix::retrieveObs(long ind)
 // Double Matrix
 Eigen::VectorXd retrievCovs_doubleMatrix::retrieveInt(long ind)
 {
-  Eigen::VectorXd output(selInt.size());
+  Eigen::VectorXd output(nInt);
   for (R_xlen_t i = 0; i < selInt.size(); ++i)
     output[i] = c[selInt[i]*ncell + ind];
 
@@ -68,7 +84,7 @@ Eigen::VectorXd retrievCovs_doubleMatrix::retrieveInt(long ind)
 
 Eigen::VectorXd retrievCovs_doubleMatrix::retrieveObs(long ind)
 {
-  Eigen::VectorXd output(selObs.size());
+  Eigen::VectorXd output(nObs);
   for (R_xlen_t i = 0; i < selObs.size(); ++i)
     output[i] = c[selObs[i]*ncell + ind];
 
@@ -78,8 +94,8 @@ Eigen::VectorXd retrievCovs_doubleMatrix::retrieveObs(long ind)
 // Normal
 Eigen::VectorXd retrievCovs_normal::retrieveInt(long ind)
 {
-  Eigen::VectorXd output(n_var_intens);
-  for (R_xlen_t i = 0; i < n_var_intens; i++)
+  Eigen::VectorXd output(nInt);
+  for (R_xlen_t i = 0; i < nInt; i++)
    output[i] = R::rnorm(0,1);
 
   return output;
@@ -87,8 +103,8 @@ Eigen::VectorXd retrievCovs_normal::retrieveInt(long ind)
 
 Eigen::VectorXd retrievCovs_normal::retrieveObs(long ind)
 {
-  Eigen::VectorXd output(n_var_obs);
-  for (R_xlen_t i = 0; i < n_var_obs; i++)
+  Eigen::VectorXd output(nObs);
+  for (R_xlen_t i = 0; i < nObs; i++)
     output[i] = R::rnorm(0,1);
 
   return output;
