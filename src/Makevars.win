@@ -1,2 +1,4 @@
 PKG_CXXFLAGS = -w $(SHLIB_OPENMP_CXXFLAGS)
-PKG_LIBS = -w $(SHLIB_OPENMP_CXXFLAGS)
+PKG_LIBS = -w $(shell "$(R_HOME)/bin/Rscript" -e "Rcpp:::LdFlags()") $(SHLIB_OPENMP_CXXFLAGS) $(shell "$(R_HOME)/bin/Rscript" -e "RcppProgress:::CxxFlags()")
+
+PKG_CXXFLAGS += -Ilibsrc $(SHLIB_OPENMP_CXXFLAGS) $(shell "$(R_HOME)/bin/Rscript" -e "RcppProgress:::CxxFlags()")

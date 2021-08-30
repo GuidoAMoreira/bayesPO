@@ -126,9 +126,10 @@ methods::setGeneric("fit_bayesPO", function(object, background,
 #' @param mcmc_setup A list with the components \code{burnin}, \code{thin} and
 #' \code{iter} where only the latter is mandatory.
 #' @name fit_bayesPO
+#' @importFrom parallel detectCores
 methods::setMethod("fit_bayesPO", signature(object="bayesPO_model",
                                             background="matrix"),
-                   function(object, background, mcmc_setup, area = 1){
+                   function(object, background, mcmc_setup, area = 1, cores = 1){
                      ## Verifying background names if columns are selected by column name. Crewating background selection variables
                      backConfig <- checkFormatBackground(object, background)
 
@@ -149,7 +150,9 @@ methods::setMethod("fit_bayesPO", signature(object="bayesPO_model",
                                mcmc_setup$thin == floor(mcmc_setup$thin), mcmc_setup$thin > 0,
                                !is.na(mcmc_setup$iter), length(mcmc_setup$iter) == 1,
                                mcmc_setup$iter == floor(mcmc_setup$iter), mcmc_setup$iter > 0,
-                               mcmc_setup$iter >= mcmc_setup$thin)
+                               mcmc_setup$iter >= mcmc_setup$thin,
+                               cores > 0, cores == floor(cores), length(cores) == 1,
+                               cores < parallel::detectCores())
                      ## Verifying mcmc_setup - end
 
                      # Helper parameters
@@ -209,7 +212,8 @@ methods::setMethod("fit_bayesPO", signature(object="bayesPO_model",
                                                  s("observabilitySelection") - 1, # po obserability columns
                                                  mcmc_setup$burnin, # MCMC burn-in
                                                  mcmc_setup$thin, # MCMC thin
-                                                 mcmc_setup$iter) # MCMC iterations
+                                                 mcmc_setup$iter, # MCMC iterations
+                                                 cores)
                        )
                        colnames(mcmcRun[[c]]) <- parnames
                        mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
@@ -231,7 +235,7 @@ methods::setMethod("fit_bayesPO", signature(object="bayesPO_model",
 methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
                                             background = "matrix"),
                    function(object, background,
-                            mcmc_setup = list(iter = object$mcmc_setup$iter)){
+                            mcmc_setup = list(iter = object$mcmc_setup$iter), cores = 1){
                      # Helper function
                      s <- function(n) methods::slot(object, n)
                      so <- function(n) methods::slot(s("original"), n)
@@ -243,7 +247,9 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
                                "iter" %in% names(mcmc_setup), !is.na(mcmc_setup$iter),
                                length(mcmc_setup$iter) == 1,
                                mcmc_setup$iter == floor(mcmc_setup$iter), mcmc_setup$iter > 0,
-                               mcmc_setup$iter >= mcmc_setup$thin)
+                               mcmc_setup$iter >= mcmc_setup$thin,
+                               cores > 0, cores == floor(cores), length(cores) == 1,
+                               cores < parallel::detectCores())
                      if ("thin" %in% names(mcmc_setup))
                        stopifnot(mcmc_setup$thin == s("mcmc_setup")$thin)
                      else
@@ -301,7 +307,8 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
                                                  so("observabilitySelection") - 1, # po obserability columns
                                                  0, # MCMC burn-in
                                                  mcmc_setup$thin, # MCMC thin
-                                                 mcmc_setup$iter) # MCMC iterations
+                                                 mcmc_setup$iter, # MCMC iterations
+                                                 cores)
                        )
                        colnames(mcmcRun[[c]]) <- s("parnames")
                        mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)

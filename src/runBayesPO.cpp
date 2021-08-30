@@ -2,6 +2,7 @@
 #include "covariates.h"
 #include "markovchain.h"
 #include <chrono>
+#include <progress.hpp>
 
 // [[Rcpp::export]]
 Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
@@ -15,7 +16,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
                       Eigen::VectorXi observabilityCovs,
                       Eigen::VectorXi xIntensityCovs,
                       Eigen::VectorXi xObservabilityCovs,
-                      int burnin, int thin, int iter)
+                      int burnin, int thin, int iter, int threads)
 {
   Eigen::MatrixXd outBetas(iter/thin,beta.size()),
     outDeltas(iter/thin,delta.size());
@@ -87,22 +88,30 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
   // Let user know it's working
   Rcpp::Rcout << "Sampling MCMC.\n";
 
+#ifdef _OPENMP
+  if ( threads > 0 )
+    omp_set_num_threads( threads );
+#endif
+
+  Progress progr(iter / thin, true);
+
   t1 = std::chrono::high_resolution_clock::now();
   // Actual MCMC
   for (i = 0; i < (iter/thin); i++)
   {
     MarkovChain.update(thin);
-    if (i == checkPointsIter[j])
+/*    if (i == checkPointsIter[j])
       Rcpp::Rcout << "MCMC has completed " << 100*checkPoints[j++] <<
-        "% of the iterations.\n";
+        "% of the iterations.\n";*/
 
-    R_CheckUserInterrupt();
+    //R_CheckUserInterrupt();
     outBetas.row(i) = MarkovChain.beta->effects;
     outDeltas.row(i) = MarkovChain.delta->effects;
     outLambdas[i] = MarkovChain.lambda->l;
     outLogPost[i] = MarkovChain.logPosterior;
     out_nU[i] = MarkovChain.U.size();
     out_nXp[i] = MarkovChain.Xprime.size();
+    progr.increment();
   }
   t2 = std::chrono::high_resolution_clock::now();
   //    auto t1 = std::chrono::high_resolution_clock::now();

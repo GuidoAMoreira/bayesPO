@@ -12,14 +12,17 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 Depends:
-    R (>= 3.4)
+    R (>= 3.4),
+    RcppProgress
 LinkingTo: 
     Rcpp,
-    RcppEigen
+    RcppEigen,
+    RcppProgress
 Imports: 
     Rcpp,
     coda,
-    methods
+    methods,
+    parallel
 Suggests:
     bayesplot
 Collate: 
