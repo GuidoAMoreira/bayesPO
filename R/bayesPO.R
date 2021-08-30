@@ -246,13 +246,19 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
                                mcmc_setup$iter >= mcmc_setup$thin)
                      if ("thin" %in% names(mcmc_setup))
                        stopifnot(mcmc_setup$thin == s("mcmc_setup")$thin)
+                     else
+                       mcmc_setup$thin = s("mcmc_setup")$thin
                      if ("burnin" %in% names(mcmc_setup) && mcmc_setup$burnin > 0)
                        warning("Burnin is disabled when continuing MCMC procedure.")
 
                      # Helper parameters
-                     betaPos <- grep("beta", colnames(s("fit")[[1]]))
-                     deltaPos <- grep("delta", colnames(s("fit")[[1]]))
-                     lambdaPos <- grep("lambdaStar", colnames(s("fit")[[1]]))
+                     betaPos <- 1:length(methods::slot(
+                       methods::slot(so("prior"), "beta"), "mu"))
+                     deltaPos <- (max(betaPos) + 1):(max(betaPos) +
+                                                       length(methods::slot(
+                                                         methods::slot(so("prior"),
+                                                                       "delta"), "mu")))
+                     lambdaPos <- max(deltaPos) + 1
                      chains <- length(s("fit"))
                      lastPoint <- nrow(s("fit")[[1]])
                      lastPoint <- s("fit")[[1]][lastPoint, ]

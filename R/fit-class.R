@@ -68,9 +68,10 @@ methods::setMethod("show","bayesPO_fit",function(object){
   setup = methods::slot(object,"mcmc_setup")
   cat(chains,ifelse(chains>1," chains"," chain")," of MCMC ",
       ifelse(chains>1,"were","was")," configured with ",
-      setup$burnin," warmup ",ifelse(setup$burnin>1,"iterations","iteration"),
-      " and ",setup$n_iter," valid ",
-      ifelse(setup$n_iter>1,"iterations","iteration"),", storing one in every ",
+      format(setup$burnin, scientific = FALSE)," warmup ",
+      ifelse(setup$burnin>1,"iterations","iteration"),
+      " and ", format(setup$iter, scientific = FALSE)," valid ",
+      ifelse(setup$iter>1,"iterations","iteration"),", storing one in every ",
       ifelse(setup$thin>1,paste(setup$thin,"steps"),"step"),".\n\n",sep="")
 
   ## Results
@@ -336,4 +337,41 @@ as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...)
 
   return(output)
 }
+
+#### Interaction methods ####
+# Adding chains into a single object
+methods::setMethod("+", methods::signature(e1 = "bayesPO_fit", e2 = "bayesPO_fit"),
+                   function(e1, e2){
+  s1 <- function(n) methods::slot(e1, n)
+  s2 <- function(n) methods::slot(e2, n)
+  stopifnot(#all.equal(s1("original"), s2("original")),
+            all.equal(s1("backgroundSummary"), s2("backgroundSummary")),
+            all.equal(s1("area"), s2("area")),
+            all.equal(s1("parnames"), s2("parnames")),
+            all.equal(s1("mcmc_setup"), s2("mcmc_setup")))
+
+  fff <- coda::mcmc.list(c(s1("fit"), s2("fit")))
+
+  or <- s1("original")
+  methods::slot(or, "init") <- c(methods::slot(s1("original"), "init"),
+                                 methods::slot(s2("original"), "init"))
+
+  return(methods::new("bayesPO_fit",
+                      fit = fff,
+                      original = or,
+                      backgroundSummary = s1("backgroundSummary"),
+                      area = s1("area"),
+                      parnames = s1("parnames"),
+                      mcmc_setup = s1("mcmc_setup")))
+})
+
+# Combining multiple chains
+methods::setMethod("c", "bayesPO_fit", function(x, ...) {
+  ll <- list(...)
+  res <- x
+  for (i in 1:length(ll))
+    res <- res + ll[[i]]
+
+  res
+})
 
