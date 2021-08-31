@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // runBayesPO
 Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta, double lambda, Rcpp::String b_updater, Rcpp::String d_updater, Rcpp::String l_updater, Rcpp::List parB, Rcpp::List parD, Rcpp::List parL, Rcpp::String covsClass, SEXP covariates, double areaD, Rcpp::String xClass, Eigen::MatrixXd xValues, Eigen::VectorXi intensityCovs, Eigen::VectorXi observabilityCovs, Eigen::VectorXi xIntensityCovs, Eigen::VectorXi xObservabilityCovs, int burnin, int thin, int iter, int threads);
 RcppExport SEXP _bayesPO_runBayesPO(SEXP betaSEXP, SEXP deltaSEXP, SEXP lambdaSEXP, SEXP b_updaterSEXP, SEXP d_updaterSEXP, SEXP l_updaterSEXP, SEXP parBSEXP, SEXP parDSEXP, SEXP parLSEXP, SEXP covsClassSEXP, SEXP covariatesSEXP, SEXP areaDSEXP, SEXP xClassSEXP, SEXP xValuesSEXP, SEXP intensityCovsSEXP, SEXP observabilityCovsSEXP, SEXP xIntensityCovsSEXP, SEXP xObservabilityCovsSEXP, SEXP burninSEXP, SEXP thinSEXP, SEXP iterSEXP, SEXP threadsSEXP) {
