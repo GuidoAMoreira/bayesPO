@@ -211,6 +211,27 @@ methods::setMethod("$","bayesPO_fit",function(x,name) x[[name]])
 #' @exportMethod as.array
 methods::setMethod("as.array","bayesPO_fit",function(x,...) as.array.bayesPO_fit(x,...))
 
+namesAid <- function(string){
+  new_string <- string
+
+  intInt <- "(Intensity intercept)"
+  obsInt <- "(Observability intercept)"
+  obsStart <- which(string == obsInt)
+  obsEnd <- which(string == "lambdaStar") - 1
+
+  # Find same covariates
+  for (i in 1:(obsStart - 1))
+    searching <- grepl(string[i], string[obsStart:obsEnd])
+    if (any(searching)){
+      new_string[i] <- paste0(string[i], ".int")
+      new_string[obsStart - 1 + which(searching)] <- paste0(string[i], ".obs")
+    }
+  new_string[1] <- "Intensity_Intercept"
+  new_string[obsStart] <- "Observability_Intercept"
+
+  new_string
+}
+
 #' Put MCMC output in an \code{array}.
 #'
 #' Prepares the MCMC results to be used by plotting functions of the
@@ -226,18 +247,18 @@ methods::setMethod("as.array","bayesPO_fit",function(x,...) as.array.bayesPO_fit
 #' @method as.array bayesPO_fit
 #' @export
 as.array.bayesPO_fit <- function(x,...){
-  nchains <- length(methods::slot(x,"fit"))
-  chains <- do.call(rbind,methods::slot(x,"fit"))
+  nchains <- length(methods::slot(x, "fit"))
+  chains <- do.call(rbind, methods::slot(x,"fit"))
   iterations <- nrow(methods::slot(x,"fit")[[1]])
   npar <- ncol(chains)
 
   ## Format to be used with bayesplot:: functions
   return(
     array(chains,
-          dim = c(iterations,nchains,npar),
-          dimnames = list(iterations=NULL,
-                          chains=paste0("chain:",1:nchains),
-                          parameters=methods::slot(x,"parnames")))
+          dim = c(iterations, nchains, npar),
+          dimnames = list(iterations = NULL,
+                          chains = paste0("chain:",1:nchains),
+                          parameters = namesAid(methods::slot(x,"parnames"))))
   )
 }
 
@@ -272,7 +293,7 @@ as.matrix.bayesPO_fit <- function(x,...){
   nchains <- length(methods::slot(x,"fit"))
   chains <- do.call(rbind,methods::slot(x,"fit"))
   iterations <- nrow(methods::slot(x,"fit")[[1]])
-  parnames <- colnames(chains)
+  parnames <- namesAid(colnames(chains))
   chains <- cbind(chains,rep(factor(1:nchains),each=iterations))
   chains <- cbind(chains,rep(1:iterations,nchains))
   colnames(chains) <- c(parnames,"chain","iteration")
@@ -324,16 +345,22 @@ methods::setMethod("as.data.frame","bayesPO_fit",function(x, row.names = NULL, o
 as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...){
   nchains <- length(methods::slot(x,"fit"))
   chains <- do.call(rbind,methods::slot(x,"fit"))
-  parnames <- colnames(chains)
+  parnames <- namesAid(colnames(chains))
   iterations <- nrow(methods::slot(x,"fit")[[1]])
 
   colsList <- list()
   for (pp in 1:length(parnames)) colsList[[parnames[pp]]] <- chains[,pp]
 
-  if (!is.null(NULL)) row_names <- row.names else row_names <- paste0(rep(paste0("C",1:nchains),each=iterations),rep(paste0("I",1:iterations),nchains))
-  output <- do.call(data.frame,c(colsList,list(check.names = TRUE, fix.empty.names = TRUE),list(row.names = row_names)))
-  output$chain <- factor(rep(1:nchains,each=iterations))
-  output$iteration <- rep(1:iterations,nchains)
+  if (!is.null(NULL))
+    row_names <- row.names else
+      row_names <- paste0(rep(paste0("C", 1:nchains),
+                              each=iterations),
+                          rep(paste0("I",1:iterations), nchains))
+  output <- do.call(data.frame, c(colsList, list(check.names = TRUE,
+                                                 fix.empty.names = TRUE),
+                                  list(row.names = row_names)))
+  output$chain <- factor(rep(1:nchains, each=iterations))
+  output$iteration <- rep(1:iterations, nchains)
 
   return(output)
 }
