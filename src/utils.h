@@ -12,17 +12,17 @@ mcStep startup_mcmc(Eigen::VectorXd beta, Eigen::VectorXd delta, double lambda,
                     Eigen::VectorXi xO, retrievCovs *covars, double aD);
 
 // Formating x functions
-void importX_double(Eigen::MatrixXd x, R_xlen_t nb, R_xlen_t nd,
+void importX_double(Eigen::MatrixXd x, long nb, long nd,
                     Eigen::VectorXi xI, Eigen::VectorXi xO,
-                    std::vector<R_xlen_t> &x_data, Eigen::MatrixXd &zx_data,
+                    std::vector<long> &x_data, Eigen::MatrixXd &zx_data,
                     Eigen::MatrixXd &wx_data);
-void importX_int(Eigen::MatrixXi x, R_xlen_t nb, R_xlen_t nd,
+void importX_int(Eigen::MatrixXi x, long nb, long nd,
                  Eigen::VectorXi xI, Eigen::VectorXi xO,
-                 std::vector<R_xlen_t> &x_data, Eigen::MatrixXd &zx_data,
+                 std::vector<long> &x_data, Eigen::MatrixXd &zx_data,
                  Eigen::MatrixXd &wx_data);
-void determineX(Eigen::VectorXd x, R_xlen_t nb, R_xlen_t nd,
+void determineX(Eigen::VectorXd x, long nb, long nd,
                       retrievCovs *b,
-                      std::vector<R_xlen_t> &x_data, Eigen::MatrixXd &zx_data,
+                      std::vector<long> &x_data, Eigen::MatrixXd &zx_data,
                       Eigen::MatrixXd &wx_data);
 
 // Sampling. Simple inline function

@@ -6,7 +6,7 @@
 \usage{
 fit_bayesPO(object, background, mcmc_setup = list(iter = 5000), ...)
 
-\S4method{fit_bayesPO}{bayesPO_model,matrix}(object, background, mcmc_setup, area = 1)
+\S4method{fit_bayesPO}{bayesPO_model,matrix}(object, background, mcmc_setup, area = 1, cores = 1)
 }
 \arguments{
 \item{object}{A bayesPO_model object.}
