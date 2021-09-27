@@ -22,7 +22,10 @@ Imports:
     methods,
     parallel,
     RcppProgress,
-    graphics
+    graphics,
+    stats,
+    methods,
+    tools
 Suggests:
     bayesplot
 Collate: 

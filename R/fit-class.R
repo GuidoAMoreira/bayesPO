@@ -146,11 +146,16 @@ summary.bayesPO_fit <- function(object,...){
 #' @export
 #' @exportMethod names
 methods::setMethod("names","bayesPO_fit",function(x){
-  nn <- c("parameters", "covariates_importance","mcmc_chains","model","log_posterior","eff. sample size","area","initial values","mcmc setup")
+  nn <- c("parameters", "covariates_importance", "mcmc_chains", "model",
+          "log_posterior", "eff_sample_size", "area", "initial_values", "mcmc_setup")
   if (length(methods::slot(methods::slot(x,"original"),"init")) > 1)
     nn <- c(nn,"Rhat","Rhat_upper_CI")
   nn
 })
+
+#' @method names bayesPO_fit
+#' @export
+names.bayesPO_fit <- function(x,...) names(x)
 
 #' The '[[' method for the bayesPO_fit class.
 #'
@@ -162,12 +167,12 @@ methods::setMethod("[[","bayesPO_fit",function(x, i){
   # Helper function
   s <- function(n) methods::slot(x, n)
 
-  nb <- length(methods::slot(s("original"),"intensitySelection")) + 1
-  nd <- length(methods::slot(s("original"),"observabilitySelection")) + 1
+  nb <- length(methods::slot(s("original"), "intensitySelection")) + 1
+  nd <- length(methods::slot(s("original"), "observabilitySelection")) + 1
   npar <- nb + nd + 1 # +1 from lambdaStar
-  summ <- summary(x)
 
   if (i == "parameters"){
+    summ <- summary(x)
     output <- summ[,1]
     names(output) <- rownames(summ)
   } else
@@ -187,22 +192,25 @@ methods::setMethod("[[","bayesPO_fit",function(x, i){
     output <- list(intensity = intensity, observability = observability)
     class(output) <- "covariates_importance"
   }
-  if (i == "eff. sample size"){
+  if (i == "eff_sample_size"){
+    summ <- summary(x)
     output <- summ[,6]
     names(output) <- rownames(summ)
   } else
   if (i == "Rhat"){
+    summ <- summary(x)
     output <- summ[,7]
     names(output) <- rownames(summ)
   } else
   if (i == "Rhat_upper_CI"){
+    summ <- summary(x)
     output <- summ[,8]
     names(output) <- rownames(summ)
   } else
   if (i == "mcmc_chains") output <- s("fit") else
   if (i == "model") output <- s("original") else
-  if (i == "initial values") output <- methods::slot(s("original"),"init") else
-  if (i == "mcmc setup") output <- s("mcmc_setup") else
+  if (i == "initial_values") output <- methods::slot(s("original"),"init") else
+  if (i == "mcmc_setup") output <- s("mcmc_setup") else
   if (i == "log_posterior") output <- as.data.frame(x)$log_Posterior else
   if (i == "area") output <- s("area")
 

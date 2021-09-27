@@ -2,11 +2,15 @@
 #'
 #' Objects of this class is the output of the "covariates_importance" object
 #' from the \code{\link{bayesPO_fit-class}}. It can be plotted which uses
-#' the \code{\link[graphics]{graphics}} package.
+#' the \code{\link[graphics]{graphics}} package. The \code{print} method
+#' gives a point-wise estimation, the same seen in the \code{bacplot} method.
+#' Both \code{plot} and \code{boxplot} methods use the posterior distribution
+#' of the importance.
 #'
 #' @details
-#' Objects of this class have two matrices. One for the intensity importance
-#' and one for the observability importance.
+#' Objects of this class have two matrices where the Monte Carlo samples on the
+#' rows and parameters on the columns. One matrix is for the intensity
+#' importance and the other for the observability importance.
 #' @name covariates_importance-class
 NULL
 
@@ -34,32 +38,59 @@ print.covariates_importance <- function(x, component = "intensity", ...){
 #' @param x The \code{covariates_importance} object.
 #' @param component Either \code{"intensity"}, \code{"observability"} or
 #' \code{"both"}.
-#' @param y Ignored.
+#' @param y Either \code{"interval"} or \code{"density"}. The formal gives
+#' vertical credible intervals, and the latter gives separate density plots
+#' with the specified quantiles as vertical lines.
+#' @param quantiles A 2- or 3-simensional vector with the desired quantiles
+#' specified. If 3-dimensiona, the middle point is drawn as a dot when the
+#' \code{y} parameter is set as \code{"interval"}.
 #' @param ... Other parameters passed to \code{\link[graphics]{plot}}.
 #' @method plot covariates_importance
 #' @importFrom stats density
-#' @importFrom graphics plot
+#' @importFrom graphics plot axis segments points
+#' @importFrom methods hasArg
+#' @importFrom tools toTitleCase
 #' @export
-plot.covariates_importance <- function(x, component = "intensity", y, ...) {
+plot.covariates_importance <- function(x, component = "intensity",
+                                       y = "importance", quantiles = c(0.025, 0.5, 0.975), ...) {
   component <- tolower(component)
-  stopifnot(component %in% c("intensity", "observability", "both"))
+  y <- tolower(y)
+  stopifnot(component %in% c("intensity", "observability", "both"),
+            y %in% c("importance", "density"),
+            length(quantiles) %in% c(2, 3), all(quantiles > 0 & quantiles < 1))
+
+  quantiles <- sort(quantiles)
   if (component != "both") {
+    intervals <- apply(x[[component]], 2, quantile, quantiles[c(1, length(quantiles))])
     plots <- ncol(x[[component]])
-    large_row_nmbr <- floor(sqrt(plots))
-    col_nmbrs <- large_row_nmbr:(large_row_nmbr + 2)
-    pp <- par(mfrow = c(large_row_nmbr,
-                        col_nmbrs[min(which(col_nmbrs * large_row_nmbr >= plots))]))
-    for (p in 1:plots){
-      graphics::plot(stats::density(x[[component]][, p]),
-                     xlab = paste(colnames(x[[component]])[p], "importance"),
-                     main = colnames(x[[component]])[p],...)
+    if (!methods::hasArg(xlab)) yl <- c(min(intervals) * 0.9, max(intervals) * 1.1) else yl <- ylim
+    if (y == "importance") {
+      graphics::plot(NA, xlim = c(1, plots), xaxt = "n",
+                     main = paste(tools::toTitleCase(component), "variables"),
+           ylim = yl,
+           xlab = ifelse(!methods::hasArg(xlab), "Covariates", xlab),
+           ylab = ifelse(!methods::hasArg(ylab), "Importance", ylab), ...)
+      graphics::axis(1, at = 1:plots, colnames(x[[component]]))
+      graphics::segments(1:plots, intervals[1, ], 1:plots, intervals[2, ])
+      if (length(quantiles) == 3)
+        graphics::points(1:plots, apply(x[[component]], 2, quantile, quantiles[2]), pch = 19)
+    } else {
+      large_row_nmbr <- floor(sqrt(plots))
+      col_nmbrs <- large_row_nmbr:(large_row_nmbr + 2)
+      pp <- par(mfrow = c(large_row_nmbr,
+                          col_nmbrs[min(which(col_nmbrs * large_row_nmbr >= plots))]))
+      for (p in 1:plots){
+        graphics::plot(stats::density(x[[component]][, p]),
+                       xlab = paste(colnames(x[[component]])[p], "importance"),
+                       main = colnames(x[[component]])[p],...)
+      }
+      par(pp)
     }
-    par(pp)
   } else {
-    plot.covariates_importance(x, "intensity")
+    plot.covariates_importance(x, "intensity", y)
     cat("\nHit <Return> to see next plot: ")
     line <- readline()
-    plot.covariates_importance(x, "observability")
+    plot.covariates_importance(x, "observability", y)
   }
 }
 

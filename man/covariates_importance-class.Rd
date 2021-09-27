@@ -10,7 +10,13 @@
 \usage{
 \method{print}{covariates_importance}(x, component = "intensity", ...)
 
-\method{plot}{covariates_importance}(x, component = "intensity", y, ...)
+\method{plot}{covariates_importance}(
+  x,
+  component = "intensity",
+  y = "importance",
+  quantiles = c(0.025, 0.5, 0.975),
+  ...
+)
 
 \method{barplot}{covariates_importance}(x, component = "intensity", y, ...)
 
@@ -24,16 +30,26 @@
 
 \item{...}{Other parameters passed to \code{\link[graphics]{boxplot}}.}
 
-\item{y}{Ignored.}
+\item{y}{Either \code{"interval"} or \code{"density"}. The formal gives
+vertical credible intervals, and the latter gives separate density plots
+with the specified quantiles as vertical lines.}
+
+\item{quantiles}{A 2- or 3-simensional vector with the desired quantiles
+specified. If 3-dimensiona, the middle point is drawn as a dot when the
+\code{y} parameter is set as \code{"interval"}.}
 
 \item{height}{The \code{covariates_importance} object.}
 }
 \description{
 Objects of this class is the output of the "covariates_importance" object
 from the \code{\link{bayesPO_fit-class}}. It can be plotted which uses
-the \code{\link[graphics]{graphics}} package.
+the \code{\link[graphics]{graphics}} package. The \code{print} method
+gives a point-wise estimation, the same seen in the \code{bacplot} method.
+Both \code{plot} and \code{boxplot} methods use the posterior distribution
+of the importance.
 }
 \details{
-Objects of this class have two matrices. One for the intensity importance
-and one for the observability importance.
+Objects of this class have two matrices where the Monte Carlo samples on the
+rows and parameters on the columns. One matrix is for the intensity
+importance and the other for the observability importance.
 }
