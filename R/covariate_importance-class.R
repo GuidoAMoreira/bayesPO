@@ -77,9 +77,30 @@ barplot.covariates_importance <- function(x, component = "intensity", y, ...) {
   if (component != "both") {
     graphics::barplot(colMeans(x[[component]]), ...)
   } else {
-    plot.covariates_importance(x, "intensity")
+    barplot.covariates_importance(x, "intensity")
     cat("\nHit <Return> to see next plot: ")
     line <- readline()
-    plot.covariates_importance(x, "observability")
+    barplot.covariates_importance(x, "observability")
+  }
+}
+
+#' @name covariates_importance-class
+#' @param x The \code{covariates_importance} object.
+#' @param component Either \code{"intensity"}, \code{"observability"} or
+#' \code{"both"}.
+#' @param ... Other parameters passed to \code{\link[graphics]{boxplot}}.
+#' @method boxplot covariates_importance
+#' @importFrom graphics boxplot
+#' @export
+boxplot.covariates_importance <- function(x, component = "intensity", ...) {
+  component <- tolower(component)
+  stopifnot(component %in% c("intensity", "observability", "both"))
+  if (component != "both") {
+    graphics::boxplot(x[[component]], ...)
+  } else {
+    boxplot.covariates_importance(x, "intensity")
+    cat("\nHit <Return> to see next plot: ")
+    line <- readline()
+    boxplot.covariates_importance(x, "observability")
   }
 }

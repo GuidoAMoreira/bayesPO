@@ -5,6 +5,7 @@
 \alias{print.covariates_importance}
 \alias{plot.covariates_importance}
 \alias{barplot.covariates_importance}
+\alias{boxplot.covariates_importance}
 \title{Class for covariates importance matrices}
 \usage{
 \method{print}{covariates_importance}(x, component = "intensity", ...)
@@ -12,6 +13,8 @@
 \method{plot}{covariates_importance}(x, component = "intensity", y, ...)
 
 \method{barplot}{covariates_importance}(x, component = "intensity", y, ...)
+
+\method{boxplot}{covariates_importance}(x, component = "intensity", ...)
 }
 \arguments{
 \item{x}{The \code{covariates_importance} object.}
@@ -19,7 +22,7 @@
 \item{component}{Either \code{"intensity"}, \code{"observability"} or
 \code{"both"}.}
 
-\item{...}{Other parameters passed to \code{\link[graphics]{barplot}}.}
+\item{...}{Other parameters passed to \code{\link[graphics]{boxplot}}.}
 
 \item{y}{Ignored.}
 
