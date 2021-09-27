@@ -9,7 +9,7 @@ Description: Presence-Only data is best modelled with a Point Process Model.
     inference to model this type of data, which is implemented in this package.
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends:
     R (>= 3.4)
 LinkingTo: 
@@ -21,7 +21,8 @@ Imports:
     coda,
     methods,
     parallel,
-    RcppProgress
+    RcppProgress,
+    graphics
 Suggests:
     bayesplot
 Collate: 
@@ -32,3 +33,4 @@ Collate:
     'model-class.R'
     'fit-class.R'
     'bayesPO.R'
+    'covariate_importance-class.R'

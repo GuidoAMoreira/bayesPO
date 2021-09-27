@@ -146,7 +146,7 @@ summary.bayesPO_fit <- function(object,...){
 #' @export
 #' @exportMethod names
 methods::setMethod("names","bayesPO_fit",function(x){
-  nn <- c("parameters","mcmc_chains","model","log_posterior","eff. sample size","area","initial values","mcmc setup")
+  nn <- c("parameters", "covariates_importance","mcmc_chains","model","log_posterior","eff. sample size","area","initial values","mcmc setup")
   if (length(methods::slot(methods::slot(x,"original"),"init")) > 1)
     nn <- c(nn,"Rhat","Rhat_upper_CI")
   nn
@@ -158,7 +158,7 @@ methods::setMethod("names","bayesPO_fit",function(x){
 #' @param i The requested slot.
 #' @export
 #' @exportMethod [[
-methods::setMethod("[[","bayesPO_fit",function(x,i){
+methods::setMethod("[[","bayesPO_fit",function(x, i){
   # Helper function
   s <- function(n) methods::slot(x, n)
 
@@ -171,6 +171,22 @@ methods::setMethod("[[","bayesPO_fit",function(x,i){
     output <- summ[,1]
     names(output) <- rownames(summ)
   } else
+  if (i == "covariates_importance"){
+    data <- as.data.frame(x)
+
+    intensity <- t(apply(
+      data[2:(which(names(data) == "Observability_Intercept") - 1)], 1,
+      function(chain) {c2 <- chain * chain; c2 / sum(c2)}
+    ))
+    observability <- t(apply(
+      data[(which(names(data) == "Observability_Intercept") + 1):(which(names(data) == "lambdaStar") - 1)], 1,
+      function(chain) {c2 <- chain * chain; c2 / sum(c2)}
+    ))
+    colnames(intensity) <- names(data)[2:(which(names(data) == "Observability_Intercept") - 1)]
+    colnames(observability) <- names(data)[(which(names(data) == "Observability_Intercept") + 1):(which(names(data) == "lambdaStar") - 1)]
+    output <- list(intensity = intensity, observability = observability)
+    class(output) <- "covariates_importance"
+  }
   if (i == "eff. sample size"){
     output <- summ[,6]
     names(output) <- rownames(summ)
