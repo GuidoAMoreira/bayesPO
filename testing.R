@@ -67,7 +67,7 @@ model = bayesPO_model(po = obs_mat, intensitySelection = 1:2,
 #output = fit_bayesPO(model,background,mcmc_setup = list(n_iter = 2))
 
 output = fit_bayesPO(model,background,
-                     mcmc_setup = list(burnin = 5e3, n_iter = 5e3, thin = 5))
+                     mcmc_setup = list(burnin = 5e3, iter = 5e3, thin = 5))
 
 output
 
