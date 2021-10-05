@@ -240,7 +240,7 @@ namesAid <- function(string){
 
   intInt <- "(Intensity intercept)"
   obsInt <- "(Observability intercept)"
-  obsStart <- which(string == obsInt)
+  obsStart <- max(which(string == obsInt), which(string == "delta_0"))
   obsEnd <- which(string == "lambdaStar") - 1
 
   # Find same covariates
@@ -250,8 +250,8 @@ namesAid <- function(string){
       new_string[i] <- paste0(string[i], ".int")
       new_string[obsStart - 1 + which(searching)] <- paste0(string[i], ".obs")
     }
-  new_string[1] <- "Intensity_Intercept"
-  new_string[obsStart] <- "Observability_Intercept"
+  new_string[1] <- ifelse(string[1] == obsInt, "Intensity_Intercept", "beta_0")
+  new_string[obsStart] <- ifelse(string[obsStart] == obsInt, "Observability_Intercept", "delta_0")
 
   new_string
 }
@@ -314,13 +314,13 @@ methods::setMethod("as.matrix","bayesPO_fit",function(x,...) as.matrix.bayesPO_f
 #' @method as.matrix bayesPO_fit
 #' @export
 as.matrix.bayesPO_fit <- function(x,...){
-  nchains <- length(methods::slot(x,"fit"))
-  chains <- do.call(rbind,methods::slot(x,"fit"))
-  iterations <- nrow(methods::slot(x,"fit")[[1]])
+  nchains <- length(methods::slot(x, "fit"))
+  chains <- do.call(rbind, methods::slot(x, "fit"))
+  iterations <- nrow(methods::slot(x, "fit")[[1]])
   parnames <- namesAid(colnames(chains))
-  chains <- cbind(chains,rep(factor(1:nchains),each=iterations))
-  chains <- cbind(chains,rep(1:iterations,nchains))
-  colnames(chains) <- c(parnames,"chain","iteration")
+  chains <- cbind(chains, rep(factor(1:nchains), each = iterations))
+  chains <- cbind(chains, rep(1:iterations,nchains))
+  colnames(chains) <- c(parnames, "chain", "iteration")
 
   return(chains)
 }
