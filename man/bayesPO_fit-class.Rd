@@ -3,23 +3,131 @@
 \docType{class}
 \name{bayesPO_fit-class}
 \alias{bayesPO_fit-class}
+\alias{as.array.bayesPO_fit}
+\alias{as.matrix.bayesPO_fit}
+\alias{as.data.frame.bayesPO_fit}
 \title{Class for the result of the MCMC procedure.}
+\usage{
+\S4method{show}{bayesPO_fit}(object)
+
+\S4method{print}{bayesPO_fit}(x, ...)
+
+\S4method{summary}{bayesPO_fit}(object, ...)
+
+\S4method{names}{bayesPO_fit}(x)
+
+\S4method{[[}{bayesPO_fit}(x, i)
+
+\S4method{$}{bayesPO_fit}(x, name)
+
+\S4method{as.array}{bayesPO_fit}(x, ...)
+
+\method{as.array}{bayesPO_fit}(x, ...)
+
+\method{as.matrix}{bayesPO_fit}(x, ...)
+
+\method{as.data.frame}{bayesPO_fit}(x, row.names = NULL, optional = FALSE, ...)
+
+\S4method{+}{bayesPO_fit,bayesPO_fit}(e1, e2)
+
+\S4method{c}{bayesPO_fit}(x, ...)
+}
+\arguments{
+\item{object}{A bayesPO_fit object.}
+
+\item{x}{A bayesPO_fit object.}
+
+\item{...}{Ignored in this version.}
+
+\item{i}{The requested slot.}
+
+\item{name}{The requested slot.}
+
+\item{row.names}{NULL or a character vector giving the row names for the
+data frame. Missing values are not allowed.}
+
+\item{optional}{logical. If TRUE, setting row names and converting column
+names to syntactic names is optional. See help('as.data.frame') for more.
+Leaving as \code{FALSE} is recommended.}
+
+\item{e1}{A bayesPO_fit object.}
+
+\item{e2}{A bayesPO_fit object with the same background, model (except for
+initial values), area, parnames and mcmc_setup as \code{e1}.}
+}
+\value{
+A matrix with the summary.
+
+The MCMC chains organized in a way ready for the \code{bayesplot}
+package.
+
+An \code{array} with dimensions I x C x P, where I stands for number of
+iterations, C for number of chains and P for total number of parameters.
+P is actually larger than the number of parameters in the model, as the
+the generated sizes of the latent processes and the log-posterior are also
+included.
+
+A matrix where all the MCMC results are included.
+
+A data.frame where all the MCMC results are included.
+
+A new bayesPO_fit object where the chains are combined into a new
+multi-chain object.
+}
 \description{
-Class for the result of the MCMC procedure.
+Objects of this class are the main objects of this package. They contain
+much information about the fitted model.
+}
+\details{
+The dimension of the output is I*C x (P + 2), where I stands for
+number of iterations, C for number of chains and P for total number of
+parameters. P is actually larger than the number of parameters in the model,
+as the generated sizes of the latent processes and the log-posterior are
+also included.
+
+Two extra columns are included to indicate to which chain and to which
+iteration that draw belongs.
+
+The dimension of the output is I*C x P+2, where I stands for
+number of iterations, C for number of chains and P for total number of
+parameters. P is actually larger than the number of parameters in the model,
+as the generated sizes of the latent processes and the log-posterior are
+also included.
+
+Two extra columns are included to indicate to which chain and to which
+iteration that draw belongs. This is to facilitate the use of plotting
+results via the \code{ggplot2} package if desired.
+
+If \code{row.names} is left at \code{NULL} then row names are created as
+CcIi where c is the chain and i is the iteration of that row.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{fit}}{The actual fit from the model. It is of class \code{\link[coda]{mcmc.list}}, as generated from the \code{coda} package.}
+\item{\code{fit}}{The actual fit from the model. It is an object of class
+\code{\link[coda]{mcmc.list}}, as generated from the \code{coda} package.}
 
-\item{\code{original}}{The model used to generate the chains, an object with class \code{bayesPO_model}.}
+\item{\code{original}}{The model used to generate the chains, an object with class
+\code{bayesPO_model}.}
 
-\item{\code{backgroundSummary}}{A small summary of the original background covariates. This is to ensure that continuing the chains will use the identical background matrix.}
+\item{\code{backgroundSummary}}{A small summary of the original background
+covariates. This is to ensure that continuing the chains will use the
+identical background matrix. Only the summary is kept for storage efficiency.}
 
-\item{\code{area}}{A positive number indicating the area measure of the region being studied.}
+\item{\code{area}}{A positive number indicating the area measure of the region being
+studied.}
 
-\item{\code{parnames}}{The names of the parameters. If the model used selects the covariates with column names, they are replicated here. If they are the column indexes, names are generated for identification.}
+\item{\code{parnames}}{The names of the parameters. If the model used selects the
+covariates with column names, they are replicated here. If they are the
+column indexes, names are generated for identification.}
 
 \item{\code{mcmc_setup}}{The original mcmc setup used.}
 }}
 
+\seealso{
+\code{\link{fit_bayesPO}}
+
+\code{\link{fit_bayesPO}}
+
+\code{\link{fit_bayesPO}}
+}
