@@ -56,43 +56,31 @@ Leaving as \code{FALSE} is recommended.}
 initial values), area, parnames and mcmc_setup as \code{e1}.}
 }
 \value{
-A matrix with the summary.
+\strong{\code{summary}}: A matrix with the summary.
 
-The MCMC chains organized in a way ready for the \code{bayesplot}
-package.
+\strong{\code{as.array}}: The MCMC chains organized in a way ready for the
+\code{bayesplot} package.
 
-An \code{array} with dimensions I x C x P, where I stands for number of
-iterations, C for number of chains and P for total number of parameters.
-P is actually larger than the number of parameters in the model, as the
-the generated sizes of the latent processes and the log-posterior are also
-included.
+\strong{\code{as.array}}: An \code{array} with dimensions I x C x P, where
+I stands for number of iterations, C for number of chains and P for total
+number of parameters. P is actually larger than the number of parameters in
+the model, as the the generated sizes of the latent processes and the
+log-posterior are also included.
 
-A matrix where all the MCMC results are included.
-
-A data.frame where all the MCMC results are included.
-
-A new bayesPO_fit object where the chains are combined into a new
-multi-chain object.
-}
-\description{
-Objects of this class are the main objects of this package. They contain
-much information about the fitted model.
-}
-\details{
-The dimension of the output is I*C x (P + 2), where I stands for
-number of iterations, C for number of chains and P for total number of
-parameters. P is actually larger than the number of parameters in the model,
-as the generated sizes of the latent processes and the log-posterior are
-also included.
+\strong{\code{as.matrix}}: The dimension of the output is I * C x (P + 2),
+where I stands for number of iterations, C for number of chains and P for
+total number of parameters. P is actually larger than the number of
+parameters in the model, as the generated sizes of the latent processes and
+the log-posterior are also included.
 
 Two extra columns are included to indicate to which chain and to which
 iteration that draw belongs.
 
-The dimension of the output is I*C x P+2, where I stands for
-number of iterations, C for number of chains and P for total number of
-parameters. P is actually larger than the number of parameters in the model,
-as the generated sizes of the latent processes and the log-posterior are
-also included.
+\strong{\code{as.data.frame}}: The dimension of the output is I*C x P+2,
+where I stands for number of iterations, C for number of chains and P for
+total number of parameters. P is actually larger than the number of
+parameters in the model, as the generated sizes of the latent processes and
+the log-posterior are also included.
 
 Two extra columns are included to indicate to which chain and to which
 iteration that draw belongs. This is to facilitate the use of plotting
@@ -100,6 +88,13 @@ results via the \code{ggplot2} package if desired.
 
 If \code{row.names} is left at \code{NULL} then row names are created as
 CcIi where c is the chain and i is the iteration of that row.
+
+\strong{\code{+}}: A new bayesPO_fit object where the chains are combined
+into a new multi-chain object.
+}
+\description{
+Objects of this class are the main objects of this package. They contain
+much information about the fitted model.
 }
 \section{Slots}{
 
@@ -125,9 +120,5 @@ column indexes, names are generated for identification.}
 }}
 
 \seealso{
-\code{\link{fit_bayesPO}}
-
-\code{\link{fit_bayesPO}}
-
 \code{\link{fit_bayesPO}}
 }

@@ -65,7 +65,6 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     t1 = std::chrono::high_resolution_clock::now();
     for (i = 0; i < burnin; i++)
       {
-      R_CheckUserInterrupt();
       progr.increment();
       MarkovChain.update();
       }

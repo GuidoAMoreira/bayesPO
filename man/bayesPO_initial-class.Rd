@@ -4,6 +4,37 @@
 \name{bayesPO_initial-class}
 \alias{bayesPO_initial-class}
 \title{Class for the initial values for the MCMC for the bayesPO package}
+\usage{
+\S4method{names}{bayesPO_initial}(x)
+
+\S4method{$}{bayesPO_initial}(x, name)
+
+\S4method{+}{bayesPO_initial,ANY}(e1, e2)
+
+\S4method{+}{bayesPO_initial,list}(e1, e2)
+
+\S4method{*}{bayesPO_initial,numeric}(e1, e2)
+
+\S4method{show}{bayesPO_initial}(object)
+}
+\arguments{
+\item{x}{The bayesPO_initial object.}
+
+\item{name}{The requested slot.}
+
+\item{e1}{A bayesPO_initial object.}
+
+\item{e2}{Another bayesPO_initial object or a list with bayesPO_initial
+objects for \strong{+} and a positive integer for \strong{*}.}
+
+\item{object}{A bayesPO_initial object.}
+}
+\value{
+\strong{\code{+}}: A list with the objects. Useful to start the
+fit function.
+
+\strong{\code{*}}: A list with \code{e2} random initial values.
+}
 \description{
 Class for the initial values for the MCMC for the bayesPO package
 }

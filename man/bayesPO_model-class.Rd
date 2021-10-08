@@ -5,27 +5,41 @@
 \alias{bayesPO_model-class}
 \title{Class that defines a model for the bayesPO package.}
 \description{
-Class that defines a model for the bayesPO package.
+The model includes the presence-only data, all selected variables, the link
+functions for \eqn{q} and \eqn{p}, the initial values and the prior distribion.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{po}}{The matrix containing the covariates values for the data.}
 
-\item{\code{intensityLink}}{A string informing about the chosen link for the intensity covariates. Current acceptable choice is only "logit"}
+\item{\code{intensityLink}}{A string informing about the chosen link for the
+intensity covariates. Current acceptable choice is only \code{"logit"}.}
 
-\item{\code{intensitySelection}}{A vector containing the indexes of the selected intensity columns in the \code{po} matrix.}
+\item{\code{intensitySelection}}{A vector containing the indexes of the selected
+intensity columns in the \code{po} matrix.}
 
-\item{\code{observabilityLink}}{A vector containing the indexes of the selected observability columns in the \code{po} matrix.}
+\item{\code{observabilityLink}}{A string informing about the chosen link for the
+observability covariates. Current acceptable choice is only \code{"logit"}.}
 
-\item{\code{intensitySelection}}{A vector containing either the names of the columns chosen for observability covariates or the number of the column indexes.}
+\item{\code{observabilitySelection}}{A vector containing the indexes of the selected
+observability columns in the \code{po} matrix.}
 
-\item{\code{init}}{A list with objects of class \code{bayesPO_initial} indicating the initial values for each chain. The number of objects will indicate how many chains will be run.}
+\item{\code{init}}{A list with objects of class \code{bayesPO_initial} indicating
+the initial values for each chain. The length of this list tells the program
+how many chains are requested to be run.}
 
-\item{\code{prior}}{An object of class \code{bayesPO_prior} which indicates the joint prior distribution for the model parameters.}
+\item{\code{prior}}{An object of class \code{bayesPO_prior} which indicates the
+joint prior distribution for the model parameters.}
 
-\item{\code{iSelectedColumns}}{If the intensity covariates selection was made with the name of the columns, they are stored in this slot.}
+\item{\code{iSelectedColumns}}{If the intensity covariates selection was made with
+the name of the columns, they are stored in this slot.}
 
-\item{\code{iSelectedColumns}}{If the observability covariates selection was made with the name of the columns, they are stored in this slot.}
+\item{\code{iSelectedColumns}}{If the observability covariates selection was made
+with the name of the columns, they are stored in this slot.}
 }}
 
+\seealso{
+\code{\link{bayesPO_initial-class}} and
+\code{\link{bayesPO_prior-class}}
+}

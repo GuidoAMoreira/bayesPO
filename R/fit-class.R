@@ -22,6 +22,7 @@ NULL
 #' covariates with column names, they are replicated here. If they are the
 #' column indexes, names are generated for identification.
 #' @slot mcmc_setup The original mcmc setup used.
+#' @seealso \code{\link{fit_bayesPO}}
 #' @export
 #' @exportClass bayesPO_fit
 methods::setClass("bayesPO_fit",
@@ -120,7 +121,7 @@ print.bayesPO_fit <- function(x,...) methods::show(x)
 #'
 #' @param object A bayesPO_fit object.
 #' @param ... Ignored.
-#' @return A matrix with the summary.
+#' @return \strong{\code{summary}}: A matrix with the summary.
 #' @export
 #' @exportMethod summary
 methods::setMethod("summary", "bayesPO_fit", function(object,...) summary.bayesPO_fit(object, ...))
@@ -238,8 +239,8 @@ methods::setMethod("$", "bayesPO_fit", function(x, name) x[[name]])
 #' @name bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored.
-#' @return The MCMC chains organized in a way ready for the \code{bayesplot}
-#' package.
+#' @return \strong{\code{as.array}}: The MCMC chains organized in a way ready for the
+#' \code{bayesplot} package.
 #' @export
 #' @exportMethod as.array
 methods::setMethod("as.array", "bayesPO_fit", function(x, ...) as.array.bayesPO_fit(x, ...))
@@ -268,12 +269,11 @@ namesAid <- function(string){
 #' @name bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored in this version.
-#' @return An \code{array} with dimensions I x C x P, where I stands for number of
-#' iterations, C for number of chains and P for total number of parameters.
-#' P is actually larger than the number of parameters in the model, as the
-#' the generated sizes of the latent processes and the log-posterior are also
-#' included.
-#' @seealso \code{\link{fit_bayesPO}}
+#' @return \strong{\code{as.array}}: An \code{array} with dimensions I x C x P, where
+#' I stands for number of iterations, C for number of chains and P for total
+#' number of parameters. P is actually larger than the number of parameters in
+#' the model, as the the generated sizes of the latent processes and the
+#' log-posterior are also included.
 #' @method as.array bayesPO_fit
 #' @export
 as.array.bayesPO_fit <- function(x, ...){
@@ -299,16 +299,14 @@ methods::setMethod("as.matrix", "bayesPO_fit", function(x, ...) as.matrix.bayesP
 #' @name bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored in this version.
-#' @return A matrix where all the MCMC results are included.
-#' @details The dimension of the output is I*C x (P + 2), where I stands for
-#' number of iterations, C for number of chains and P for total number of
-#' parameters. P is actually larger than the number of parameters in the model,
-#' as the generated sizes of the latent processes and the log-posterior are
-#' also included.
+#' @return \strong{\code{as.matrix}}: The dimension of the output is I * C x (P + 2),
+#' where I stands for number of iterations, C for number of chains and P for
+#' total number of parameters. P is actually larger than the number of
+#' parameters in the model, as the generated sizes of the latent processes and
+#' the log-posterior are also included.
 #'
 #' Two extra columns are included to indicate to which chain and to which
 #' iteration that draw belongs.
-#' @seealso \code{\link{fit_bayesPO}}
 #' @method as.matrix bayesPO_fit
 #' @export
 as.matrix.bayesPO_fit <- function(x, ...){
@@ -335,12 +333,11 @@ methods::setMethod("as.data.frame","bayesPO_fit",function(x, row.names = NULL, o
 #' names to syntactic names is optional. See help('as.data.frame') for more.
 #' Leaving as \code{FALSE} is recommended.
 #' @param ... Ignored in this version.
-#' @return A data.frame where all the MCMC results are included.
-#' @details The dimension of the output is I*C x P+2, where I stands for
-#' number of iterations, C for number of chains and P for total number of
-#' parameters. P is actually larger than the number of parameters in the model,
-#' as the generated sizes of the latent processes and the log-posterior are
-#' also included.
+#' @return \strong{\code{as.data.frame}}: The dimension of the output is I*C x P+2,
+#' where I stands for number of iterations, C for number of chains and P for
+#' total number of parameters. P is actually larger than the number of
+#' parameters in the model, as the generated sizes of the latent processes and
+#' the log-posterior are also included.
 #'
 #' Two extra columns are included to indicate to which chain and to which
 #' iteration that draw belongs. This is to facilitate the use of plotting
@@ -348,7 +345,6 @@ methods::setMethod("as.data.frame","bayesPO_fit",function(x, row.names = NULL, o
 #'
 #' If \code{row.names} is left at \code{NULL} then row names are created as
 #' CcIi where c is the chain and i is the iteration of that row.
-#' @seealso \code{\link{fit_bayesPO}}
 #' @method as.data.frame bayesPO_fit
 #' @export
 as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...){
@@ -380,8 +376,8 @@ as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...)
 #' @param e1 A bayesPO_fit object.
 #' @param e2 A bayesPO_fit object with the same background, model (except for
 #' initial values), area, parnames and mcmc_setup as \code{e1}.
-#' @return A new bayesPO_fit object where the chains are combined into a new
-#' multi-chain object.
+#' @return \strong{\code{+}}: A new bayesPO_fit object where the chains are combined
+#' into a new multi-chain object.
 methods::setMethod("+", methods::signature(e1 = "bayesPO_fit", e2 = "bayesPO_fit"),
                    function(e1, e2){
   s1 <- function(n) methods::slot(e1, n)

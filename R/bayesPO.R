@@ -132,6 +132,7 @@ methods::setMethod("fit_bayesPO", signature(object="bayesPO_model",
                    function(object, background, mcmc_setup, area = 1, cores = 1){
                      ## Verifying background names if columns are selected by column name. Crewating background selection variables
                      backConfig <- checkFormatBackground(object, background)
+                     cores <- 1
 
                      # Helper function
                      s <- function(n) methods::slot(object, n)
