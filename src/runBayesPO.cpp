@@ -28,7 +28,6 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     oC = std::vector<long>(
       observabilityCovs.data(), observabilityCovs.data() +
         observabilityCovs.size());
-  Progress progr(1, true);
   long i, j = 0;
 
   auto t1 = std::chrono::high_resolution_clock::now(); // Timing variable
@@ -60,12 +59,12 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
   // Warming up the Markov Chain
   if (burnin)
     {
-    progr = Progress(burnin, true);
     Rcpp::Rcout << "Warming up the Markov Chain.\n";
+    Progress progr_Burnin(burnin, true);
     t1 = std::chrono::high_resolution_clock::now();
     for (i = 0; i < burnin; i++)
       {
-      progr.increment();
+      progr_Burnin.increment();
       MarkovChain.update();
       }
     t2 = std::chrono::high_resolution_clock::now();
@@ -83,7 +82,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     omp_set_num_threads( threads );
 #endif
 
-  progr = Progress(iter / thin, true);
+  Progress progr_Main(iter / thin, true);
 
   t1 = std::chrono::high_resolution_clock::now();
   // Actual MCMC
@@ -101,7 +100,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     outLogPost[i] = MarkovChain.logPosterior;
     out_nU[i] = MarkovChain.U.size();
     out_nXp[i] = MarkovChain.Xprime.size();
-    progr.increment();
+    progr_Main.increment();
   }
   t2 = std::chrono::high_resolution_clock::now();
   //    auto t1 = std::chrono::high_resolution_clock::now();
