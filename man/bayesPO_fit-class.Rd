@@ -89,8 +89,11 @@ results via the \code{ggplot2} package if desired.
 If \code{row.names} is left at \code{NULL} then row names are created as
 CcIi where c is the chain and i is the iteration of that row.
 
-\strong{\code{+}}: A new bayesPO_fit object where the chains are combined
-into a new multi-chain object.
+\strong{\code{+}}: A new \code{bayesPO_fit} object where the chains
+are combined into a new multi-chain object.
+
+\strong{\code{c}}: A new \code{bayesPO_fit} object where the chains
+are combined into a new multi-chain object.
 }
 \description{
 Objects of this class are the main objects of this package. They contain

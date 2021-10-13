@@ -3,13 +3,45 @@
 \docType{class}
 \name{GammaPrior-class}
 \alias{GammaPrior-class}
+\alias{print.GammaPrior}
 \title{Gamma prior class for the LambdaStar parameter.}
+\usage{
+\S4method{names}{GammaPrior}(x)
+
+\S4method{$}{GammaPrior}(x, name)
+
+\S4method{$}{GammaPrior}(x, name) <- value
+
+\S4method{show}{GammaPrior}(object)
+
+\S4method{print}{GammaPrior}(x, ...)
+
+\method{print}{GammaPrior}(x, ...)
+}
+\arguments{
+\item{x}{The GammaPrior object.}
+
+\item{name}{The slot to be changed.}
+
+\item{value}{New value.}
+
+\item{object}{The GammaPrior object.}
+
+\item{...}{Ignored.}
+}
 \description{
-Gamma prior class for the LambdaStar parameter.
+This is used to represent the prior for lambdaStar individually. It
+still needs to be joined with the prior for Beta and Delta to be used
+in a model.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{mu}}{The mean vector for the prior.}
+\item{\code{shape}}{The shape parameter of the Gamma distribution.}
+
+\item{\code{rate}}{The rate parameter of the Gamma distribution.}
 }}
 
+\seealso{
+\code{\link{prior}}
+}

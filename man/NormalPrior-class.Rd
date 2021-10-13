@@ -3,9 +3,35 @@
 \docType{class}
 \name{NormalPrior-class}
 \alias{NormalPrior-class}
+\alias{print.NormalPrior}
 \title{Normal prior class for Beta and Delta parameters.}
+\usage{
+\S4method{names}{NormalPrior}(x)
+
+\S4method{$}{NormalPrior}(x, name)
+
+\S4method{$}{NormalPrior}(x, name) <- value
+
+\S4method{show}{NormalPrior}(object)
+
+\S4method{print}{NormalPrior}(x, ...)
+
+print.NormalPrior(x, ...)
+}
+\arguments{
+\item{x}{The NormalPrior object.}
+
+\item{name}{The slot to be changed.}
+
+\item{value}{New value.}
+
+\item{object}{The NormalPrior object.}
+
+\item{...}{Ignored.}
+}
 \description{
-Normal prior class for Beta and Delta parameters.
+This is used to represent the prior for Beta and Delta individually. They
+still need to be joined to be used in a model.
 }
 \section{Slots}{
 

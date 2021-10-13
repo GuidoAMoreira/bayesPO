@@ -376,8 +376,9 @@ as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...)
 #' @param e1 A bayesPO_fit object.
 #' @param e2 A bayesPO_fit object with the same background, model (except for
 #' initial values), area, parnames and mcmc_setup as \code{e1}.
-#' @return \strong{\code{+}}: A new bayesPO_fit object where the chains are combined
-#' into a new multi-chain object.
+#' @return \strong{\code{+}}: A new \code{bayesPO_fit} object where the chains
+#' are combined into a new multi-chain object.
+#' @importFrom methods new
 methods::setMethod("+", methods::signature(e1 = "bayesPO_fit", e2 = "bayesPO_fit"),
                    function(e1, e2){
   s1 <- function(n) methods::slot(e1, n)
@@ -405,6 +406,8 @@ methods::setMethod("+", methods::signature(e1 = "bayesPO_fit", e2 = "bayesPO_fit
 
 # Combining multiple chains
 #' @name bayesPO_fit-class
+#' @return \strong{\code{c}}: A new \code{bayesPO_fit} object where the chains
+#' are combined into a new multi-chain object.
 #' @export
 #' @exportMethod c
 methods::setMethod("c", "bayesPO_fit", function(x, ...) {

@@ -4,9 +4,24 @@
 \name{bayesPO_model-class}
 \alias{bayesPO_model-class}
 \title{Class that defines a model for the bayesPO package.}
+\usage{
+\S4method{names}{bayesPO_model}(x)
+
+\S4method{$}{bayesPO_model}(x, name)
+
+\S4method{$}{bayesPO_model}(x, name) <- value
+}
+\arguments{
+\item{x}{The bayesPO_model object.}
+
+\item{name}{The requested slot.}
+
+\item{value}{New value.}
+}
 \description{
 The model includes the presence-only data, all selected variables, the link
-functions for \eqn{q} and \eqn{p}, the initial values and the prior distribion.
+functions for \eqn{q} and \eqn{p}, the initial values and the prior
+distribution.
 }
 \section{Slots}{
 
@@ -41,5 +56,5 @@ with the name of the columns, they are stored in this slot.}
 
 \seealso{
 \code{\link{bayesPO_initial-class}} and
-\code{\link{bayesPO_prior-class}}
+\code{\link{bayesPO_prior-class}} and \code{\link{bayesPO_model}}
 }
