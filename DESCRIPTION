@@ -14,7 +14,7 @@ License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.2
 Depends:
-    R (>= 3.4)
+    R (>= 3.5.0)
 LinkingTo: 
     Rcpp,
     RcppEigen,
