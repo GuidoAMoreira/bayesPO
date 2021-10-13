@@ -19,15 +19,15 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
                       int burnin, int thin, int iter, int threads)
 {
   Eigen::MatrixXd outBetas(iter/thin,beta.size()),
-    outDeltas(iter/thin,delta.size());
+  outDeltas(iter/thin,delta.size());
   Eigen::VectorXd outLambdas(iter/thin), outLogPost(iter/thin),
-    out_nU(iter/thin), out_nXp(iter/thin), checkPoints(9);
+  out_nU(iter/thin), out_nXp(iter/thin), checkPoints(9);
   std::vector<long> iC = std::vector<long>(
     intensityCovs.data(),intensityCovs.data() +
-    intensityCovs.size()),
-    oC = std::vector<long>(
-      observabilityCovs.data(),observabilityCovs.data() +
-        observabilityCovs.size());
+      intensityCovs.size()),
+      oC = std::vector<long>(
+        observabilityCovs.data(),observabilityCovs.data() +
+          observabilityCovs.size());
   long i, j = 0;
 
   checkPoints << 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9;
@@ -64,17 +64,17 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
 
   // Warming up the Markov Chain
   if (burnin)
-    {
+  {
     Rcpp::Rcout << "Warming up the Markov Chain.\n";
     t1 = std::chrono::high_resolution_clock::now();
     MarkovChain.update(checkPointsBurnin[0]);
     for (i = 0; i < (checkPoints.size() - 1); i++)
-      {
+    {
       R_CheckUserInterrupt();
       Rcpp::Rcout << "Warmup has completed " << 100 * checkPoints[i] <<
         "% of the iterations.\n";
       MarkovChain.update(checkPointsBurnin[i + 1] - checkPointsBurnin[i]);
-      }
+    }
     Rcpp::Rcout << "Warmup has completed " << 100 * checkPoints[8] <<
       "% of the iterations.\n";
     MarkovChain.update(burnin - checkPointsBurnin[8]);
@@ -83,7 +83,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     Rcpp::Rcout << "Warmup took " <<
       std::chrono::duration_cast<std::chrono::seconds>( t2 - t1 ).count() <<
         " seconds.\n";
-    }
+  }
 
   // Let user know it's working
   Rcpp::Rcout << "Sampling MCMC.\n";
@@ -100,9 +100,9 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
   for (i = 0; i < (iter/thin); i++)
   {
     MarkovChain.update(thin);
-/*    if (i == checkPointsIter[j])
-      Rcpp::Rcout << "MCMC has completed " << 100*checkPoints[j++] <<
-        "% of the iterations.\n";*/
+    /*    if (i == checkPointsIter[j])
+     Rcpp::Rcout << "MCMC has completed " << 100*checkPoints[j++] <<
+     "% of the iterations.\n";*/
 
     //R_CheckUserInterrupt();
     outBetas.row(i) = MarkovChain.beta->effects;
