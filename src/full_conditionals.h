@@ -50,9 +50,9 @@ public:
   bool used;
   virtual double update(BetaDelta*) {return 0.;} // Not an abstract class
   virtual double calcCov(double) {return 0.;}    // in case there is no GP.
-  const Eigen::MatrixXd& calcCovMatrix(const Eigen::MatrixXd&, const Eigen::MatrixXd&);
-  const Eigen::MatrixXd& calcCovMatrixPoints(const Eigen::MatrixXd&);
-  const Eigen::MatrixXd& applyCovariance(const Eigen::MatrixXd&);
+  Eigen::MatrixXd calcCovMatrix(const Eigen::MatrixXd&, const Eigen::MatrixXd&);
+  Eigen::MatrixXd calcCovMatrixPoints(const Eigen::MatrixXd&);
+  Eigen::MatrixXd applyCovariance(const Eigen::MatrixXd&);
 }; // Covariance
 
 // Derived classes

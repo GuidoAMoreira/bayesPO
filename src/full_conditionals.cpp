@@ -139,11 +139,11 @@ double logit_normal::updateGP(const Eigen::MatrixXd &pos,
 }
 
 // INCOMPLETE
-double Exponential_Covariance::update(BetaDelta* points)
+/*double Exponential_Covariance::update(BetaDelta* points)
 {
   double proposal = R::rnorm(phi, 0.3), temp = phi, propDens, pastDens, alpha;
   pastDens = - rate * phi + (shape - 1) * log(phi);
-}
+}*/
 
 // Other methods
 Eigen::MatrixXd logit_normal::link(const Eigen::MatrixXd& covs, bool complementary)
@@ -167,7 +167,7 @@ Eigen::MatrixXd logit_normal::link(const Eigen::MatrixXd& covs, bool complementa
     return -(-(oneCov * effects)).array().exp().log1p();
 }
 
-const Eigen::MatrixXd& Covariance::calcCovMatrix(const Eigen::MatrixXd& x,
+Eigen::MatrixXd Covariance::calcCovMatrix(const Eigen::MatrixXd& x,
                                                  const Eigen::MatrixXd& y)
 {
   long nx = x.rows(), ny = y.rows(), i, j;
@@ -180,7 +180,7 @@ const Eigen::MatrixXd& Covariance::calcCovMatrix(const Eigen::MatrixXd& x,
   return calcCovMatrixPoints(points);
 }
 
-const Eigen::MatrixXd& Covariance::calcCovMatrixPoints(const Eigen::MatrixXd& points)
+Eigen::MatrixXd Covariance::calcCovMatrixPoints(const Eigen::MatrixXd& points)
 {
   R_xlen_t i, j;
   long n = points.rows();
@@ -198,7 +198,7 @@ const Eigen::MatrixXd& Covariance::calcCovMatrixPoints(const Eigen::MatrixXd& po
   return output;
 }
 
-const Eigen::MatrixXd& Covariance::applyCovariance(const Eigen::MatrixXd& mat)
+Eigen::MatrixXd Covariance::applyCovariance(const Eigen::MatrixXd& mat)
 {
   long n = mat.rows();
   Eigen::MatrixXd output = Eigen::MatrixXd::Identity(n, n);

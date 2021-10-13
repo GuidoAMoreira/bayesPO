@@ -1,6 +1,6 @@
 Package: bayesPO
 Type: Package
-Title: Bayesian Inference for Presence-Only data
+Title: Bayesian Inference for Presence-Only Data
 Version: 0.2.0
 Date: 2021-10-13
 Authors@R: person("Guido", "Alberti Moreira", email = "guidoalber@gmail.com",
