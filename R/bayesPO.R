@@ -29,8 +29,6 @@ methods::setGeneric("fit_bayesPO", function(object, background,
 #' @param area A positive number with the studied region's area.
 #' @param cores Currently unused.
 #' @importFrom parallel detectCores
-#' @export
-#' @exportMethod fit_bayesPO
 methods::setMethod("fit_bayesPO",
                    methods::signature(object = "bayesPO_model",
                                       background = "matrix"),
@@ -141,8 +139,6 @@ methods::setMethod("fit_bayesPO",
 
 #' @name fit_bayesPO
 #' @param cores Currently unused.
-#' @export
-#' @exportMethod fit_bayesPO
 methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
                                             background = "matrix"),
   function(object, background, mcmc_setup = list(iter = object$mcmc_setup$iter),
