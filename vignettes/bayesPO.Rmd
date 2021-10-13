@@ -1,0 +1,170 @@
+---
+title: "bayesPO"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{bayesPO}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r set_options, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(bayesPO)
+library(ggplot2)
+library(bayesplot)
+library(MASS)
+theme_set(theme_bw())
+color_scheme_set("green")
+set.seed(123456789)
+load(system.file("extdata", "vignette_objects.rda", package = "bayesPO"), verbose = TRUE)
+```
+
+In this vignette, we show the basics of fitting a model with the bayesPO package. For this purpose we use some simulated data.
+
+## Simulating some data
+
+We simulate some simple data from the model in the unit square to showcase it being used. First we set some true values for the parameters.
+
+```{r set_true_params}
+beta <- c(-1, 2) # Intercept = -1. Only one covariate
+delta <- c(3, 4) # Intercept = 3. Only one covariate
+lambdaStar <- 1000
+```
+
+The code below just does this simulation.
+
+```{r simulation}
+# Spread a Poisson amount of points randomly in the random square.
+total_points <- rpois(1, lambdaStar)
+random_points <- cbind(runif(total_points), runif(total_points))
+grid_size <- 50
+
+# Find covariate values to explain the species occurrence.
+# We give them a Gaussian spatial structure.
+reg_grid <- as.matrix(expand.grid(seq(0, 1, len = grid_size), seq(0, 1, len = grid_size)))
+#### Next is commented to save time. Uncomment to replicate results
+# Z <- mvrnorm(1, rep(0, total_points + grid_size * grid_size), 3 * exp(-as.matrix(dist(rbind(random_points, reg_grid))) / 0.2))
+Z1 <- Z[1:total_points]; Z2 <- Z[-(1:total_points)]
+
+# Thin the points by comparing the retaining probabilities with uniforms
+# in the log scale to find the occurrences
+#### Next is commented to save time. Uncomment to replicate results
+# occurrences <- log(runif(total_points)) <= -log1p(exp(-beta[1] - beta[2] * Z1))
+n_occurrences <- sum(occurrences)
+occurrences_points <- random_points[occurrences,]
+occurrences_Z <- Z1[occurrences]
+
+# Find covariate values to explain the observation bias.
+# Additionally create a regular grid to plot the covariate later.
+#### Next is commented to save time. Uncomment to replicate results
+# W <- mvrnorm(1, rep(0, n_occurrences + grid_size * grid_size), 2 * exp(-as.matrix(dist(rbind(occurrences_points, reg_grid))) / 0.3))
+W1 <- W[1:n_occurrences]; W2 <- W[-(1:n_occurrences)]
+
+# Find the presence-only observations.
+#### Next is commented to save time. Uncomment to replicate results
+# po_sightings <- log(runif(n_occurrences)) <= -log1p(exp(-delta[1] - delta[2] * W1))
+n_po <- sum(po_sightings)
+po_points <- occurrences_points[po_sightings, ]
+po_Z <- occurrences_Z[po_sightings]
+po_W <- W1[po_sightings]
+```
+
+Now the variable `po_points` contains the coordinates of the presence-only sightings. We can plot the observability covariate to see how the points have
+been selected and discarded according to it.
+
+```{r plot_observer_bias, fig.width = 5, fig.height = 3.5, fig.align = 'center'}
+ggplot(
+  data.frame(x = reg_grid[, 1], y = reg_grid[, 2], Covariate = W2),
+  aes(x, y)
+) +
+  geom_tile(aes(fill = Covariate)) +
+  geom_point(aes(shape = Occurrences),
+             data = data.frame(x = occurrences_points[, 1],
+                               y = occurrences_points[, 2],
+                               Occurrences = po_sightings), size = 1) +
+  scale_shape_manual(values = c(1, 19), labels = c("Not observed", "Observed"))
+```
+
+The points are more often observed when the covariate is large, as it should. Note that there is a spatial pattern to all occurrences, and it is caused by the intensity covariate's pattern (not plotted).
+
+## Creating the model
+
+In the bayesPO package, the model is built separately, so that it can be saved to disk and it can be easily recovered. It must contain the data, meaning the matrix with the covariates in the observed locations, the selection of covariates, the link function (although for now only the logit link is supported), initial values for the Markov Chain and the prior.
+
+First we create a prior distribution. Currently, only a Normal prior is accepted for the Beta and Delta parameters, and only a Gamma prior is accepted for the LambdaStar parameter.
+
+```{r prior}
+jointPrior <- prior(
+  NormalPrior(rep(0, 2), 10 * diag(2)), # Beta
+  NormalPrior(rep(0, 2), 10 * diag(2)), # Delta
+  GammaPrior(0.00001, 0.00001) # LambdaStar
+)
+```
+
+The prior is set with expected value 1 and very high variance for LambdaStar, but not that high variance for Beta and Delta. The reason for the former is that it is very hard to interpret and elicit reasonable values for this parameter, but it should be as small as possible (larger values yield more calculations and a slower program).
+
+The choice for the Beta and Delta prior is twofold. Firstly, all covariates should be standardized for stability in the logistic scale, and the values for these parameters should not be very large (in absolute value), for the same reason. Secondly, a smaller variance provides some regularization, which is always desired in regression problems.
+
+The next step is creating the model.
+
+```{r create_model}
+model <- bayesPO_model(po = cbind(po_Z, po_W),
+                       intensitySelection = 1, observabilitySelection = 2,
+                       intensityLink = "logit", observabilityLink = "logit",
+                       initial_values = 2, joint_prior = jointPrior)
+```
+
+The instruction `initial_values = 2` informs the model that it is supposed to run two chains, where the initial values are randomly generated.
+
+## Fitting the model
+
+Only one piece is needed for the model, namely the matrix with the background variables. Note that this is usually a very large matrix, which is why it is not included in the model, that is, to keep it a small object. Afterwards, only fitting the model remains.
+
+```{r fit}
+bkg <- cbind(Z2, W2) # Create background
+
+#### Next is commented to save time. Uncomment to replicate results
+# fit <- fit_bayesPO(model, bkg, area = 1, mcmc_setup = list(burnin = 1000, iter = 2000))
+```
+
+## Checking results
+
+As with any MCMC procedure, the chains need to be checked. The first thing to do is print the fit.
+
+```{r print_fit}
+summary(fit)
+```
+
+The Rhat columns gives some metric for quality of convergence. It is only provided when there is more than 1 fitted chain. Ideally, the upper limit CI should be below 1.1. Since this is not true for some of the parameters, more iterations should be run. This can be done by recalling the function.
+
+```{r fit2}
+#### Next is commented to save time. Uncomment to replicate results
+# fit2 <- fit_bayesPO(fit, bkg, mcmc_setup = list(iter = 10000))
+```
+
+Checking the new fit...
+
+```{r print_fit2}
+summary(fit2)
+```
+
+... and it looks better. To see the traceplots, package bayesplot is very useful. By calling `as.array()`, the fitted object is readied for the bayesplot functions.
+
+```{r bayesplot, fig.width = 5, fig.width = 5, fig.align = 'center'}
+theray <- as.array(fit2)
+mcmc_trace(theray)
+```
+
+Satisfied with convergence, the marginal distributions can be checked.
+
+```{r marginals, fig.width = 5, fig.width = 5, fig.align = 'center'}
+mcmc_dens(theray)
+```
+
+There is high posterior density close to the parameters true values, which is good!

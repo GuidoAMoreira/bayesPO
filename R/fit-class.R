@@ -7,12 +7,22 @@ NULL
 
 #' Class for the result of the MCMC procedure.
 #'
-#' @slot fit The actual fit from the model. It is of class \code{\link[coda]{mcmc.list}}, as generated from the \code{coda} package.
-#' @slot original The model used to generate the chains, an object with class \code{bayesPO_model}.
-#' @slot backgroundSummary A small summary of the original background covariates. This is to ensure that continuing the chains will use the identical background matrix.
-#' @slot area A positive number indicating the area measure of the region being studied.
-#' @slot parnames The names of the parameters. If the model used selects the covariates with column names, they are replicated here. If they are the column indexes, names are generated for identification.
+#' Objects of this class are the main objects of this package. They contain
+#' much information about the fitted model.
+#' @slot fit The actual fit from the model. It is an object of class
+#' \code{\link[coda]{mcmc.list}}, as generated from the \code{coda} package.
+#' @slot original The model used to generate the chains, an object with class
+#' \code{bayesPO_model}.
+#' @slot backgroundSummary A small summary of the original background
+#' covariates. This is to ensure that continuing the chains will use the
+#' identical background matrix. Only the summary is kept for storage efficiency.
+#' @slot area A positive number indicating the area measure of the region being
+#' studied.
+#' @slot parnames The names of the parameters. If the model used selects the
+#' covariates with column names, they are replicated here. If they are the
+#' column indexes, names are generated for identification.
 #' @slot mcmc_setup The original mcmc setup used.
+#' @seealso \code{\link{fit_bayesPO}}
 #' @export
 #' @exportClass bayesPO_fit
 methods::setClass("bayesPO_fit",
@@ -24,7 +34,7 @@ methods::setClass("bayesPO_fit",
                                  mcmc_setup = "list"))
 
 #### Basic methods ####
-#' Show method for the bayesPO_fit class.
+#' @name bayesPO_fit-class
 #'
 #' @param object A bayesPO_fit object.
 #' @export
@@ -95,75 +105,76 @@ methods::setMethod("show","bayesPO_fit",function(object){
   invisible(object)
 })
 
-#' Print method
+#' @name bayesPO_fit-class
 #'
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored.
 #' @export
 #' @exportMethod print
-methods::setMethod("print","bayesPO_fit",function(x,...) methods::show(x))
+methods::setMethod("print", "bayesPO_fit", function(x, ...) methods::show(x))
 
 #' @method print bayesPO_fit
 #' @export
 print.bayesPO_fit <- function(x,...) methods::show(x)
 
-#' Summary method for the bayesPO_fit class.
+#' @name bayesPO_fit-class
 #'
 #' @param object A bayesPO_fit object.
 #' @param ... Ignored.
-#' @return A matrix with the summary.
+#' @return \strong{\code{summary}}: A matrix with the summary.
 #' @export
 #' @exportMethod summary
-methods::setMethod("summary","bayesPO_fit",function(object,...) summary.bayesPO_fit(object,...))
+methods::setMethod("summary", "bayesPO_fit", function(object,...) summary.bayesPO_fit(object, ...))
 
+#' @method summary bayesPO_fit
 #' @export
-summary.bayesPO_fit <- function(object,...){
-  chains <- length(methods::slot(methods::slot(object,"original"),"init"))
-  nb <- length(methods::slot(methods::slot(object,"original"),"intensitySelection"))+1
-  nd <- length(methods::slot(methods::slot(object,"original"),"observabilitySelection"))+1
-  npar <- nb+nd+1 # +1 = lambdaStar
-  result <- matrix(0,npar,6) # Mean, median, sd, lower CI bound, upper CI bound, effective sample size
-  colnames(result) <- c("mean","median","sd","2.5%","97.5%","eff. sample size")
-  rownames(result) <- methods::slot(object,"parnames")[1:npar]
-  fitToMatrix <- as.matrix(methods::slot(object,"fit"))[,1:npar]
+summary.bayesPO_fit <- function(object, ...){
+  chains <- length(methods::slot(methods::slot(object, "original"), "init"))
+  nb <- length(methods::slot(methods::slot(object, "original"), "intensitySelection")) + 1
+  nd <- length(methods::slot(methods::slot(object, "original"), "observabilitySelection")) + 1
+  npar <- nb + nd + 1 # +1 = lambdaStar
+  result <- matrix(0, npar, 6) # Mean, median, sd, lower CI bound, upper CI bound, effective sample size
+  colnames(result) <- c("mean", "median", "sd", "2.5%", "97.5%", "eff. sample size")
+  rownames(result) <- methods::slot(object, "parnames")[1:npar]
+  fitToMatrix <- as.matrix(methods::slot(object, "fit"))[, 1:npar]
   result[,1] <- colMeans(fitToMatrix)
-  result[,2] <- apply(fitToMatrix,2,stats::median)
-  result[,3] <- apply(fitToMatrix,2,stats::sd)
-  result[,4] <- apply(fitToMatrix,2,stats::quantile,0.025)
-  result[,5] <- apply(fitToMatrix,2,stats::quantile,0.975)
+  result[,2] <- apply(fitToMatrix, 2, stats::median)
+  result[,3] <- apply(fitToMatrix, 2, stats::sd)
+  result[,4] <- apply(fitToMatrix, 2, stats::quantile, 0.025)
+  result[,5] <- apply(fitToMatrix, 2, stats::quantile, 0.975)
   result[,6] <- coda::effectiveSize(methods::slot(object,"fit"))[1:npar]
   if (chains > 1){
     cols <- colnames(result)
-    result <- cbind(result, coda::gelman.diag(methods::slot(object,"fit"))$psrf[1:npar,])
-    colnames(result) <- c(cols,"Estimated Rhat","Upper CI Rhat")
+    result <- cbind(result, coda::gelman.diag(methods::slot(object, "fit"))$psrf[1:npar, ])
+    colnames(result) <- c(cols, "Estimated Rhat","Upper CI Rhat")
   }
   result
 }
 
-#' Names method for the bayesPO_fit class.
+#' @name bayesPO_fit-class
 #'
 #' @param x A bayesPO_fit object.
 #' @export
 #' @exportMethod names
-methods::setMethod("names","bayesPO_fit",function(x){
+methods::setMethod("names", "bayesPO_fit", function(x){
   nn <- c("parameters", "covariates_importance", "mcmc_chains", "model",
           "log_posterior", "eff_sample_size", "area", "initial_values", "mcmc_setup")
-  if (length(methods::slot(methods::slot(x,"original"),"init")) > 1)
-    nn <- c(nn,"Rhat","Rhat_upper_CI")
+  if (length(methods::slot(methods::slot(x, "original"), "init")) > 1)
+    nn <- c(nn, "Rhat", "Rhat_upper_CI")
   nn
 })
 
 #' @method names bayesPO_fit
 #' @export
-names.bayesPO_fit <- function(x,...) names(x)
+names.bayesPO_fit <- function(x) names(x)
 
-#' The '[[' method for the bayesPO_fit class.
+#' @name bayesPO_fit-class
 #'
 #' @param x A bayesPO_fit object.
 #' @param i The requested slot.
 #' @export
 #' @exportMethod [[
-methods::setMethod("[[","bayesPO_fit",function(x, i){
+methods::setMethod("[[", "bayesPO_fit", function(x, i){
   # Helper function
   s <- function(n) methods::slot(x, n)
 
@@ -173,7 +184,7 @@ methods::setMethod("[[","bayesPO_fit",function(x, i){
 
   if (i == "parameters"){
     summ <- summary(x)
-    output <- summ[,1]
+    output <- summ[, 1]
     names(output) <- rownames(summ)
   } else
   if (i == "covariates_importance"){
@@ -194,22 +205,22 @@ methods::setMethod("[[","bayesPO_fit",function(x, i){
   }
   if (i == "eff_sample_size"){
     summ <- summary(x)
-    output <- summ[,6]
+    output <- summ[, 6]
     names(output) <- rownames(summ)
   } else
   if (i == "Rhat"){
     summ <- summary(x)
-    output <- summ[,7]
+    output <- summ[, 7]
     names(output) <- rownames(summ)
   } else
   if (i == "Rhat_upper_CI"){
     summ <- summary(x)
-    output <- summ[,8]
+    output <- summ[, 8]
     names(output) <- rownames(summ)
   } else
   if (i == "mcmc_chains") output <- s("fit") else
   if (i == "model") output <- s("original") else
-  if (i == "initial_values") output <- methods::slot(s("original"),"init") else
+  if (i == "initial_values") output <- methods::slot(s("original"), "init") else
   if (i == "mcmc_setup") output <- s("mcmc_setup") else
   if (i == "log_posterior") output <- as.data.frame(x)$log_Posterior else
   if (i == "area") output <- s("area")
@@ -217,23 +228,22 @@ methods::setMethod("[[","bayesPO_fit",function(x, i){
   output
 })
 
-#' The '$' method for the bayesPO_fit class.
+#' @name bayesPO_fit-class
 #'
 #' @param x A bayesPO_fit object.
 #' @param name The requested slot.
 #' @export
 #' @exportMethod $
-methods::setMethod("$","bayesPO_fit",function(x,name) x[[name]])
+methods::setMethod("$", "bayesPO_fit", function(x, name) x[[name]])
 
-## as.array
-#' as.array method for the bayesPO_fit class.
-#'
+#' @name bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored.
-#' @return The MCMC chains organized in a way ready for the \code{bayesplot} package.
+#' @return \strong{\code{as.array}}: The MCMC chains organized in a way ready for the
+#' \code{bayesplot} package.
 #' @export
 #' @exportMethod as.array
-methods::setMethod("as.array","bayesPO_fit",function(x,...) as.array.bayesPO_fit(x,...))
+methods::setMethod("as.array", "bayesPO_fit", function(x, ...) as.array.bayesPO_fit(x, ...))
 
 namesAid <- function(string){
   new_string <- string
@@ -256,24 +266,20 @@ namesAid <- function(string){
   new_string
 }
 
-#' Put MCMC output in an \code{array}.
-#'
-#' Prepares the MCMC results to be used by plotting functions of the
-#' bayesplot package.
-#' @param x Output of the \code{\link{fit_bayesPO}} function.
+#' @name bayesPO_fit-class
+#' @param x A bayesPO_fit object.
 #' @param ... Ignored in this version.
-#' @return An \code{array} with dimensions I x C x P, where I stands for number of
-#' iterations, C for number of chains and P for total number of parameters.
-#' P is actually larger than the number of parameters in the model, as the
-#' the generated sizes of the latent processes and the log-posterior are also
-#' included.
-#' @seealso \code{\link{fit_bayesPO}}
+#' @return \strong{\code{as.array}}: An \code{array} with dimensions I x C x P, where
+#' I stands for number of iterations, C for number of chains and P for total
+#' number of parameters. P is actually larger than the number of parameters in
+#' the model, as the the generated sizes of the latent processes and the
+#' log-posterior are also included.
 #' @method as.array bayesPO_fit
 #' @export
-as.array.bayesPO_fit <- function(x,...){
+as.array.bayesPO_fit <- function(x, ...){
   nchains <- length(methods::slot(x, "fit"))
-  chains <- do.call(rbind, methods::slot(x,"fit"))
-  iterations <- nrow(methods::slot(x,"fit")[[1]])
+  chains <- do.call(rbind, methods::slot(x, "fit"))
+  iterations <- nrow(methods::slot(x, "fit")[[1]])
   npar <- ncol(chains)
 
   ## Format to be used with bayesplot:: functions
@@ -281,81 +287,57 @@ as.array.bayesPO_fit <- function(x,...){
     array(chains,
           dim = c(iterations, nchains, npar),
           dimnames = list(iterations = NULL,
-                          chains = paste0("chain:",1:nchains),
-                          parameters = namesAid(methods::slot(x,"parnames"))))
+                          chains = paste0("chain:", 1:nchains),
+                          parameters = namesAid(methods::slot(x, "parnames"))))
   )
 }
 
-## as.matrix
-#' as.matrix method for the bayesPO_fit class.
-#'
-#' @param x A bayesPO_fit object.
-#' @param ... Ignored.
-#' @return The MCMC chains reformatted as a matrix.
 #' @export
 #' @exportMethod as.matrix
-methods::setMethod("as.matrix","bayesPO_fit",function(x,...) as.matrix.bayesPO_fit(x,...))
+methods::setMethod("as.matrix", "bayesPO_fit", function(x, ...) as.matrix.bayesPO_fit(x, ...))
 
-#' Put MCMC output in a \code{matrix}.
-#'
-#' Create a matrix with all the MCMC results.
-#' @param x Output of the \code{\link{fit_bayesPO}} function.
+#' @name bayesPO_fit-class
+#' @param x A bayesPO_fit object.
 #' @param ... Ignored in this version.
-#' @return A matrix where all the MCMC results are included.
-#' @details The dimension of the output is I*C x P+2, where I stands for
-#' number of iterations, C for number of chains and P for total number of
-#' parameters. P is actually larger than the number of parameters in the model,
-#' as the generated sizes of the latent processes and the log-posterior are
-#' also included.
+#' @return \strong{\code{as.matrix}}: The dimension of the output is I * C x (P + 2),
+#' where I stands for number of iterations, C for number of chains and P for
+#' total number of parameters. P is actually larger than the number of
+#' parameters in the model, as the generated sizes of the latent processes and
+#' the log-posterior are also included.
 #'
 #' Two extra columns are included to indicate to which chain and to which
 #' iteration that draw belongs.
-#' @seealso \code{\link{fit_bayesPO}}
 #' @method as.matrix bayesPO_fit
 #' @export
-as.matrix.bayesPO_fit <- function(x,...){
+as.matrix.bayesPO_fit <- function(x, ...){
   nchains <- length(methods::slot(x, "fit"))
   chains <- do.call(rbind, methods::slot(x, "fit"))
   iterations <- nrow(methods::slot(x, "fit")[[1]])
   parnames <- namesAid(colnames(chains))
   chains <- cbind(chains, rep(factor(1:nchains), each = iterations))
-  chains <- cbind(chains, rep(1:iterations,nchains))
+  chains <- cbind(chains, rep(1:iterations, nchains))
   colnames(chains) <- c(parnames, "chain", "iteration")
 
   return(chains)
 }
 
-## as.data.frame
-#' as.data.frame method for the bayesPO_fit class.
-#'
+#' @export
+#' @exportMethod as.data.frame
+methods::setMethod("as.data.frame","bayesPO_fit",function(x, row.names = NULL, optional = FALSE, ...) as.data.frame.bayesPO_fit(x, row.names = NULL, optional = FALSE, ...))
+
+#' @name bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param row.names NULL or a character vector giving the row names for the
 #' data frame. Missing values are not allowed.
 #' @param optional logical. If TRUE, setting row names and converting column
 #' names to syntactic names is optional. See help('as.data.frame') for more.
 #' Leaving as \code{FALSE} is recommended.
-#' @param ... Ignored.
-#' @return The MCMC chains reformatted as a data.frame
-#' @export
-#' @exportMethod as.data.frame
-methods::setMethod("as.data.frame","bayesPO_fit",function(x, row.names = NULL, optional = FALSE, ...) as.data.frame.bayesPO_fit(x, row.names = NULL, optional = FALSE, ...))
-
-#' Put MCMC output in a \code{data.frame}.
-#'
-#' Create a \code{data.frame} with all the MCMC results.
-#' @param x Output of the \code{\link{fit_bayesPO}} function.
-#' @param row.names NULL or a character vector giving the row names for the
-#' data frame. Missing values are not allowed.
-#' @param optional logical. If TRUE, setting row names and converting column
-#' names to syntactic names is optional. See help('as.data.frame') for more.
-#' Leaving as \code{FALSE} is recommended.
 #' @param ... Ignored in this version.
-#' @return A data.frame where all the MCMC results are included.
-#' @details The dimension of the output is I*C x P+2, where I stands for
-#' number of iterations, C for number of chains and P for total number of
-#' parameters. P is actually larger than the number of parameters in the model,
-#' as the generated sizes of the latent processes and the log-posterior are
-#' also included.
+#' @return \strong{\code{as.data.frame}}: The dimension of the output is I*C x P+2,
+#' where I stands for number of iterations, C for number of chains and P for
+#' total number of parameters. P is actually larger than the number of
+#' parameters in the model, as the generated sizes of the latent processes and
+#' the log-posterior are also included.
 #'
 #' Two extra columns are included to indicate to which chain and to which
 #' iteration that draw belongs. This is to facilitate the use of plotting
@@ -363,23 +345,22 @@ methods::setMethod("as.data.frame","bayesPO_fit",function(x, row.names = NULL, o
 #'
 #' If \code{row.names} is left at \code{NULL} then row names are created as
 #' CcIi where c is the chain and i is the iteration of that row.
-#' @seealso \code{\link{fit_bayesPO}}
 #' @method as.data.frame bayesPO_fit
 #' @export
 as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...){
-  nchains <- length(methods::slot(x,"fit"))
-  chains <- do.call(rbind,methods::slot(x,"fit"))
+  nchains <- length(methods::slot(x, "fit"))
+  chains <- do.call(rbind, methods::slot(x, "fit"))
   parnames <- namesAid(colnames(chains))
-  iterations <- nrow(methods::slot(x,"fit")[[1]])
+  iterations <- nrow(methods::slot(x, "fit")[[1]])
 
   colsList <- list()
-  for (pp in 1:length(parnames)) colsList[[parnames[pp]]] <- chains[,pp]
+  for (pp in 1:length(parnames)) colsList[[parnames[pp]]] <- chains[, pp]
 
   if (!is.null(NULL))
     row_names <- row.names else
       row_names <- paste0(rep(paste0("C", 1:nchains),
                               each=iterations),
-                          rep(paste0("I",1:iterations), nchains))
+                          rep(paste0("I", 1:iterations), nchains))
   output <- do.call(data.frame, c(colsList, list(check.names = TRUE,
                                                  fix.empty.names = TRUE),
                                   list(row.names = row_names)))
@@ -391,6 +372,13 @@ as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...)
 
 #### Interaction methods ####
 # Adding chains into a single object
+#' @name bayesPO_fit-class
+#' @param e1 A bayesPO_fit object.
+#' @param e2 A bayesPO_fit object with the same background, model (except for
+#' initial values), area, parnames and mcmc_setup as \code{e1}.
+#' @return \strong{\code{+}}: A new \code{bayesPO_fit} object where the chains
+#' are combined into a new multi-chain object.
+#' @importFrom methods new
 methods::setMethod("+", methods::signature(e1 = "bayesPO_fit", e2 = "bayesPO_fit"),
                    function(e1, e2){
   s1 <- function(n) methods::slot(e1, n)
@@ -417,6 +405,11 @@ methods::setMethod("+", methods::signature(e1 = "bayesPO_fit", e2 = "bayesPO_fit
 })
 
 # Combining multiple chains
+#' @name bayesPO_fit-class
+#' @return \strong{\code{c}}: A new \code{bayesPO_fit} object where the chains
+#' are combined into a new multi-chain object.
+#' @export
+#' @exportMethod c
 methods::setMethod("c", "bayesPO_fit", function(x, ...) {
   ll <- list(...)
   res <- x

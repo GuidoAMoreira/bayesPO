@@ -3,7 +3,22 @@
 \docType{class}
 \name{BetaDeltaPrior-class}
 \alias{BetaDeltaPrior-class}
+\alias{print.BetaDeltaPrior}
 \title{Generic class for the beta and delta parameters.}
+\usage{
+\S4method{show}{BetaDeltaPrior}(object)
+
+\S4method{print}{BetaDeltaPrior}(x, ...)
+
+\method{print}{BetaDeltaPrior}(x, ...)
+}
+\arguments{
+\item{object}{The BetaDeltaPrior object.}
+
+\item{x}{The BetaDeltaPrior object.}
+
+\item{...}{Ignored.}
+}
 \description{
 Generic class for the beta and delta parameters.
 }

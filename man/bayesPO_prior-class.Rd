@@ -3,17 +3,48 @@
 \docType{class}
 \name{bayesPO_prior-class}
 \alias{bayesPO_prior-class}
-\title{Joint prior class for the bayesPO package parameters.}
+\alias{print.bayesPO_prior}
+\title{Joint prior class for the bayesPO package parameters}
+\usage{
+\S4method{names}{bayesPO_prior}(x)
+
+\S4method{$}{bayesPO_prior}(x, name)
+
+\S4method{show}{bayesPO_prior}(object)
+
+\S4method{print}{bayesPO_prior}(x, ...)
+
+\method{print}{bayesPO_prior}(x, ...)
+
+\S4method{$}{bayesPO_prior}(x, name)
+
+\S4method{$}{bayesPO_prior}(x, name) <- value
+}
+\arguments{
+\item{x}{The bayesPO_prior object.}
+
+\item{name}{The slot to be changed.}
+
+\item{object}{The bayesPO_prior object.}
+
+\item{...}{Ignored.}
+
+\item{value}{New value.}
+}
 \description{
-Joint prior class for the bayesPO package parameters.
+Objects of this class are the joining of independent priors for Beta, Delta
+and LambdaStar. They can be used in the \code{fit_bayesPO} function.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{beta}}{An object of BetaDeltaPrior S4 class with the appropriate Beta prior.}
+\item{\code{beta}}{An object of a class which inherits the \code{BetaDeltaPrior} S4
+class with the appropriate Beta prior.}
 
-\item{\code{delta}}{An object of BetaDeltaPrior S4 class with the appropriate Delta prior.}
+\item{\code{delta}}{An object of a class which inherits the \code{BetaDeltaPrior} S4
+class with the appropriate Delta prior.}
 
-\item{\code{lambdaStar}}{An object of LambdaStarPrior S4 class with the appropriate LambdaStar prior.}
+\item{\code{lambdaStar}}{An object of a class which inherits the
+\code{LambdaStarPrior} S4 class with the appropriate LambdaStar prior.}
 }}
 

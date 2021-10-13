@@ -10,6 +10,6 @@ Generic class for the LambdaStar parameters.
 \section{Slots}{
 
 \describe{
-\item{\code{mu}}{The mean vector for the prior.}
+\item{\code{family}}{The family of distributions of the prior.}
 }}
 

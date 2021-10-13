@@ -18,23 +18,18 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
                       Eigen::VectorXi xObservabilityCovs,
                       int burnin, int thin, int iter, int threads)
 {
-  Eigen::MatrixXd outBetas(iter/thin,beta.size()),
-  outDeltas(iter/thin,delta.size());
-  Eigen::VectorXd outLambdas(iter/thin), outLogPost(iter/thin),
-  out_nU(iter/thin), out_nXp(iter/thin), checkPoints(9);
-  std::vector<long> iC = std::vector<long>(
-    intensityCovs.data(),intensityCovs.data() +
-      intensityCovs.size()),
-      oC = std::vector<long>(
-        observabilityCovs.data(),observabilityCovs.data() +
-          observabilityCovs.size());
-  long i, j = 0;
 
-  checkPoints << 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9;
-  Eigen::VectorXd checkPointsBurnin =
-    (checkPoints * burnin).array().floor(),
-    checkPointsIter =
-      (checkPoints * iter / thin).array().floor();
+  Eigen::MatrixXd outBetas(iter/thin, beta.size()),
+    outDeltas(iter/thin, delta.size());
+  Eigen::VectorXd outLambdas(iter/thin), outLogPost(iter/thin),
+    out_nU(iter/thin), out_nXp(iter/thin);
+  std::vector<long> iC = std::vector<long>(
+    intensityCovs.data(), intensityCovs.data() +
+    intensityCovs.size()),
+    oC = std::vector<long>(
+      observabilityCovs.data(), observabilityCovs.data() +
+        observabilityCovs.size());
+  long i, j = 0;
 
   auto t1 = std::chrono::high_resolution_clock::now(); // Timing variable
   auto t2 = std::chrono::high_resolution_clock::now(); // Timing variable
@@ -46,11 +41,11 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
   retrievCovs *covs;
   if (covsClass == "num_mat")
   {
-    covs = new retrievCovs_doubleMatrix(covariates,iC,oC);
+    covs = new retrievCovs_doubleMatrix(covariates, iC, oC);
   } else if (covsClass == "int_mat")
   {
-    covs = new retrievCovs_intMatrix(covariates,iC,oC);
-  } else if (covsClass == "std_normal") {covs = new retrievCovs_normal(iC,oC);}
+    covs = new retrievCovs_intMatrix(covariates, iC, oC);
+  } else if (covsClass == "std_normal") {covs = new retrievCovs_normal(iC, oC);}
   else {Rcpp::stop("Unidentified background data type - C++ level");}
 
   // Starting up MCMC
@@ -66,18 +61,13 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
   if (burnin)
   {
     Rcpp::Rcout << "Warming up the Markov Chain.\n";
+    Progress progr_Burnin(burnin, true);
     t1 = std::chrono::high_resolution_clock::now();
-    MarkovChain.update(checkPointsBurnin[0]);
-    for (i = 0; i < (checkPoints.size() - 1); i++)
-    {
-      R_CheckUserInterrupt();
-      Rcpp::Rcout << "Warmup has completed " << 100 * checkPoints[i] <<
-        "% of the iterations.\n";
-      MarkovChain.update(checkPointsBurnin[i + 1] - checkPointsBurnin[i]);
-    }
-    Rcpp::Rcout << "Warmup has completed " << 100 * checkPoints[8] <<
-      "% of the iterations.\n";
-    MarkovChain.update(burnin - checkPointsBurnin[8]);
+    for (i = 0; i < burnin; i++)
+      {
+      progr_Burnin.increment();
+      MarkovChain.update();
+      }
     t2 = std::chrono::high_resolution_clock::now();
     Rcpp::Rcout << "Warm up complete. ";
     Rcpp::Rcout << "Warmup took " <<
@@ -93,7 +83,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     omp_set_num_threads( threads );
 #endif
 
-  Progress progr(iter / thin, true);
+  Progress progr_Main(iter / thin, true);
 
   t1 = std::chrono::high_resolution_clock::now();
   // Actual MCMC
@@ -111,7 +101,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     outLogPost[i] = MarkovChain.logPosterior;
     out_nU[i] = MarkovChain.U.size();
     out_nXp[i] = MarkovChain.Xprime.size();
-    progr.increment();
+    progr_Main.increment();
   }
   t2 = std::chrono::high_resolution_clock::now();
   //    auto t1 = std::chrono::high_resolution_clock::now();
