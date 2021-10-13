@@ -43,7 +43,7 @@ with respect to the observabilitycovariates. Current version accepts 'logit'.}
 model how many independent chains will be run. If an integer, that many
 initial values will be randomly generated.}
 
-\item{prior}{A \code{bayesPO_prior} object.}
+\item{joint_prior}{A \code{bayesPO_prior} object.}
 }
 \description{
 Constructor for \code{bayesPO_model-class} objects, built to facilitate

@@ -15,6 +15,7 @@ NULL
 #' must be exactly the same as the one used in the original fit.
 #' @param mcmc_setup A list containing \code{iter} to inform the model how
 #' many iterations are to be run. The list may optionally contain the objects
+#' @param ... Parameters passed on to specific methods.
 #' \code{burnin} and \code{thin} to inform these instructions as well.
 #' @return An object of class \code{"bayesPO_fit"}.
 #' @details The background is kept outside of the
@@ -25,14 +26,14 @@ methods::setGeneric("fit_bayesPO", function(object, background,
                                             mcmc_setup = list(iter = 5000), ...)
   standardGeneric("fit_bayesPO"))
 
-#' @name fit_bayesPO
+#' @rdname fit_bayesPO
 #' @param area A positive number with the studied region's area.
 #' @param cores Currently unused.
 #' @importFrom parallel detectCores
 methods::setMethod("fit_bayesPO",
                    methods::signature(object = "bayesPO_model",
                                       background = "matrix"),
-                   function(object, background, mcmc_setup, area = 1, cores = 1){
+                   function(object, background, mcmc_setup, area = 1, cores = 1, ...){
   ## Verifying background names if columns are selected by column name. Crewating background selection variables
   backConfig <- checkFormatBackground(object, background)
   cores <- 1
@@ -83,41 +84,41 @@ methods::setMethod("fit_bayesPO",
   for (c in 1:chains){
      if (chains > 1) cat("Starting chain ", c, ".\n",sep="")
      mcmcRun[[c]] <- do.call(cbind,
-                             runBayesPO(
-                                methods::slot(s("init")[[c]], "beta"),
-                                methods::slot(s("init")[[c]], "delta"), # Init delta
-                                methods::slot(s("init")[[c]], "lambdaStar"), # Init lambdaStar
-                                paste0(s("intensityLink"), "_", # intenisty Link + prior
-                                       methods::slot(
-                                          methods::slot(s("prior"), "beta"), "family")),
-                                paste0(s("observabilityLink"),"_", # observability Link + prior
-                                       methods::slot(
-                                          methods::slot(s("prior"), "delta"), "family")),
-                                methods::slot( # lambdaStar prior
-                                   methods::slot(
-                                      s("prior"),"lambdaStar"), "family"),
-                                retrievePars(methods::slot( # beta prior parameters
-                                   s("prior"),"beta")),
-                                retrievePars(methods::slot( # delta prior parameters
-                                   s("prior"),"delta")),
-                                retrievePars( # lambdaStar prior parameters
-                                   methods::slot(
-                                      s("prior"),"lambdaStar")),
-                                ifelse(is.integer(background), # background class
-                                       "int_mat", "num_mat"),
-                                background, # background data
-                                area, # region area
-                                ifelse(is.integer(s("po")),
-                                       "int_mat", "num_mat"), # po data class
-                                s("po"), # po data
-                                backConfig$bIS - 1, # background intensity columns
-                                backConfig$bOS - 1, # background observability colmns
-                                s("intensitySelection") - 1, # po intensity columns
-                                s("observabilitySelection") - 1, # po obserability columns
-                                mcmc_setup$burnin, # MCMC burn-in
-                                mcmc_setup$thin, # MCMC thin
-                                mcmc_setup$iter, # MCMC iterations
-                                cores)
+  runBayesPO(
+    methods::slot(s("init")[[c]], "beta"),
+    methods::slot(s("init")[[c]], "delta"), # Init delta
+    methods::slot(s("init")[[c]], "lambdaStar"), # Init lambdaStar
+    paste0(s("intensityLink"), "_", # intenisty Link + prior
+           methods::slot(
+              methods::slot(s("prior"), "beta"), "family")),
+    paste0(s("observabilityLink"),"_", # observability Link + prior
+           methods::slot(
+              methods::slot(s("prior"), "delta"), "family")),
+    methods::slot( # lambdaStar prior
+       methods::slot(
+          s("prior"),"lambdaStar"), "family"),
+    retrievePars(methods::slot( # beta prior parameters
+       s("prior"),"beta")),
+    retrievePars(methods::slot( # delta prior parameters
+       s("prior"),"delta")),
+    retrievePars( # lambdaStar prior parameters
+       methods::slot(
+          s("prior"),"lambdaStar")),
+    ifelse(is.integer(background), # background class
+           "int_mat", "num_mat"),
+    background, # background data
+    area, # region area
+    ifelse(is.integer(s("po")),
+           "int_mat", "num_mat"), # po data class
+    s("po"), # po data
+    backConfig$bIS - 1, # background intensity columns
+    backConfig$bOS - 1, # background observability colmns
+    s("intensitySelection") - 1, # po intensity columns
+    s("observabilitySelection") - 1, # po obserability columns
+    mcmc_setup$burnin, # MCMC burn-in
+    mcmc_setup$thin, # MCMC thin
+    mcmc_setup$iter, # MCMC iterations
+    cores)
      )
      colnames(mcmcRun[[c]]) <- parnames
      mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
@@ -137,12 +138,12 @@ methods::setMethod("fit_bayesPO",
 })
 
 
-#' @name fit_bayesPO
+#' @rdname fit_bayesPO
 #' @param cores Currently unused.
 methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
                                             background = "matrix"),
   function(object, background, mcmc_setup = list(iter = object$mcmc_setup$iter),
-           cores = 1){
+           cores = 1, ...){
    # Helper function
    s <- function(n) methods::slot(object, n)
    so <- function(n) methods::slot(s("original"), n)
@@ -182,41 +183,41 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
    for (c in 1:chains){
      if (chains > 1) cat("Starting chain ",c,".\n",sep="")
      mcmcRun[[c]] <- do.call(cbind,
-       runBayesPO(
-         lastPoint[betaPos], # Starting at last stored point
-         lastPoint[deltaPos], # Starting at last stored point
-         lastPoint[lambdaPos], # Starting at last stored point
-         paste0(so("intensityLink"), "_", # intenisty Link + prior
-                methods::slot(
-                  methods::slot(so("prior"), "beta"), "family")),
-         paste0(so("observabilityLink"),"_", # observability Link + prior
-                methods::slot(
-                  methods::slot(so("prior"), "delta"), "family")),
-         methods::slot( # lambdaStar prior
-           methods::slot(
-             so("prior"),"lambdaStar"), "family"),
-         retrievePars(methods::slot( # beta prior parameters
-           so("prior"),"beta")),
-         retrievePars(methods::slot( # delta prior parameters
-           so("prior"),"delta")),
-         retrievePars( # lambdaStar prior parameters
-           methods::slot(
-             so("prior"),"lambdaStar")),
-         ifelse(is.integer(background), # background class
-                "int_mat", "num_mat"),
-         background, # background data
-         s("area"), # region area
-         ifelse(is.integer(so("po")),
-                "int_mat", "num_mat"), # po data class
-         so("po"), # po data
-         backConfig$bIS - 1, # background intensity columns
-         backConfig$bOS - 1, # background observability colmns
-         so("intensitySelection") - 1, # po intensity columns
-         so("observabilitySelection") - 1, # po obserability columns
-         0, # MCMC burn-in
-         mcmc_setup$thin, # MCMC thin
-         mcmc_setup$iter, # MCMC iterations
-         cores)
+   runBayesPO(
+     lastPoint[betaPos], # Starting at last stored point
+     lastPoint[deltaPos], # Starting at last stored point
+     lastPoint[lambdaPos], # Starting at last stored point
+     paste0(so("intensityLink"), "_", # intenisty Link + prior
+            methods::slot(
+              methods::slot(so("prior"), "beta"), "family")),
+     paste0(so("observabilityLink"),"_", # observability Link + prior
+            methods::slot(
+              methods::slot(so("prior"), "delta"), "family")),
+     methods::slot( # lambdaStar prior
+       methods::slot(
+         so("prior"),"lambdaStar"), "family"),
+     retrievePars(methods::slot( # beta prior parameters
+       so("prior"),"beta")),
+     retrievePars(methods::slot( # delta prior parameters
+       so("prior"),"delta")),
+     retrievePars( # lambdaStar prior parameters
+       methods::slot(
+         so("prior"),"lambdaStar")),
+     ifelse(is.integer(background), # background class
+            "int_mat", "num_mat"),
+     background, # background data
+     s("area"), # region area
+     ifelse(is.integer(so("po")),
+            "int_mat", "num_mat"), # po data class
+     so("po"), # po data
+     backConfig$bIS - 1, # background intensity columns
+     backConfig$bOS - 1, # background observability colmns
+     so("intensitySelection") - 1, # po intensity columns
+     so("observabilitySelection") - 1, # po obserability columns
+     0, # MCMC burn-in
+     mcmc_setup$thin, # MCMC thin
+     mcmc_setup$iter, # MCMC iterations
+     cores)
      )
      colnames(mcmcRun[[c]]) <- s("parnames")
      mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
@@ -303,7 +304,7 @@ checkFormatBackground <- function(object,background){
 #' \code{bayesPO_initial-class} objects. The length of the list will inform the
 #' model how many independent chains will be run. If an integer, that many
 #' initial values will be randomly generated.
-#' @param prior A \code{bayesPO_prior} object.
+#' @param joint_prior A \code{bayesPO_prior} object.
 #' @seealso \code{\link{initial}}, \code{\link{prior}} and
 #' \code{\link{fit_bayesPO}}.
 #' @export
@@ -356,7 +357,7 @@ bayesPO_model = function(po, intensitySelection,
         observabilitySelection = c(observabilitySelection,which(selected==colnames(po)))
       }
     }
-  if (is(initial_values,"bayesPO_initial"))
+  if (methods::is(initial_values,"bayesPO_initial"))
     initial_values = list(initial_values)
   if (is.numeric(initial_values))
     initial_values = initial(length(intensitySelection) + 1,

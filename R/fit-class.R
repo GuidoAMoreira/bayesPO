@@ -9,19 +9,19 @@ NULL
 #'
 #' Objects of this class are the main objects of this package. They contain
 #' much information about the fitted model.
-#' @slot fit The actual fit from the model. It is an object of class
+#' @field fit The actual fit from the model. It is an object of class
 #' \code{\link[coda]{mcmc.list}}, as generated from the \code{coda} package.
-#' @slot original The model used to generate the chains, an object with class
+#' @field original The model used to generate the chains, an object with class
 #' \code{bayesPO_model}.
-#' @slot backgroundSummary A small summary of the original background
+#' @field backgroundSummary A small summary of the original background
 #' covariates. This is to ensure that continuing the chains will use the
 #' identical background matrix. Only the summary is kept for storage efficiency.
-#' @slot area A positive number indicating the area measure of the region being
+#' @field area A positive number indicating the area measure of the region being
 #' studied.
-#' @slot parnames The names of the parameters. If the model used selects the
+#' @field parnames The names of the parameters. If the model used selects the
 #' covariates with column names, they are replicated here. If they are the
 #' column indexes, names are generated for identification.
-#' @slot mcmc_setup The original mcmc setup used.
+#' @field mcmc_setup The original mcmc setup used.
 #' @seealso \code{\link{fit_bayesPO}}
 #' @export
 #' @exportClass bayesPO_fit
@@ -34,7 +34,7 @@ methods::setClass("bayesPO_fit",
                                  mcmc_setup = "list"))
 
 #### Basic methods ####
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #'
 #' @param object A bayesPO_fit object.
 #' @export
@@ -105,7 +105,7 @@ methods::setMethod("show","bayesPO_fit",function(object){
   invisible(object)
 })
 
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #'
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored.
@@ -115,9 +115,10 @@ methods::setMethod("print", "bayesPO_fit", function(x, ...) methods::show(x))
 
 #' @method print bayesPO_fit
 #' @export
+#' @rdname bayesPO_fit-class
 print.bayesPO_fit <- function(x,...) methods::show(x)
 
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #'
 #' @param object A bayesPO_fit object.
 #' @param ... Ignored.
@@ -127,6 +128,7 @@ print.bayesPO_fit <- function(x,...) methods::show(x)
 methods::setMethod("summary", "bayesPO_fit", function(object,...) summary.bayesPO_fit(object, ...))
 
 #' @method summary bayesPO_fit
+#' @rdname bayesPO_fit-class
 #' @export
 summary.bayesPO_fit <- function(object, ...){
   chains <- length(methods::slot(methods::slot(object, "original"), "init"))
@@ -151,7 +153,7 @@ summary.bayesPO_fit <- function(object, ...){
   result
 }
 
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #'
 #' @param x A bayesPO_fit object.
 #' @export
@@ -165,10 +167,11 @@ methods::setMethod("names", "bayesPO_fit", function(x){
 })
 
 #' @method names bayesPO_fit
+#' @rdname bayesPO_fit-class
 #' @export
 names.bayesPO_fit <- function(x) names(x)
 
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #'
 #' @param x A bayesPO_fit object.
 #' @param i The requested slot.
@@ -228,7 +231,7 @@ methods::setMethod("[[", "bayesPO_fit", function(x, i){
   output
 })
 
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #'
 #' @param x A bayesPO_fit object.
 #' @param name The requested slot.
@@ -236,7 +239,7 @@ methods::setMethod("[[", "bayesPO_fit", function(x, i){
 #' @exportMethod $
 methods::setMethod("$", "bayesPO_fit", function(x, name) x[[name]])
 
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored.
 #' @return \strong{\code{as.array}}: The MCMC chains organized in a way ready for the
@@ -266,7 +269,7 @@ namesAid <- function(string){
   new_string
 }
 
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored in this version.
 #' @return \strong{\code{as.array}}: An \code{array} with dimensions I x C x P, where
@@ -293,10 +296,11 @@ as.array.bayesPO_fit <- function(x, ...){
 }
 
 #' @export
+#' @rdname bayesPO_fit-class
 #' @exportMethod as.matrix
 methods::setMethod("as.matrix", "bayesPO_fit", function(x, ...) as.matrix.bayesPO_fit(x, ...))
 
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored in this version.
 #' @return \strong{\code{as.matrix}}: The dimension of the output is I * C x (P + 2),
@@ -322,10 +326,11 @@ as.matrix.bayesPO_fit <- function(x, ...){
 }
 
 #' @export
+#' @rdname bayesPO_fit-class
 #' @exportMethod as.data.frame
 methods::setMethod("as.data.frame","bayesPO_fit",function(x, row.names = NULL, optional = FALSE, ...) as.data.frame.bayesPO_fit(x, row.names = NULL, optional = FALSE, ...))
 
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param row.names NULL or a character vector giving the row names for the
 #' data frame. Missing values are not allowed.
@@ -372,7 +377,7 @@ as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...)
 
 #### Interaction methods ####
 # Adding chains into a single object
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #' @param e1 A bayesPO_fit object.
 #' @param e2 A bayesPO_fit object with the same background, model (except for
 #' initial values), area, parnames and mcmc_setup as \code{e1}.
@@ -405,7 +410,7 @@ methods::setMethod("+", methods::signature(e1 = "bayesPO_fit", e2 = "bayesPO_fit
 })
 
 # Combining multiple chains
-#' @name bayesPO_fit-class
+#' @rdname bayesPO_fit-class
 #' @return \strong{\code{c}}: A new \code{bayesPO_fit} object where the chains
 #' are combined into a new multi-chain object.
 #' @export

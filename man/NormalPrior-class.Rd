@@ -3,6 +3,11 @@
 \docType{class}
 \name{NormalPrior-class}
 \alias{NormalPrior-class}
+\alias{names,NormalPrior-method}
+\alias{$,NormalPrior-method}
+\alias{$<-,NormalPrior-method}
+\alias{show,NormalPrior-method}
+\alias{print,NormalPrior-method}
 \alias{print.NormalPrior}
 \title{Normal prior class for Beta and Delta parameters.}
 \usage{
@@ -16,7 +21,7 @@
 
 \S4method{print}{NormalPrior}(x, ...)
 
-print.NormalPrior(x, ...)
+\method{print}{NormalPrior}(x, ...)
 }
 \arguments{
 \item{x}{The NormalPrior object.}
@@ -33,7 +38,7 @@ print.NormalPrior(x, ...)
 This is used to represent the prior for Beta and Delta individually. They
 still need to be joined to be used in a model.
 }
-\section{Slots}{
+\section{Fields}{
 
 \describe{
 \item{\code{mu}}{The mean vector for the prior.}

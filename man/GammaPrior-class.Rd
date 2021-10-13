@@ -3,6 +3,11 @@
 \docType{class}
 \name{GammaPrior-class}
 \alias{GammaPrior-class}
+\alias{names,GammaPrior-method}
+\alias{$,GammaPrior-method}
+\alias{$<-,GammaPrior-method}
+\alias{show,GammaPrior-method}
+\alias{print,GammaPrior-method}
 \alias{print.GammaPrior}
 \title{Gamma prior class for the LambdaStar parameter.}
 \usage{
@@ -34,7 +39,7 @@ This is used to represent the prior for lambdaStar individually. It
 still needs to be joined with the prior for Beta and Delta to be used
 in a model.
 }
-\section{Slots}{
+\section{Fields}{
 
 \describe{
 \item{\code{shape}}{The shape parameter of the Gamma distribution.}

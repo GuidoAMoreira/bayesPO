@@ -3,6 +3,16 @@
 \docType{class}
 \name{bayesPO_initial-class}
 \alias{bayesPO_initial-class}
+\alias{names,bayesPO_initial-method}
+\alias{$,bayesPO_initial-method}
+\alias{+,bayesPO_initial,ANY-method}
+\alias{+,bayesPO_initial,list-method}
+\alias{+,list,bayesPO_initial-method}
+\alias{*,bayesPO_initial,numeric-method}
+\alias{*,numeric,bayesPO_initial-method}
+\alias{show,bayesPO_initial-method}
+\alias{print,bayesPO_initial-method}
+\alias{print.bayesPO_initial}
 \title{Class for the initial values for the MCMC for the bayesPO package}
 \usage{
 \S4method{names}{bayesPO_initial}(x)
@@ -13,9 +23,17 @@
 
 \S4method{+}{bayesPO_initial,list}(e1, e2)
 
+\S4method{+}{list,bayesPO_initial}(e1, e2)
+
 \S4method{*}{bayesPO_initial,numeric}(e1, e2)
 
+\S4method{*}{numeric,bayesPO_initial}(e1, e2)
+
 \S4method{show}{bayesPO_initial}(object)
+
+\S4method{print}{bayesPO_initial}(x, ...)
+
+\method{print}{bayesPO_initial}(x, ...)
 }
 \arguments{
 \item{x}{The bayesPO_initial object.}
@@ -25,9 +43,12 @@
 \item{e1}{A bayesPO_initial object.}
 
 \item{e2}{Another bayesPO_initial object or a list with bayesPO_initial
-objects for \strong{+} and a positive integer for \strong{*}.}
+objects for \strong{+} and a positive integer for \strong{*}. e1 and e2
+can be switched (+ and * are commutative).}
 
 \item{object}{A bayesPO_initial object.}
+
+\item{...}{Currently unused.}
 }
 \value{
 \strong{\code{+}}: A list with the objects. Useful to start the
@@ -38,7 +59,7 @@ fit function.
 \description{
 Class for the initial values for the MCMC for the bayesPO package
 }
-\section{Slots}{
+\section{Fields}{
 
 \describe{
 \item{\code{beta}}{Initial values for beta.}

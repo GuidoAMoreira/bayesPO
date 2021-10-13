@@ -22,18 +22,19 @@ LinkingTo:
 Imports: 
     Rcpp,
     coda,
-    methods,
     parallel,
+    methods,
     RcppProgress,
     graphics,
     stats,
-    methods,
     tools
 Suggests:
     bayesplot,
     knitr,
     rmarkdown,
-    webshot
+    webshot,
+    ggplot2,
+    MASS
 Collate: 
     'RcppExports.R'
     'bayesPO-package.R'

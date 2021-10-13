@@ -18,7 +18,7 @@
   ...
 )
 
-\method{barplot}{covariates_importance}(x, component = "intensity", y, ...)
+\method{barplot}{covariates_importance}(height, component = "intensity", y, ...)
 
 \method{boxplot}{covariates_importance}(x, component = "intensity", ...)
 }

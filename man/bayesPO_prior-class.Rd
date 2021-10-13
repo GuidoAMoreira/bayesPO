@@ -3,7 +3,12 @@
 \docType{class}
 \name{bayesPO_prior-class}
 \alias{bayesPO_prior-class}
+\alias{names,bayesPO_prior-method}
+\alias{$,bayesPO_prior-method}
+\alias{show,bayesPO_prior-method}
+\alias{print,bayesPO_prior-method}
 \alias{print.bayesPO_prior}
+\alias{$<-,bayesPO_prior-method}
 \title{Joint prior class for the bayesPO package parameters}
 \usage{
 \S4method{names}{bayesPO_prior}(x)
@@ -35,7 +40,7 @@
 Objects of this class are the joining of independent priors for Beta, Delta
 and LambdaStar. They can be used in the \code{fit_bayesPO} function.
 }
-\section{Slots}{
+\section{Fields}{
 
 \describe{
 \item{\code{beta}}{An object of a class which inherits the \code{BetaDeltaPrior} S4

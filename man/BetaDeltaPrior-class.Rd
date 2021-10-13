@@ -3,6 +3,8 @@
 \docType{class}
 \name{BetaDeltaPrior-class}
 \alias{BetaDeltaPrior-class}
+\alias{show,BetaDeltaPrior-method}
+\alias{print,BetaDeltaPrior-method}
 \alias{print.BetaDeltaPrior}
 \title{Generic class for the beta and delta parameters.}
 \usage{
@@ -22,7 +24,7 @@
 \description{
 Generic class for the beta and delta parameters.
 }
-\section{Slots}{
+\section{Fields}{
 
 \describe{
 \item{\code{family}}{The family of distributions of the prior.}

@@ -7,7 +7,7 @@
 \description{
 Generic class for the LambdaStar parameters.
 }
-\section{Slots}{
+\section{Fields}{
 
 \describe{
 \item{\code{family}}{The family of distributions of the prior.}

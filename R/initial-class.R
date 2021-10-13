@@ -1,9 +1,9 @@
 #' Class for the initial values for the MCMC for the bayesPO package
 #'
-#' @slot beta Initial values for beta.
-#' @slot delta Initial values for delta.
-#' @slot lambdaStar Initial values for lambdaStar.
-#' @slot tag Indicates the source of the initial values.
+#' @field beta Initial values for beta.
+#' @field delta Initial values for delta.
+#' @field lambdaStar Initial values for lambdaStar.
+#' @field tag Indicates the source of the initial values.
 #' @export
 #' @exportClass bayesPO_initial
 methods::setClass("bayesPO_initial",
@@ -18,6 +18,18 @@ methods::setClass("bayesPO_initial",
            TRUE
          })
 
+#' Initialize method for bayesPO_initial objects
+#'
+#' Fills the object with the necessary slots, converting them to numeric as
+#' needed
+#' @param .Object An empty bayesPO_initial object.
+#' @param beta A vector with initial beta values. Must be possible to coerce to
+#' numeric.
+#' @param delta A vector with initial delta values. Must be possible to coerce
+#' to numeric.
+#' @param lambdaStar A number with initial the lambdaStar value. Must be
+#' possible to coerce to numeric.
+#' @param tag The tag indicating the origin of the initial value.
 #' @export
 #' @exportMethod initialize
 methods::setMethod("initialize", "bayesPO_initial",
@@ -29,37 +41,38 @@ methods::setMethod("initialize", "bayesPO_initial",
   .Object
 })
 
-#' @name bayesPO_initial-class
+#' @rdname bayesPO_initial-class
 #' @param x The bayesPO_initial object.
 #' @export
 #' @exportMethod names
 methods::setMethod("names","bayesPO_initial", function(x) c("beta", "delta", "lambdaStar"))
 
-#' @name bayesPO_initial-class
+#' @rdname bayesPO_initial-class
 #' @param x The bayesPO_initial object.
 #' @param name The requested slot.
 #' @export
 #' @exportMethod $
 methods::setMethod("$","bayesPO_initial",function(x,name) methods::slot(x, name))
 
-#' @name bayesPO_initial-class
+#' @rdname bayesPO_initial-class
 #' @param e1 A bayesPO_initial object.
 #' @param e2 Another bayesPO_initial object or a list with bayesPO_initial
-#' objects for \strong{+} and a positive integer for \strong{*}.
+#' objects for \strong{+} and a positive integer for \strong{*}. e1 and e2
+#' can be switched (+ and * are commutative).
 #' @return \strong{\code{+}}: A list with the objects. Useful to start the
 #' fit function.
 #' @export
 #' @exportMethod +
 methods::setMethod("+", "bayesPO_initial", function(e1, e2) list(e1, e2))
 
-#' @name bayesPO_initial-class
+#' @rdname bayesPO_initial-class
 #' @param e1 A bayesPO_initial object.
 #' @export
 #' @exportMethod +
 methods::setMethod("+",methods::signature(e1 = "bayesPO_initial", e2 = "list"),
                    function(e1, e2){
                      for (i in 1:length(e2))
-                      if (!is(e2[[i]], "bayesPO_initial"))
+                      if (!methods::is(e2[[i]], "bayesPO_initial"))
                         stop("Initial values can only be added to a list of other initial values.")
                      e2[[i + 1]] = e1
                      e2
@@ -67,18 +80,19 @@ methods::setMethod("+",methods::signature(e1 = "bayesPO_initial", e2 = "list"),
 
 #' @export
 #' @exportMethod +
+#' @rdname bayesPO_initial-class
 methods::setMethod("+",methods::signature(e1 = "list", e2 = "bayesPO_initial"),
                    function(e1,e2){
                      n = length(e1)
                      l = list(e2)
                      for (i in 1:n){
-                       if (!is(e1[[i]],"bayesPO_initial")) stop("Initial values can only be added to a list of other initial values.")
+                       if (!methods::is(e1[[i]],"bayesPO_initial")) stop("Initial values can only be added to a list of other initial values.")
                        l[[i+1]] = e1[[i]]
                      }
                      l
                    })
 
-#' @name bayesPO_initial-class
+#' @rdname bayesPO_initial-class
 #' @param e1 A bayesPO_initial object.
 #' @return \strong{\code{*}}: A list with \code{e2} random initial values.
 #' @export
@@ -102,9 +116,10 @@ methods::setMethod("*", methods::signature(e1 = "bayesPO_initial", e2 = "numeric
 
 #' @export
 #' @exportMethod *
+#' @rdname bayesPO_initial-class
 methods::setMethod("*", methods::signature(e1 = "numeric", e2 = "bayesPO_initial"), function(e1, e2) e2 * e1)
 
-#' @name bayesPO_initial-class
+#' @rdname bayesPO_initial-class
 #' @param object A bayesPO_initial object.
 #' @export
 #' @exportMethod show
@@ -125,11 +140,14 @@ methods::setMethod("show", "bayesPO_initial", function(object){
 
 #' @export
 #' @exportMethod print
-methods::setMethod("print", "bayesPO_initial", function(x, ...) show(x))
+#' @param ... Currently unused.
+#' @rdname bayesPO_initial-class
+methods::setMethod("print", "bayesPO_initial", function(x, ...) methods::show(x))
 
-#' @method print bayesPO_fit
+#' @method print bayesPO_initial
 #' @export
-print.bayesPO_fit <- function(x, ...) show(x)
+#' @rdname bayesPO_initial-class
+print.bayesPO_initial <- function(x, ...) methods::show(x)
 
 #' Initial values constructor for bayesPO modeling
 #'

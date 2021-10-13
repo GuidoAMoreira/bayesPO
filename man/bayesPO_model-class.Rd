@@ -3,6 +3,9 @@
 \docType{class}
 \name{bayesPO_model-class}
 \alias{bayesPO_model-class}
+\alias{names,bayesPO_model-method}
+\alias{$,bayesPO_model-method}
+\alias{$<-,bayesPO_model-method}
 \title{Class that defines a model for the bayesPO package.}
 \usage{
 \S4method{names}{bayesPO_model}(x)
@@ -23,7 +26,7 @@ The model includes the presence-only data, all selected variables, the link
 functions for \eqn{q} and \eqn{p}, the initial values and the prior
 distribution.
 }
-\section{Slots}{
+\section{Fields}{
 
 \describe{
 \item{\code{po}}{The matrix containing the covariates values for the data.}

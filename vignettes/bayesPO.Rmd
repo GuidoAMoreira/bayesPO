@@ -75,8 +75,7 @@ po_Z <- occurrences_Z[po_sightings]
 po_W <- W1[po_sightings]
 ```
 
-Now the variable `po_points` contains the coordinates of the presence-only sightings. We can plot the observability covariate to see how the points have
-been selected and discarded according to it.
+Now the variable `po_points` contains the coordinates of the presence-only sightings. We can plot the observability covariate to see how the points have been selected and discarded according to it.
 
 ```{r plot_observer_bias, fig.width = 5, fig.height = 3.5, fig.align = 'center'}
 ggplot(

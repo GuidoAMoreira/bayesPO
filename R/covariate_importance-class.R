@@ -14,7 +14,7 @@
 #' @name covariates_importance-class
 NULL
 
-#' @name covariates_importance-class
+#' @rdname covariates_importance-class
 #' @param x The \code{covariates_importance} object.
 #' @param component Either \code{"intensity"}, \code{"observability"} or
 #' \code{"both"}.
@@ -34,7 +34,7 @@ print.covariates_importance <- function(x, component = "intensity", ...){
   invisible(x)
 }
 
-#' @name covariates_importance-class
+#' @rdname covariates_importance-class
 #' @param x The \code{covariates_importance} object.
 #' @param component Either \code{"intensity"}, \code{"observability"} or
 #' \code{"both"}.
@@ -47,12 +47,14 @@ print.covariates_importance <- function(x, component = "intensity", ...){
 #' @param ... Other parameters passed to \code{\link[graphics]{plot}}.
 #' @method plot covariates_importance
 #' @importFrom stats density
-#' @importFrom graphics plot axis segments points
+#' @importFrom graphics plot axis segments points par
 #' @importFrom methods hasArg
 #' @importFrom tools toTitleCase
+#' @importFrom stats quantile
 #' @export
 plot.covariates_importance <- function(x, component = "intensity",
-                                       y = "importance", quantiles = c(0.025, 0.5, 0.975), ...) {
+                                       y = "importance",
+                                       quantiles = c(0.025, 0.5, 0.975), ...) {
   component <- tolower(component)
   y <- tolower(y)
   stopifnot(component %in% c("intensity", "observability", "both"),
@@ -61,30 +63,33 @@ plot.covariates_importance <- function(x, component = "intensity",
 
   quantiles <- sort(quantiles)
   if (component != "both") {
-    intervals <- apply(x[[component]], 2, quantile, quantiles[c(1, length(quantiles))])
+    intervals <- apply(x[[component]], 2, stats::quantile,
+                       quantiles[c(1, length(quantiles))])
     plots <- ncol(x[[component]])
-    if (!methods::hasArg(xlab)) yl <- c(min(intervals) * 0.9, max(intervals) * 1.1) else yl <- ylim
+    if (!methods::hasArg("ylim")) yl <- c(min(intervals) * 0.9,
+                                        max(intervals) * 1.1) else yl <- get("ylim")
     if (y == "importance") {
       graphics::plot(NA, xlim = c(1, plots), xaxt = "n",
                      main = paste(tools::toTitleCase(component), "variables"),
            ylim = yl,
-           xlab = ifelse(!methods::hasArg(xlab), "Covariates", xlab),
-           ylab = ifelse(!methods::hasArg(ylab), "Importance", ylab), ...)
+           xlab = ifelse(!methods::hasArg("xlab"), "Covariates", get("xlab")),
+           ylab = ifelse(!methods::hasArg("ylab"), "Importance", get("ylab")), ...)
       graphics::axis(1, at = 1:plots, colnames(x[[component]]))
       graphics::segments(1:plots, intervals[1, ], 1:plots, intervals[2, ])
       if (length(quantiles) == 3)
-        graphics::points(1:plots, apply(x[[component]], 2, quantile, quantiles[2]), pch = 19)
+        graphics::points(1:plots, apply(x[[component]], 2, stats::quantile,
+                                        quantiles[2]), pch = 19)
     } else {
       large_row_nmbr <- floor(sqrt(plots))
       col_nmbrs <- large_row_nmbr:(large_row_nmbr + 2)
-      pp <- par(mfrow = c(large_row_nmbr,
+      pp <- graphics::par(mfrow = c(large_row_nmbr,
                           col_nmbrs[min(which(col_nmbrs * large_row_nmbr >= plots))]))
       for (p in 1:plots){
         graphics::plot(stats::density(x[[component]][, p]),
                        xlab = paste(colnames(x[[component]])[p], "importance"),
                        main = colnames(x[[component]])[p],...)
       }
-      par(pp)
+      graphics::par(pp)
     }
   } else {
     plot.covariates_importance(x, "intensity", y)
@@ -94,7 +99,7 @@ plot.covariates_importance <- function(x, component = "intensity",
   }
 }
 
-#' @name covariates_importance-class
+#' @rdname covariates_importance-class
 #' @param height The \code{covariates_importance} object.
 #' @param component Either \code{"intensity"}, \code{"observability"} or
 #' \code{"both"}.
@@ -102,20 +107,20 @@ plot.covariates_importance <- function(x, component = "intensity",
 #' @method barplot covariates_importance
 #' @importFrom graphics barplot
 #' @export
-barplot.covariates_importance <- function(x, component = "intensity", y, ...) {
+barplot.covariates_importance <- function(height, component = "intensity", y, ...) {
   component <- tolower(component)
   stopifnot(component %in% c("intensity", "observability", "both"))
   if (component != "both") {
-    graphics::barplot(colMeans(x[[component]]), ...)
+    graphics::barplot(colMeans(height[[component]]), ...)
   } else {
-    barplot.covariates_importance(x, "intensity")
+    barplot.covariates_importance(height, "intensity")
     cat("\nHit <Return> to see next plot: ")
     line <- readline()
-    barplot.covariates_importance(x, "observability")
+    barplot.covariates_importance(height, "observability")
   }
 }
 
-#' @name covariates_importance-class
+#' @rdname covariates_importance-class
 #' @param x The \code{covariates_importance} object.
 #' @param component Either \code{"intensity"}, \code{"observability"} or
 #' \code{"both"}.

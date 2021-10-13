@@ -3,18 +3,38 @@
 \docType{class}
 \name{bayesPO_fit-class}
 \alias{bayesPO_fit-class}
+\alias{show,bayesPO_fit-method}
+\alias{print,bayesPO_fit-method}
+\alias{print.bayesPO_fit}
+\alias{summary,bayesPO_fit-method}
+\alias{summary.bayesPO_fit}
+\alias{names,bayesPO_fit-method}
+\alias{names.bayesPO_fit}
+\alias{[[,bayesPO_fit-method}
+\alias{$,bayesPO_fit-method}
+\alias{as.array,bayesPO_fit-method}
 \alias{as.array.bayesPO_fit}
+\alias{as.matrix,bayesPO_fit-method}
 \alias{as.matrix.bayesPO_fit}
+\alias{as.data.frame,bayesPO_fit-method}
 \alias{as.data.frame.bayesPO_fit}
+\alias{+,bayesPO_fit,bayesPO_fit-method}
+\alias{c,bayesPO_fit-method}
 \title{Class for the result of the MCMC procedure.}
 \usage{
 \S4method{show}{bayesPO_fit}(object)
 
 \S4method{print}{bayesPO_fit}(x, ...)
 
+\method{print}{bayesPO_fit}(x, ...)
+
 \S4method{summary}{bayesPO_fit}(object, ...)
 
+\method{summary}{bayesPO_fit}(object, ...)
+
 \S4method{names}{bayesPO_fit}(x)
+
+\method{names}{bayesPO_fit}(x)
 
 \S4method{[[}{bayesPO_fit}(x, i)
 
@@ -24,7 +44,11 @@
 
 \method{as.array}{bayesPO_fit}(x, ...)
 
+\S4method{as.matrix}{bayesPO_fit}(x, ...)
+
 \method{as.matrix}{bayesPO_fit}(x, ...)
+
+\S4method{as.data.frame}{bayesPO_fit}(x, row.names = NULL, optional = FALSE, ...)
 
 \method{as.data.frame}{bayesPO_fit}(x, row.names = NULL, optional = FALSE, ...)
 
@@ -99,7 +123,7 @@ are combined into a new multi-chain object.
 Objects of this class are the main objects of this package. They contain
 much information about the fitted model.
 }
-\section{Slots}{
+\section{Fields}{
 
 \describe{
 \item{\code{fit}}{The actual fit from the model. It is an object of class
