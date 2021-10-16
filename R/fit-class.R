@@ -37,6 +37,7 @@ methods::setClass("bayesPO_fit",
 #' @rdname bayesPO_fit-class
 #'
 #' @param object A bayesPO_fit object.
+#' @return \strong{\code{show}} and \strong{\code{print}}: The invisible object.
 #' @export
 #' @exportMethod show
 methods::setMethod("show","bayesPO_fit",function(object){
@@ -122,12 +123,15 @@ print.bayesPO_fit <- function(x,...) methods::show(x)
 #'
 #' @param object A bayesPO_fit object.
 #' @param ... Ignored.
-#' @return \strong{\code{summary}}: A matrix with the summary.
 #' @export
 #' @exportMethod summary
 methods::setMethod("summary", "bayesPO_fit", function(object,...) summary.bayesPO_fit(object, ...))
 
 #' @method summary bayesPO_fit
+#' @return \strong{\code{summary}}: A matrix with the summary statistics of the
+#' fit. It is also printed in the \code{print} method. The summary can be
+#' treated as a matrix, such as retrieving rows/columns and creating tables
+#' with the \code{xtable} package.
 #' @rdname bayesPO_fit-class
 #' @export
 summary.bayesPO_fit <- function(object, ...){
@@ -156,6 +160,8 @@ summary.bayesPO_fit <- function(object, ...){
 #' @rdname bayesPO_fit-class
 #'
 #' @param x A bayesPO_fit object.
+#' @return \strong{\code{names}}: A character vector with the available options
+#' for the \code{`$`} and \code{`[[`} methods.
 #' @export
 #' @exportMethod names
 methods::setMethod("names", "bayesPO_fit", function(x){
@@ -175,6 +181,9 @@ names.bayesPO_fit <- function(x) names(x)
 #'
 #' @param x A bayesPO_fit object.
 #' @param i The requested slot.
+#' @return \strong{\code{`$`}} and \strong{\code{`[[`}}: The requested slot.
+#' Available options are not necessarily the class slots, and can be checked
+#' with the \code{names} method.
 #' @export
 #' @exportMethod [[
 methods::setMethod("[[", "bayesPO_fit", function(x, i){
@@ -242,8 +251,6 @@ methods::setMethod("$", "bayesPO_fit", function(x, name) x[[name]])
 #' @rdname bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored.
-#' @return \strong{\code{as.array}}: The MCMC chains organized in a way ready for the
-#' \code{bayesplot} package.
 #' @export
 #' @exportMethod as.array
 methods::setMethod("as.array", "bayesPO_fit", function(x, ...) as.array.bayesPO_fit(x, ...))
@@ -256,14 +263,14 @@ namesAid <- function(string){
   obsStart <- max(which(string == obsInt), which(string == "delta_0"))
   obsEnd <- which(string == "lambdaStar") - 1
 
-  # Find same covariates
+  # Find same covariates in both sets
   for (i in 1:(obsStart - 1))
     searching <- grepl(string[i], string[obsStart:obsEnd])
     if (any(searching)){
       new_string[i] <- paste0(string[i], ".int")
       new_string[obsStart - 1 + which(searching)] <- paste0(string[i], ".obs")
     }
-  new_string[1] <- ifelse(string[1] == obsInt, "Intensity_Intercept", "beta_0")
+  new_string[1] <- ifelse(string[1] == intInt, "Intensity_Intercept", "beta_0")
   new_string[obsStart] <- ifelse(string[obsStart] == obsInt, "Observability_Intercept", "delta_0")
 
   new_string
@@ -272,11 +279,12 @@ namesAid <- function(string){
 #' @rdname bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored in this version.
-#' @return \strong{\code{as.array}}: An \code{array} with dimensions I x C x P, where
-#' I stands for number of iterations, C for number of chains and P for total
-#' number of parameters. P is actually larger than the number of parameters in
-#' the model, as the the generated sizes of the latent processes and the
-#' log-posterior are also included.
+#' @return \strong{\code{as.array}}: An \code{array} with dimensions I x C x P,
+#' where I stands for number of iterations, C for number of chains and P for
+#' total number of parameters. P is actually larger than the number of
+#' parameters in the model, as the the generated sizes of the latent processes
+#' and the log-posterior are also included. This is organized so that is ready
+#' for the \code{bayesplot} package functions.
 #' @method as.array bayesPO_fit
 #' @export
 as.array.bayesPO_fit <- function(x, ...){
@@ -303,11 +311,11 @@ methods::setMethod("as.matrix", "bayesPO_fit", function(x, ...) as.matrix.bayesP
 #' @rdname bayesPO_fit-class
 #' @param x A bayesPO_fit object.
 #' @param ... Ignored in this version.
-#' @return \strong{\code{as.matrix}}: The dimension of the output is I * C x (P + 2),
-#' where I stands for number of iterations, C for number of chains and P for
-#' total number of parameters. P is actually larger than the number of
-#' parameters in the model, as the generated sizes of the latent processes and
-#' the log-posterior are also included.
+#' @return \strong{\code{as.matrix}}: The dimension of the output is
+#' I * C x (P + 2), where I stands for number of iterations, C for number of
+#' chains and P for total number of parameters. P is actually larger than the
+#' number of parameters in the model, as the generated sizes of the latent
+#' processes and the log-posterior are also included.
 #'
 #' Two extra columns are included to indicate to which chain and to which
 #' iteration that draw belongs.
@@ -338,11 +346,11 @@ methods::setMethod("as.data.frame","bayesPO_fit",function(x, row.names = NULL, o
 #' names to syntactic names is optional. See help('as.data.frame') for more.
 #' Leaving as \code{FALSE} is recommended.
 #' @param ... Ignored in this version.
-#' @return \strong{\code{as.data.frame}}: The dimension of the output is I*C x P+2,
-#' where I stands for number of iterations, C for number of chains and P for
-#' total number of parameters. P is actually larger than the number of
-#' parameters in the model, as the generated sizes of the latent processes and
-#' the log-posterior are also included.
+#' @return \strong{\code{as.data.frame}}: The dimension of the output is
+#' I*C x P + 2, where I stands for number of iterations, C for number of chains
+#' and P for total number of parameters. P is actually larger than the number
+#' of parameters in the model, as the generated sizes of the latent processes
+#' and the log-posterior are also included.
 #'
 #' Two extra columns are included to indicate to which chain and to which
 #' iteration that draw belongs. This is to facilitate the use of plotting
@@ -379,16 +387,27 @@ as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...)
 # Adding chains into a single object
 #' @rdname bayesPO_fit-class
 #' @param e1 A bayesPO_fit object.
-#' @param e2 A bayesPO_fit object with the same background, model (except for
-#' initial values), area, parnames and mcmc_setup as \code{e1}.
+#' @param e2 A bayesPO_fit object with the same slots (except for initial
+#' values) as \code{e1}.
 #' @return \strong{\code{+}}: A new \code{bayesPO_fit} object where the chains
-#' are combined into a new multi-chain object.
+#' are combined into a new multi-chain object. This can be used if chains are
+#' run in separate occasions or computers to combine them into a single object
+#' for analysis.
 #' @importFrom methods new
 methods::setMethod("+", methods::signature(e1 = "bayesPO_fit", e2 = "bayesPO_fit"),
                    function(e1, e2){
   s1 <- function(n) methods::slot(e1, n)
+  so1 <- function(n) methods::slot(s1("original"), n)
   s2 <- function(n) methods::slot(e2, n)
-  stopifnot(#all.equal(s1("original"), s2("original")),
+  so2 <- function(n) methods::slot(s2("original"), n)
+  stopifnot(all.equal(so1("po"), so2("po")),
+            all.equal(so1("intensityLink"), so2("intensityLink")),
+            all.equal(so1("intensitySelection"), so2("intensitySelection")),
+            all.equal(so1("observabilityLink"), so2("observabilityLink")),
+            all.equal(so1("observabilitySelection"), so2("observabilitySelection")),
+            all.equal(so1("prior"), so2("prior")),
+            all.equal(so1("iSelectedColumns"), so2("iSelectedColumns")),
+            all.equal(so1("oSelectedColumns"), so2("oSelectedColumns")),
             all.equal(s1("backgroundSummary"), s2("backgroundSummary")),
             all.equal(s1("area"), s2("area")),
             all.equal(s1("parnames"), s2("parnames")),
@@ -412,7 +431,8 @@ methods::setMethod("+", methods::signature(e1 = "bayesPO_fit", e2 = "bayesPO_fit
 # Combining multiple chains
 #' @rdname bayesPO_fit-class
 #' @return \strong{\code{c}}: A new \code{bayesPO_fit} object where the chains
-#' are combined into a new multi-chain object.
+#' are combined into a new multi-chain object. The \strong{\code{+}} method is
+#' used for that, with the same arguments restrictions and results.
 #' @export
 #' @exportMethod c
 methods::setMethod("c", "bayesPO_fit", function(x, ...) {

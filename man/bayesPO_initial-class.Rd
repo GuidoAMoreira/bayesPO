@@ -51,10 +51,18 @@ can be switched (+ and * are commutative).}
 \item{...}{Currently unused.}
 }
 \value{
+\strong{\code{names}}: A character vector with the initialized
+parameter names.
+
+\strong{\code{`$`}}: The requested initial value (in case of
+LambdaStar) or values (in case of Beta or Delta).
+
 \strong{\code{+}}: A list with the objects. Useful to start the
-fit function.
+\code{fit_bayesPO} function, as it requires a list of initial values.
 
 \strong{\code{*}}: A list with \code{e2} random initial values.
+
+\strong{\code{show}} and \strong{\code{print}}: The invisible object.
 }
 \description{
 Class for the initial values for the MCMC for the bayesPO package

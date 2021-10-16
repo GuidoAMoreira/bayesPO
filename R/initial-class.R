@@ -18,31 +18,10 @@ methods::setClass("bayesPO_initial",
            TRUE
          })
 
-#' Initialize method for bayesPO_initial objects
-#'
-#' Fills the object with the necessary slots, converting them to numeric as
-#' needed
-#' @param .Object An empty bayesPO_initial object.
-#' @param beta A vector with initial beta values. Must be possible to coerce to
-#' numeric.
-#' @param delta A vector with initial delta values. Must be possible to coerce
-#' to numeric.
-#' @param lambdaStar A number with initial the lambdaStar value. Must be
-#' possible to coerce to numeric.
-#' @param tag The tag indicating the origin of the initial value.
-#' @export
-#' @exportMethod initialize
-methods::setMethod("initialize", "bayesPO_initial",
-                   function(.Object, beta, delta, lambdaStar, tag){
-  methods::slot(.Object,"beta") <- as.numeric(beta)
-  methods::slot(.Object,"delta") <- as.numeric(delta)
-  methods::slot(.Object,"lambdaStar") <- as.numeric(lambdaStar)
-  methods::slot(.Object,"tag") <- tag
-  .Object
-})
-
 #' @rdname bayesPO_initial-class
 #' @param x The bayesPO_initial object.
+#' @return \strong{\code{names}}: A character vector with the initialized
+#' parameter names.
 #' @export
 #' @exportMethod names
 methods::setMethod("names","bayesPO_initial", function(x) c("beta", "delta", "lambdaStar"))
@@ -50,6 +29,8 @@ methods::setMethod("names","bayesPO_initial", function(x) c("beta", "delta", "la
 #' @rdname bayesPO_initial-class
 #' @param x The bayesPO_initial object.
 #' @param name The requested slot.
+#' @return \strong{\code{`$`}}: The requested initial value (in case of
+#' LambdaStar) or values (in case of Beta or Delta).
 #' @export
 #' @exportMethod $
 methods::setMethod("$","bayesPO_initial",function(x,name) methods::slot(x, name))
@@ -60,13 +41,12 @@ methods::setMethod("$","bayesPO_initial",function(x,name) methods::slot(x, name)
 #' objects for \strong{+} and a positive integer for \strong{*}. e1 and e2
 #' can be switched (+ and * are commutative).
 #' @return \strong{\code{+}}: A list with the objects. Useful to start the
-#' fit function.
+#' \code{fit_bayesPO} function, as it requires a list of initial values.
 #' @export
 #' @exportMethod +
 methods::setMethod("+", "bayesPO_initial", function(e1, e2) list(e1, e2))
 
 #' @rdname bayesPO_initial-class
-#' @param e1 A bayesPO_initial object.
 #' @export
 #' @exportMethod +
 methods::setMethod("+",methods::signature(e1 = "bayesPO_initial", e2 = "list"),
@@ -121,6 +101,7 @@ methods::setMethod("*", methods::signature(e1 = "numeric", e2 = "bayesPO_initial
 
 #' @rdname bayesPO_initial-class
 #' @param object A bayesPO_initial object.
+#' @return \strong{\code{show}} and \strong{\code{print}}: The invisible object.
 #' @export
 #' @exportMethod show
 methods::setMethod("show", "bayesPO_initial", function(object){
@@ -165,7 +146,10 @@ print.bayesPO_initial <- function(x, ...) methods::show(x)
 #' and from a \code{Beta(lambdaStar, 1)} for \code{lambdaStar}. The latter is
 #' generated as a low value due to potential explosive values resulting from
 #' background area scaling.
-#' @return A \code{bayesPO_initial} object.
+#' @return A \code{bayesPO_initial} object. It can be used in the
+#' \code{fit_bayesPO} function by itself, but must be in a list if multiple
+#' initial values are supplied. Initial values can be combined by adding them
+#' (with the use of `+`).
 #' @seealso \code{\link{bayesPO_initial-class}}.
 #' @export
 initial <- function(beta = numeric(), delta = numeric(), lambdaStar = numeric(),
@@ -174,6 +158,8 @@ initial <- function(beta = numeric(), delta = numeric(), lambdaStar = numeric(),
                            delta = stats::rnorm(delta),
                            lambdaStar = stats::rbeta(1, lambdaStar, 1), # Simulated small for safety
                            tag = "random")
-  else methods::new('bayesPO_initial', beta = beta, delta = delta,
-                    lambdaStar = lambdaStar, tag = "supplied")
+  else methods::new('bayesPO_initial',
+                    beta = as.numeric(beta),
+                    delta = as.numeric(delta),
+                    lambdaStar = as.numeric(lambdaStar), tag = "supplied")
 }

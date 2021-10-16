@@ -11,6 +11,9 @@ GammaPrior(shape, rate)
 
 \item{rate}{A positive number.}
 }
+\value{
+A \code{GammaPrior} object with adequate slots.
+}
 \description{
 Constructor for \code{GammaPrior-class} objects
 }

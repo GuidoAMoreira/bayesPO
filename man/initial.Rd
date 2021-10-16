@@ -29,7 +29,10 @@ generated as a low value due to potential explosive values resulting from
 background area scaling.}
 }
 \value{
-A \code{bayesPO_initial} object.
+A \code{bayesPO_initial} object. It can be used in the
+\code{fit_bayesPO} function by itself, but must be in a list if multiple
+initial values are supplied. Initial values can be combined by adding them
+(with the use of `+`).
 }
 \description{
 Helper function to create a valid set of initial values to be used with the

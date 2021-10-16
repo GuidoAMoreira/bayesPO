@@ -11,6 +11,9 @@ NormalPrior(mu, Sigma)
 
 \item{Sigma}{The covariance matrix for the Normal distribution.}
 }
+\value{
+A \code{NormalPrior} object with adequate slots.
+}
 \description{
 Constructor for \code{NormalPrior-class} objects
 }

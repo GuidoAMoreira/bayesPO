@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // runBayesPO
-Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta, double lambda, Rcpp::String b_updater, Rcpp::String d_updater, Rcpp::String l_updater, Rcpp::List parB, Rcpp::List parD, Rcpp::List parL, Rcpp::String covsClass, SEXP covariates, double areaD, Rcpp::String xClass, Eigen::MatrixXd xValues, Eigen::VectorXi intensityCovs, Eigen::VectorXi observabilityCovs, Eigen::VectorXi xIntensityCovs, Eigen::VectorXi xObservabilityCovs, int burnin, int thin, int iter, int threads);
-RcppExport SEXP _bayesPO_runBayesPO(SEXP betaSEXP, SEXP deltaSEXP, SEXP lambdaSEXP, SEXP b_updaterSEXP, SEXP d_updaterSEXP, SEXP l_updaterSEXP, SEXP parBSEXP, SEXP parDSEXP, SEXP parLSEXP, SEXP covsClassSEXP, SEXP covariatesSEXP, SEXP areaDSEXP, SEXP xClassSEXP, SEXP xValuesSEXP, SEXP intensityCovsSEXP, SEXP observabilityCovsSEXP, SEXP xIntensityCovsSEXP, SEXP xObservabilityCovsSEXP, SEXP burninSEXP, SEXP thinSEXP, SEXP iterSEXP, SEXP threadsSEXP) {
+Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta, double lambda, Rcpp::String b_updater, Rcpp::String d_updater, Rcpp::String l_updater, Rcpp::List parB, Rcpp::List parD, Rcpp::List parL, Rcpp::String covsClass, SEXP covariates, double areaD, Rcpp::String xClass, Eigen::MatrixXd xValues, Eigen::VectorXi intensityCovs, Eigen::VectorXi observabilityCovs, Eigen::VectorXi xIntensityCovs, Eigen::VectorXi xObservabilityCovs, int burnin, int thin, int iter, int threads, bool verbose);
+RcppExport SEXP _bayesPO_runBayesPO(SEXP betaSEXP, SEXP deltaSEXP, SEXP lambdaSEXP, SEXP b_updaterSEXP, SEXP d_updaterSEXP, SEXP l_updaterSEXP, SEXP parBSEXP, SEXP parDSEXP, SEXP parLSEXP, SEXP covsClassSEXP, SEXP covariatesSEXP, SEXP areaDSEXP, SEXP xClassSEXP, SEXP xValuesSEXP, SEXP intensityCovsSEXP, SEXP observabilityCovsSEXP, SEXP xIntensityCovsSEXP, SEXP xObservabilityCovsSEXP, SEXP burninSEXP, SEXP thinSEXP, SEXP iterSEXP, SEXP threadsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -39,13 +39,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
     Rcpp::traits::input_parameter< int >::type iter(iterSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(runBayesPO(beta, delta, lambda, b_updater, d_updater, l_updater, parB, parD, parL, covsClass, covariates, areaD, xClass, xValues, intensityCovs, observabilityCovs, xIntensityCovs, xObservabilityCovs, burnin, thin, iter, threads));
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(runBayesPO(beta, delta, lambda, b_updater, d_updater, l_updater, parB, parD, parL, covsClass, covariates, areaD, xClass, xValues, intensityCovs, observabilityCovs, xIntensityCovs, xObservabilityCovs, burnin, thin, iter, threads, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_bayesPO_runBayesPO", (DL_FUNC) &_bayesPO_runBayesPO, 22},
+    {"_bayesPO_runBayesPO", (DL_FUNC) &_bayesPO_runBayesPO, 23},
     {NULL, NULL, 0}
 };
 

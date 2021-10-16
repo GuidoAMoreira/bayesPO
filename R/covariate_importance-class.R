@@ -19,6 +19,7 @@ NULL
 #' @param component Either \code{"intensity"}, \code{"observability"} or
 #' \code{"both"}.
 #' @param ... Ignored.
+#' @return The invisible object.
 #' @method print covariates_importance
 #' @export
 print.covariates_importance <- function(x, component = "intensity", ...){
@@ -45,6 +46,8 @@ print.covariates_importance <- function(x, component = "intensity", ...){
 #' specified. If 3-dimensiona, the middle point is drawn as a dot when the
 #' \code{y} parameter is set as \code{"interval"}.
 #' @param ... Other parameters passed to \code{\link[graphics]{plot}}.
+#' @return Nothing is returned. Plot is called and drawn on the configured
+#' device.
 #' @method plot covariates_importance
 #' @importFrom stats density
 #' @importFrom graphics plot axis segments points par
@@ -84,12 +87,12 @@ plot.covariates_importance <- function(x, component = "intensity",
       col_nmbrs <- large_row_nmbr:(large_row_nmbr + 2)
       pp <- graphics::par(mfrow = c(large_row_nmbr,
                           col_nmbrs[min(which(col_nmbrs * large_row_nmbr >= plots))]))
+      on.exit(graphics::par(pp))
       for (p in 1:plots){
         graphics::plot(stats::density(x[[component]][, p]),
                        xlab = paste(colnames(x[[component]])[p], "importance"),
                        main = colnames(x[[component]])[p],...)
       }
-      graphics::par(pp)
     }
   } else {
     plot.covariates_importance(x, "intensity", y)
@@ -105,6 +108,9 @@ plot.covariates_importance <- function(x, component = "intensity",
 #' \code{"both"}.
 #' @param ... Other parameters passed to \code{\link[graphics]{barplot}}.
 #' @method barplot covariates_importance
+#' @return A barplot. See \code{barplot} for details. If component is selected
+#' as \code{"both"}, only the second barplot is returned.
+#' @seealso \code{\link[graphics]{barplot}}.
 #' @importFrom graphics barplot
 #' @export
 barplot.covariates_importance <- function(height, component = "intensity", y, ...) {
@@ -126,6 +132,9 @@ barplot.covariates_importance <- function(height, component = "intensity", y, ..
 #' \code{"both"}.
 #' @param ... Other parameters passed to \code{\link[graphics]{boxplot}}.
 #' @method boxplot covariates_importance
+#' @return A boxplot. See \code{boxplot} for details. If component is selected
+#' as \code{"both"}, only the second boxplot is returned.
+#' @seealso \code{\link[graphics]{boxplot}}.
 #' @importFrom graphics boxplot
 #' @export
 boxplot.covariates_importance <- function(x, component = "intensity", ...) {

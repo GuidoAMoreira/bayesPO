@@ -14,7 +14,8 @@ NULL
 #' the function is being used on a \code{bayesPO_fit} object, the background
 #' must be exactly the same as the one used in the original fit.
 #' @param mcmc_setup A list containing \code{iter} to inform the model how
-#' many iterations are to be run. The list may optionally contain the objects
+#' many iterations are to be run. The list may optionally contain the objects.
+#' @param verbose Set to \code{FALSE} to suppress all messages to console.
 #' @param ... Parameters passed on to specific methods.
 #' \code{burnin} and \code{thin} to inform these instructions as well.
 #' @return An object of class \code{"bayesPO_fit"}.
@@ -23,7 +24,8 @@ NULL
 #' @importFrom coda mcmc mcmc.list
 #' @export
 methods::setGeneric("fit_bayesPO", function(object, background,
-                                            mcmc_setup = list(iter = 5000), ...)
+                                            mcmc_setup = list(iter = 5000),
+                                            verbose = TRUE, ...)
   standardGeneric("fit_bayesPO"))
 
 #' @rdname fit_bayesPO
@@ -33,7 +35,7 @@ methods::setGeneric("fit_bayesPO", function(object, background,
 methods::setMethod("fit_bayesPO",
                    methods::signature(object = "bayesPO_model",
                                       background = "matrix"),
-                   function(object, background, mcmc_setup, area = 1, cores = 1, ...){
+                   function(object, background, mcmc_setup, verbose = TRUE, area = 1, cores = 1, ...){
   ## Verifying background names if columns are selected by column name. Crewating background selection variables
   backConfig <- checkFormatBackground(object, background)
   cores <- 1
@@ -82,7 +84,7 @@ methods::setMethod("fit_bayesPO",
   time <- Sys.time()
   mcmcRun <- list()
   for (c in 1:chains){
-     if (chains > 1) cat("Starting chain ", c, ".\n",sep="")
+     if (chains > 1 && verbose) cat("Starting chain ", c, ".\n",sep="")
      mcmcRun[[c]] <- do.call(cbind,
   runBayesPO(
     methods::slot(s("init")[[c]], "beta"),
@@ -118,13 +120,13 @@ methods::setMethod("fit_bayesPO",
     mcmc_setup$burnin, # MCMC burn-in
     mcmc_setup$thin, # MCMC thin
     mcmc_setup$iter, # MCMC iterations
-    cores)
+    cores, verbose)
      )
      colnames(mcmcRun[[c]]) <- parnames
      mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
      if (chains > 1) cat("Finished chain ",c,".\n\n",sep="")
   }
-  if (chains > 1) cat("Total computation time: ", format(unclass(Sys.time()-time),
+  if (chains > 1 && verbose) cat("Total computation time: ", format(unclass(Sys.time()-time),
                                                          digits = 2), " ",
                       attr(Sys.time() - time, "units"), ".\n", sep="")
 
@@ -142,7 +144,7 @@ methods::setMethod("fit_bayesPO",
 #' @param cores Currently unused.
 methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
                                             background = "matrix"),
-  function(object, background, mcmc_setup = list(iter = object$mcmc_setup$iter),
+  function(object, background, mcmc_setup = list(iter = object$mcmc_setup$iter), verbose = TRUE,
            cores = 1, ...){
    # Helper function
    s <- function(n) methods::slot(object, n)
@@ -151,7 +153,7 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
    cores <- 1
 
    # Check background differences
-   cat("Performing error check...\n")
+   if (verbose) cat("Performing error check...\n")
    stopifnot(all.equal(s("backgroundSummary"), summary(background)),
              "iter" %in% names(mcmc_setup), !is.na(mcmc_setup$iter),
              length(mcmc_setup$iter) == 1,
@@ -181,7 +183,7 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
    time <- Sys.time()
    mcmcRun <- list()
    for (c in 1:chains){
-     if (chains > 1) cat("Starting chain ",c,".\n",sep="")
+     if (chains > 1 && verbose) cat("Starting chain ",c,".\n",sep="")
      mcmcRun[[c]] <- do.call(cbind,
    runBayesPO(
      lastPoint[betaPos], # Starting at last stored point
@@ -217,13 +219,13 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
      0, # MCMC burn-in
      mcmc_setup$thin, # MCMC thin
      mcmc_setup$iter, # MCMC iterations
-     cores)
+     cores, verbose)
      )
      colnames(mcmcRun[[c]]) <- s("parnames")
      mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
      if (chains > 1) cat("Finished chain ",c,".\n\n",sep="")
    }
-   if (chains > 1) cat("Total computation time: ", format(unclass(Sys.time()-time),
+   if (chains > 1 && verbose) cat("Total computation time: ", format(unclass(Sys.time()-time),
                                                           digits = 2), " ",
                        attr(Sys.time() - time, "units"), ".\n", sep="")
 
@@ -300,20 +302,22 @@ checkFormatBackground <- function(object,background){
 #' with respect to the intensity covariates. Current version accepts 'logit'.
 #' @param observabilityLink A string to inform what link function the model has
 #' with respect to the observabilitycovariates. Current version accepts 'logit'.
-#' @param initial_values Either a single integer or list containing
+#' @param initial_values Either a single integer, a single
+#' \code{bayesPO_initial-class} or a list containing
 #' \code{bayesPO_initial-class} objects. The length of the list will inform the
 #' model how many independent chains will be run. If an integer, that many
 #' initial values will be randomly generated.
 #' @param joint_prior A \code{bayesPO_prior} object.
+#' @param verbose Set to \code{FALSE} to suppress all messages to console.
+#' @return A \code{bayesPO_model} object with the requested slots. It is ready
+#' to be used in the \code{fit_bayesPO} function.
 #' @seealso \code{\link{initial}}, \code{\link{prior}} and
 #' \code{\link{fit_bayesPO}}.
 #' @export
 bayesPO_model = function(po, intensitySelection,
                          observabilitySelection,
                          intensityLink = "logit", observabilityLink = "logit",
-                         initial_values = initial(length(intensitySelection) + 1,
-                                                  length(observabilitySelection) + 1,
-                                                  nrow(po), random=TRUE),
+                         initial_values = 1,
                          joint_prior = prior(
                            beta = NormalPrior(
                              rep(0,length(intensitySelection) + 1),
@@ -323,7 +327,7 @@ bayesPO_model = function(po, intensitySelection,
                              10*diag(length(observabilitySelection) + 1)),
                            lambdaStar = GammaPrior(
                              1e-10, 1e-10
-                           ))){
+                           )), verbose = TRUE){
   #if (missing(po)) {return(model_builder())} # Easy and interactive model building
 
   stopifnot(is.matrix(po),
@@ -364,10 +368,20 @@ bayesPO_model = function(po, intensitySelection,
                              length(observabilitySelection) + 1,
                              nrow(po), random=TRUE) * initial_values
 
-  return(methods::new("bayesPO_model", po = po, intensityLink = intensityLink,
-                      intensitySelection = intensitySelection,
-                      observabilityLink = observabilityLink,
-                      observabilitySelection = observabilitySelection,
-                      init = initial_values, prior = joint_prior,
-                      iSelectedColumns = icharSel, oSelectedColumns = ocharSel))
+  if (verbose) cat("Loading data with", nrow(po), "observed points.\n")
+  output <- methods::new("bayesPO_model", po = po, intensityLink = intensityLink,
+                         intensitySelection = intensitySelection,
+                         observabilityLink = observabilityLink,
+                         observabilitySelection = observabilitySelection,
+                         init = initial_values, prior = joint_prior,
+                         iSelectedColumns = icharSel, oSelectedColumns = ocharSel)
+  if (verbose) {
+    cat("Data loaded successfully with ", length(intensitySelection), " intensity variables and ",
+        length(observabilitySelection), " observability variables selected.\n", length(initial_values), " chains ",
+        ifelse(length(initial_values) > 1, "were", "was"), " initialized.\n", sep = "")
+    if (!length(icharSel)) cat("Intensity covariates selected with column indexes. Make sure the background covariates are in the same position.\n")
+    if (!length(ocharSel)) cat("Observability covariates selected with column indexes. Make sure the background covariates are in the same position.\n")
+  }
+
+  return(output)
 }

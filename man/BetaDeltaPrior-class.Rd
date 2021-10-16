@@ -21,6 +21,9 @@
 
 \item{...}{Ignored.}
 }
+\value{
+\strong{\code{show}} and \strong{\code{print}}: The invisible object.
+}
 \description{
 Generic class for the beta and delta parameters.
 }

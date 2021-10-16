@@ -16,7 +16,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
                       Eigen::VectorXi observabilityCovs,
                       Eigen::VectorXi xIntensityCovs,
                       Eigen::VectorXi xObservabilityCovs,
-                      int burnin, int thin, int iter, int threads)
+                      int burnin, int thin, int iter, int threads, bool verbose)
 {
 
   Eigen::MatrixXd outBetas(iter/thin, beta.size()),
@@ -35,7 +35,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
   auto t2 = std::chrono::high_resolution_clock::now(); // Timing variable
 
   // Let user know it's working
-  Rcpp::Rcout << "Building MCMC model.\n";
+  if (verbose) Rcpp::Rcout << "Building MCMC model.\n";
 
   // Defining covariates object
   retrievCovs *covs;
@@ -55,12 +55,12 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
                                     areaD);
 
   // Let user know it's working
-  Rcpp::Rcout << "MCMC model built.\n";
+  if (verbose) Rcpp::Rcout << "MCMC model built.\n";
 
   // Warming up the Markov Chain
   if (burnin)
   {
-    Rcpp::Rcout << "Warming up the Markov Chain.\n";
+    if (verbose) Rcpp::Rcout << "Warming up the Markov Chain.\n";
     Progress progr_Burnin(burnin, true);
     t1 = std::chrono::high_resolution_clock::now();
     for (i = 0; i < burnin; i++)
@@ -69,14 +69,14 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
       MarkovChain.update();
       }
     t2 = std::chrono::high_resolution_clock::now();
-    Rcpp::Rcout << "Warm up complete. ";
-    Rcpp::Rcout << "Warmup took " <<
+    if (verbose) Rcpp::Rcout << "Warm up complete. ";
+    if (verbose) Rcpp::Rcout << "Warmup took " <<
       std::chrono::duration_cast<std::chrono::seconds>( t2 - t1 ).count() <<
         " seconds.\n";
   }
 
   // Let user know it's working
-  Rcpp::Rcout << "Sampling MCMC.\n";
+  if (verbose) Rcpp::Rcout << "Sampling MCMC.\n";
 
 #ifdef _OPENMP
   if ( threads > 0 )
@@ -109,8 +109,8 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
   //    Rcout << "Candidate choice took " << std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count() << " microseconds.\n";
 
   // Let user know it's working
-  Rcpp::Rcout << "MCMC sampling complete.\n";
-  Rcpp::Rcout << "MCMC took " <<
+  if (verbose) Rcpp::Rcout << "MCMC sampling complete.\n";
+  if (verbose) Rcpp::Rcout << "MCMC took " <<
     std::chrono::duration_cast<std::chrono::seconds>( t2 - t1 ).count() <<
       " seconds.\n";
 

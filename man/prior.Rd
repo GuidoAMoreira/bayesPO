@@ -13,12 +13,16 @@ prior(beta, delta, lambdaStar)
 
 \item{lambdaStar}{An S4 object whose class inherits from \code{LambdaStarPrior}.}
 }
+\value{
+A \code{bayesPO_prior} object with the adequate slots. It is ready to
+be included in a model via the \code{bayesPO_model} function.
+}
 \description{
 Constructor for \code{bayesPO_prior} objects, which is used in the
 \code{bayesPO_fit} function. The generated prior is so that Beta, Delta
 and LambdaStar are indepdendent a priori.
 }
 \seealso{
-\code{\link{fit_bayesPO}}, \code{\link{NormalPrior}} and
-\code{\link{GammaPrior}}
+\code{\link{fit_bayesPO}}, \code{\link{NormalPrior}},
+\code{\link{GammaPrior}} and \code{\link{bayesPO_model}}.
 }

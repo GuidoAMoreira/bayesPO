@@ -11,9 +11,13 @@ methods::setClass("BetaDeltaPrior", representation(family="character"))
 
 #' @rdname BetaDeltaPrior-class
 #' @param object The BetaDeltaPrior object.
+#' @return \strong{\code{show}} and \strong{\code{print}}: The invisible object.
 #' @export
 #' @exportMethod show
-methods::setMethod("show", "BetaDeltaPrior", function(object) cat("Prior for Beta and Delta from the", methods::slot(object, "family"), "family.\n"))
+methods::setMethod("show", "BetaDeltaPrior", function(object){
+  cat("Prior for Beta and Delta from the", methods::slot(object, "family"), "family.\n")
+  invisible(object)
+})
 
 #' @rdname BetaDeltaPrior-class
 #' @param x The BetaDeltaPrior object.
@@ -26,6 +30,10 @@ methods::setMethod("print", "BetaDeltaPrior", function(x, ...) methods::show(x))
 #' @method print BetaDeltaPrior
 #' @export
 print.BetaDeltaPrior <- function(x, ...) methods::show(x)
+
+methods::setMethod("retrievePars", "BetaDeltaPrior", function(object){
+  stop("Please specify a specific prior distribution for Beta and Delta.")
+})
 
 #' Normal prior class for Beta and Delta parameters.
 #'
@@ -51,6 +59,7 @@ methods::setClass("NormalPrior", contains="BetaDeltaPrior",
 #' @param Sigma The covariance matrix for the Normal distribution.
 #' @details Matrix Sigma must be square and positive definite. Its dimensions
 #' must match mu's length.
+#' @return A \code{NormalPrior} object with adequate slots.
 #' @seealso \code{\link{prior}}
 #' @export
 NormalPrior <- function(mu, Sigma){
@@ -62,6 +71,7 @@ NormalPrior <- function(mu, Sigma){
 ## Methods
 #' @rdname NormalPrior-class
 #' @param x The NormalPrior object.
+#' @return \strong{\code{names}}: A character vector with the prior parameters.
 #' @export
 #' @exportMethod names
 methods::setMethod("names","NormalPrior",function(x) c("mu","Sigma"))
@@ -69,14 +79,16 @@ methods::setMethod("names","NormalPrior",function(x) c("mu","Sigma"))
 #' @rdname NormalPrior-class
 #' @param x The NormalPrior object.
 #' @param name The requested slot.
+#' @return \strong{\code{`$`}}: The requested slot's value.
 #' @export
 #' @exportMethod $
-methods::setMethod("$","NormalPrior",function(x,name) methods::slot(x,name))
+methods::setMethod("$","NormalPrior",function(x,name) methods::slot(x, name))
 
 #' @rdname NormalPrior-class
 #' @param x The NormalPrior object.
-#' @param name The slot to be changed.
+#' @param name The requested slot.
 #' @param value New value.
+#' @return \strong{\code{`$<-`}}: The new object with the updated slot.
 #' @export
 #' @exportMethod $<-
 methods::setMethod("$<-","NormalPrior",function(x,name,value){
@@ -87,6 +99,7 @@ methods::setMethod("$<-","NormalPrior",function(x,name,value){
 
 #' @rdname NormalPrior-class
 #' @param object The NormalPrior object.
+#' @return \strong{\code{show}} and \strong{\code{print}}: The invisible object.
 #' @export
 #' @exportMethod show
 methods::setMethod("show","NormalPrior",function(object){
@@ -130,6 +143,16 @@ methods::setMethod("retrievePars", "NormalPrior", function(object){
 #' @exportClass LambdaStarPrior
 methods::setClass("LambdaStarPrior", methods::representation(family = "character"))
 
+#' @rdname LambdaStarPrior-class
+#' @param object The LambdaStarPrior object.
+#' @return \strong{\code{show}} and \strong{\code{print}}: The invisible object.
+#' @export
+#' @exportMethod show
+methods::setMethod("show", "LambdaStarPrior", function(object){
+  cat("Prior for LambdaStar from the", methods::slot(object, "family"), "family.\n")
+  invisible(object)
+})
+
 #' Gamma prior class for the LambdaStar parameter.
 #'
 #' This is used to represent the prior for lambdaStar individually. It
@@ -150,12 +173,17 @@ methods::setClass("GammaPrior", contains="LambdaStarPrior",
     TRUE
   })
 
+methods::setMethod("retrievePars", "GammaPrior", function(object){
+  stop("Please specify a specific prior distribution for LambdaStar.")
+})
+
 ## Constructor
 #' Create a Gamma prior object for model specification.
 #'
 #' Constructor for \code{GammaPrior-class} objects
 #' @param shape A positive number.
 #' @param rate A positive number.
+#' @return A \code{GammaPrior} object with adequate slots.
 #' @export
 GammaPrior <- function(shape, rate) {
   stopifnot(shape > 0, rate > 0)
@@ -165,21 +193,24 @@ GammaPrior <- function(shape, rate) {
 ## Methods
 #' @rdname GammaPrior-class
 #' @param x The GammaPrior object.
+#' @return \strong{\code{names}}: A character vector with the prior parameters.
 #' @export
 #' @exportMethod names
 methods::setMethod("names", "GammaPrior", function(x) c("shape", "rate"))
 
 #' @rdname GammaPrior-class
-#' @param x The GammaPrior object.
+#' @param x The Gamma<- object.
 #' @param name The requested slot.
+#' @return \strong{\code{`$`}} The requested slot's value.
 #' @export
 #' @exportMethod $
 methods::setMethod("$", "GammaPrior", function(x, name) methods::slot(x, name))
 
 #' @rdname GammaPrior-class
 #' @param x The GammaPrior object.
-#' @param name The slot to be changed.
+#' @param name The requested slot.
 #' @param value New value.
+#' @return \strong{\code{`$<-`}}: The new object with the updated slot.
 #' @export
 #' @exportMethod $<-
 methods::setMethod("$<-", "GammaPrior", function(x, name, value){
@@ -190,6 +221,7 @@ methods::setMethod("$<-", "GammaPrior", function(x, name, value){
 
 #' @rdname GammaPrior-class
 #' @param object The GammaPrior object.
+#' @return \strong{\code{show}} and \strong{\code{print}}: The invisible object.
 #' @export
 #' @exportMethod show
 methods::setMethod("show", "GammaPrior", function(object){
@@ -259,8 +291,10 @@ methods::setMethod("$", "bayesPO_prior", function(x,name) methods::slot(x, name)
 #' @param beta An S4 object whose class inherits from \code{BetaDeltaPrior}.
 #' @param delta An S4 object whose class inherits from \code{BetaDeltaPrior}.
 #' @param lambdaStar An S4 object whose class inherits from \code{LambdaStarPrior}.
-#' @seealso \code{\link{fit_bayesPO}}, \code{\link{NormalPrior}} and
-#' \code{\link{GammaPrior}}
+#' @return A \code{bayesPO_prior} object with the adequate slots. It is ready to
+#' be included in a model via the \code{bayesPO_model} function.
+#' @seealso \code{\link{fit_bayesPO}}, \code{\link{NormalPrior}},
+#' \code{\link{GammaPrior}} and \code{\link{bayesPO_model}}.
 #' @export
 prior <- function(beta, delta, lambdaStar){
   methods::new("bayesPO_prior", beta = beta, delta = delta, lambdaStar = lambdaStar)
@@ -268,6 +302,8 @@ prior <- function(beta, delta, lambdaStar){
 
 #' @rdname bayesPO_prior-class
 #' @param object The bayesPO_prior object.
+#' @return \strong{\code{names}}: A character vector with the model parameters
+#' names.
 #' @export
 #' @exportMethod show
 setMethod("show", "bayesPO_prior", function(object){
@@ -296,14 +332,16 @@ print.bayesPO_prior <- function(x, ...) methods::show(x)
 #' @rdname bayesPO_prior-class
 #' @param x The bayesPO_prior object.
 #' @param name The requested slot.
+#' @return \strong{\code{`$`}}: The requested slot's value.
 #' @export
 #' @exportMethod $
 setMethod("$", "bayesPO_prior", function(x, name) methods::slot(x, name))
 
 #' @rdname bayesPO_prior-class
 #' @param x The bayesPO_prior object.
-#' @param name The slot to be changed.
+#' @param name The requested slot.
 #' @param value New value.
+#' @return \strong{\code{`$<-`}}: The new object with the updated slot.
 #' @export
 #' @exportMethod $<-
 setMethod("$<-", "bayesPO_prior", function(x, name, value){

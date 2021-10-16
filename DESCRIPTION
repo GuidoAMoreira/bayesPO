@@ -44,4 +44,5 @@ Collate:
     'fit-class.R'
     'bayesPO.R'
     'covariate_importance-class.R'
+URL: <http://www.pg.im.ufrj.br/teses/Estatistica/Doutorado/043.pdf>
 VignetteBuilder: knitr

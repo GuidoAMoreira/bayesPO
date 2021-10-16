@@ -40,6 +40,18 @@ specified. If 3-dimensiona, the middle point is drawn as a dot when the
 
 \item{height}{The \code{covariates_importance} object.}
 }
+\value{
+The invisible object.
+
+Nothing is returned. Plot is called and drawn on the configured
+device.
+
+A barplot. See \code{barplot} for details. If component is selected
+as \code{"both"}, only the second barplot is returned.
+
+A boxplot. See \code{boxplot} for details. If component is selected
+as \code{"both"}, only the second boxplot is returned.
+}
 \description{
 Objects of this class is the output of the "covariates_importance" object
 from the \code{\link{bayesPO_fit-class}}. It can be plotted which uses
@@ -52,4 +64,9 @@ of the importance.
 Objects of this class have two matrices where the Monte Carlo samples on the
 rows and parameters on the columns. One matrix is for the intensity
 importance and the other for the observability importance.
+}
+\seealso{
+\code{\link[graphics]{barplot}}.
+
+\code{\link[graphics]{boxplot}}.
 }

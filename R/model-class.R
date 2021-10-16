@@ -22,7 +22,7 @@ NULL
 #' joint prior distribution for the model parameters.
 #' @field iSelectedColumns If the intensity covariates selection was made with
 #' the name of the columns, they are stored in this slot.
-#' @field iSelectedColumns If the observability covariates selection was made
+#' @field oSelectedColumns If the observability covariates selection was made
 #' with the name of the columns, they are stored in this slot.
 #' @seealso \code{\link{bayesPO_initial-class}} and
 #' \code{\link{bayesPO_prior-class}} and \code{\link{bayesPO_model}}
@@ -62,67 +62,28 @@ methods::setClass("bayesPO_model",
            TRUE
          })
 
-#' Initialize method for bayesPO_model objects
-#'
-#' Fills the object with the necessary slots. Provides some text informing
-#' the loaded data.
-#' @param .Object An empty bayesPO_model object.
-#' @param po The matrix containing the covariates in the observed locations.
-#' @param intensityLink A string containing the intensity Link function.
-#' @param intensitySelection The positions of selected columns for the intensity
-#' covariates. Can be empty if the selection was from a character vector.
-#' @param observabilityLink A string containing the observability Link function.
-#' @param observabilitySelection The positions of selected columns for the
-#' observability covariates. Can be empty if the selection was from a character
-#' vector.
-#' @param init A bayesPO_initial object.
-#' @param prior A bayesPO_prior object.
-#' @param iSelectedColumns A character vector containing the selected
-#' intensity covariates. Can be empty if the selection was from the columns
-#' positions.
-#' @param oSelectedColumns A character vector containing the selected
-#' observability covariates. Can be empty if the selection was from the columns
-#' positions.
-#' @export
-#' @exportMethod initialize
-methods::setMethod("initialize", "bayesPO_model", function(.Object, po, intensityLink, intensitySelection,
-                                                observabilityLink, observabilitySelection,
-                                                init, prior, iSelectedColumns, oSelectedColumns){
-  cat("Loading data with", nrow(po), "observed points.\n")
-  methods::slot(.Object, "po") <- po
-  methods::slot(.Object, "intensityLink") <- intensityLink; methods::slot(.Object, "observabilityLink") = observabilityLink
-  methods::slot(.Object, "intensitySelection") <- intensitySelection; methods::slot(.Object, "observabilitySelection") = observabilitySelection
-  methods::slot(.Object, "init") <- init
-  methods::slot(.Object, "prior") <- prior
-  methods::slot(.Object, "iSelectedColumns") <- iSelectedColumns
-  methods::slot(.Object, "oSelectedColumns") <- oSelectedColumns
-  methods::validObject(.Object)
-  cat("Data loaded successfully with ", length(intensitySelection), " intensity variables and ",
-      length(observabilitySelection), " observability variables selected.\n", length(init), " chains ",
-      ifelse(length(init) > 1, "were","was"), " initialized.\n", sep = "")
-  if (!length(iSelectedColumns)) cat("Intensity covariates selected with column indexes. Make sure the background covariates are in the same position.\n")
-  if (!length(oSelectedColumns)) cat("Observability covariates selected with column indexes. Make sure the background covariates are in the same position.\n")
-  .Object
-})
-
 #' @rdname bayesPO_model-class
 #'
 #' @param x The bayesPO_model object.
+#' @return \strong{\code{names}}: A character vector with possible options
+#' for the \code{`$`} and \code{`$<-`} methods.
 #' @export
 #' @exportMethod names
 methods::setMethod("names", "bayesPO_model",
           function(x) c("po", "intensityLink", "intensitySelection",
                         "observabilityLink", "observabilitySelection",
-                        "initial values", "prior"))
+                        "initial_values", "prior"))
 
 #' @rdname bayesPO_model-class
 #'
 #' @param x The bayesPO_model object.
-#' @param name The requested slot.
+#' @param name The requested slot. Available options are not necessarily the
+#' class slots. They can be checked with the \code{names} method.
+#' @return \strong{\code{`$`}}: The requested slot's value.
 #' @export
 #' @exportMethod $
 methods::setMethod("$","bayesPO_model",function(x,name){
-  if (name %in% c("initial values", "initial")) methods::slot(x, "init") else methods::slot(x, name)
+  if (name %in% c("initial_values", "initial")) methods::slot(x, "init") else methods::slot(x, name)
 })
 
 #' @rdname bayesPO_model-class
@@ -130,6 +91,7 @@ methods::setMethod("$","bayesPO_model",function(x,name){
 #' @param x The bayesPO_model object.
 #' @param name The requested slot.
 #' @param value New value.
+#' @return \strong{\code{`$<-`}}: The new object with the updated slot.
 #' @export
 #' @exportMethod $<-
 methods::setMethod("$<-","bayesPO_model",function(x, name, value){

@@ -6,14 +6,29 @@
 \alias{fit_bayesPO,bayesPO_fit,matrix-method}
 \title{Fit presence-only data using a Bayesian Poisson Process model}
 \usage{
-fit_bayesPO(object, background, mcmc_setup = list(iter = 5000), ...)
+fit_bayesPO(
+  object,
+  background,
+  mcmc_setup = list(iter = 5000),
+  verbose = TRUE,
+  ...
+)
 
-\S4method{fit_bayesPO}{bayesPO_model,matrix}(object, background, mcmc_setup, area = 1, cores = 1, ...)
+\S4method{fit_bayesPO}{bayesPO_model,matrix}(
+  object,
+  background,
+  mcmc_setup,
+  verbose = TRUE,
+  area = 1,
+  cores = 1,
+  ...
+)
 
 \S4method{fit_bayesPO}{bayesPO_fit,matrix}(
   object,
   background,
   mcmc_setup = list(iter = object$mcmc_setup$iter),
+  verbose = TRUE,
   cores = 1,
   ...
 )
@@ -30,7 +45,9 @@ the function is being used on a \code{bayesPO_fit} object, the background
 must be exactly the same as the one used in the original fit.}
 
 \item{mcmc_setup}{A list containing \code{iter} to inform the model how
-many iterations are to be run. The list may optionally contain the objects}
+many iterations are to be run. The list may optionally contain the objects.}
+
+\item{verbose}{Set to \code{FALSE} to suppress all messages to console.}
 
 \item{...}{Parameters passed on to specific methods.
 \code{burnin} and \code{thin} to inform these instructions as well.}

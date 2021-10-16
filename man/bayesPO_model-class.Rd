@@ -21,6 +21,14 @@
 
 \item{value}{New value.}
 }
+\value{
+\strong{\code{names}}: A character vector with possible options
+for the \code{`$`} and \code{`$<-`} methods.
+
+\strong{\code{`$`}}: The requested slot's value.
+
+\strong{\code{`$<-`}}: The new object with the updated slot.
+}
 \description{
 The model includes the presence-only data, all selected variables, the link
 functions for \eqn{q} and \eqn{p}, the initial values and the prior
@@ -53,7 +61,7 @@ joint prior distribution for the model parameters.}
 \item{\code{iSelectedColumns}}{If the intensity covariates selection was made with
 the name of the columns, they are stored in this slot.}
 
-\item{\code{iSelectedColumns}}{If the observability covariates selection was made
+\item{\code{oSelectedColumns}}{If the observability covariates selection was made
 with the name of the columns, they are stored in this slot.}
 }}
 

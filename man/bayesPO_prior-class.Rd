@@ -28,13 +28,21 @@
 \arguments{
 \item{x}{The bayesPO_prior object.}
 
-\item{name}{The slot to be changed.}
+\item{name}{The requested slot.}
 
 \item{object}{The bayesPO_prior object.}
 
 \item{...}{Ignored.}
 
 \item{value}{New value.}
+}
+\value{
+\strong{\code{names}}: A character vector with the model parameters
+names.
+
+\strong{\code{`$`}}: The requested slot's value.
+
+\strong{\code{`$<-`}}: The new object with the updated slot.
 }
 \description{
 Objects of this class are the joining of independent priors for Beta, Delta

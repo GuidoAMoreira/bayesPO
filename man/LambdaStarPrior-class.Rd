@@ -3,7 +3,17 @@
 \docType{class}
 \name{LambdaStarPrior-class}
 \alias{LambdaStarPrior-class}
+\alias{show,LambdaStarPrior-method}
 \title{Generic class for the LambdaStar parameters.}
+\usage{
+\S4method{show}{LambdaStarPrior}(object)
+}
+\arguments{
+\item{object}{The LambdaStarPrior object.}
+}
+\value{
+\strong{\code{show}} and \strong{\code{print}}: The invisible object.
+}
 \description{
 Generic class for the LambdaStar parameters.
 }

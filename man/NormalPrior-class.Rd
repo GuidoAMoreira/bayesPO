@@ -26,13 +26,22 @@
 \arguments{
 \item{x}{The NormalPrior object.}
 
-\item{name}{The slot to be changed.}
+\item{name}{The requested slot.}
 
 \item{value}{New value.}
 
 \item{object}{The NormalPrior object.}
 
 \item{...}{Ignored.}
+}
+\value{
+\strong{\code{names}}: A character vector with the prior parameters.
+
+\strong{\code{`$`}}: The requested slot's value.
+
+\strong{\code{`$<-`}}: The new object with the updated slot.
+
+\strong{\code{show}} and \strong{\code{print}}: The invisible object.
 }
 \description{
 This is used to represent the prior for Beta and Delta individually. They

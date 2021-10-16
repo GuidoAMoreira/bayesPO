@@ -76,35 +76,45 @@ Leaving as \code{FALSE} is recommended.}
 
 \item{e1}{A bayesPO_fit object.}
 
-\item{e2}{A bayesPO_fit object with the same background, model (except for
-initial values), area, parnames and mcmc_setup as \code{e1}.}
+\item{e2}{A bayesPO_fit object with the same slots (except for initial
+values) as \code{e1}.}
 }
 \value{
-\strong{\code{summary}}: A matrix with the summary.
+\strong{\code{show}} and \strong{\code{print}}: The invisible object.
 
-\strong{\code{as.array}}: The MCMC chains organized in a way ready for the
-\code{bayesplot} package.
+\strong{\code{summary}}: A matrix with the summary statistics of the
+fit. It is also printed in the \code{print} method. The summary can be
+treated as a matrix, such as retrieving rows/columns and creating tables
+with the \code{xtable} package.
 
-\strong{\code{as.array}}: An \code{array} with dimensions I x C x P, where
-I stands for number of iterations, C for number of chains and P for total
-number of parameters. P is actually larger than the number of parameters in
-the model, as the the generated sizes of the latent processes and the
-log-posterior are also included.
+\strong{\code{names}}: A character vector with the available options
+for the \code{`$`} and \code{`[[`} methods.
 
-\strong{\code{as.matrix}}: The dimension of the output is I * C x (P + 2),
+\strong{\code{`$`}} and \strong{\code{`[[`}}: The requested slot.
+Available options are not necessarily the class slots, and can be checked
+with the \code{names} method.
+
+\strong{\code{as.array}}: An \code{array} with dimensions I x C x P,
 where I stands for number of iterations, C for number of chains and P for
 total number of parameters. P is actually larger than the number of
-parameters in the model, as the generated sizes of the latent processes and
-the log-posterior are also included.
+parameters in the model, as the the generated sizes of the latent processes
+and the log-posterior are also included. This is organized so that is ready
+for the \code{bayesplot} package functions.
+
+\strong{\code{as.matrix}}: The dimension of the output is
+I * C x (P + 2), where I stands for number of iterations, C for number of
+chains and P for total number of parameters. P is actually larger than the
+number of parameters in the model, as the generated sizes of the latent
+processes and the log-posterior are also included.
 
 Two extra columns are included to indicate to which chain and to which
 iteration that draw belongs.
 
-\strong{\code{as.data.frame}}: The dimension of the output is I*C x P+2,
-where I stands for number of iterations, C for number of chains and P for
-total number of parameters. P is actually larger than the number of
-parameters in the model, as the generated sizes of the latent processes and
-the log-posterior are also included.
+\strong{\code{as.data.frame}}: The dimension of the output is
+I*C x P + 2, where I stands for number of iterations, C for number of chains
+and P for total number of parameters. P is actually larger than the number
+of parameters in the model, as the generated sizes of the latent processes
+and the log-posterior are also included.
 
 Two extra columns are included to indicate to which chain and to which
 iteration that draw belongs. This is to facilitate the use of plotting
@@ -114,10 +124,13 @@ If \code{row.names} is left at \code{NULL} then row names are created as
 CcIi where c is the chain and i is the iteration of that row.
 
 \strong{\code{+}}: A new \code{bayesPO_fit} object where the chains
-are combined into a new multi-chain object.
+are combined into a new multi-chain object. This can be used if chains are
+run in separate occasions or computers to combine them into a single object
+for analysis.
 
 \strong{\code{c}}: A new \code{bayesPO_fit} object where the chains
-are combined into a new multi-chain object.
+are combined into a new multi-chain object. The \strong{\code{+}} method is
+used for that, with the same arguments restrictions and results.
 }
 \description{
 Objects of this class are the main objects of this package. They contain

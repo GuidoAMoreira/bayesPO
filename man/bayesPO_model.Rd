@@ -10,12 +10,12 @@ bayesPO_model(
   observabilitySelection,
   intensityLink = "logit",
   observabilityLink = "logit",
-  initial_values = initial(length(intensitySelection) + 1,
-    length(observabilitySelection) + 1, nrow(po), random = TRUE),
+  initial_values = 1,
   joint_prior = prior(beta = NormalPrior(rep(0, length(intensitySelection) + 1), 10 *
     diag(length(intensitySelection) + 1)), delta = NormalPrior(rep(0,
     length(observabilitySelection) + 1), 10 * diag(length(observabilitySelection) + 1)),
-    lambdaStar = GammaPrior(1e-10, 1e-10))
+    lambdaStar = GammaPrior(1e-10, 1e-10)),
+  verbose = TRUE
 )
 }
 \arguments{
@@ -38,12 +38,19 @@ with respect to the intensity covariates. Current version accepts 'logit'.}
 \item{observabilityLink}{A string to inform what link function the model has
 with respect to the observabilitycovariates. Current version accepts 'logit'.}
 
-\item{initial_values}{Either a single integer or list containing
+\item{initial_values}{Either a single integer, a single
+\code{bayesPO_initial-class} or a list containing
 \code{bayesPO_initial-class} objects. The length of the list will inform the
 model how many independent chains will be run. If an integer, that many
 initial values will be randomly generated.}
 
 \item{joint_prior}{A \code{bayesPO_prior} object.}
+
+\item{verbose}{Set to \code{FALSE} to suppress all messages to console.}
+}
+\value{
+A \code{bayesPO_model} object with the requested slots. It is ready
+to be used in the \code{fit_bayesPO} function.
 }
 \description{
 Constructor for \code{bayesPO_model-class} objects, built to facilitate

@@ -87,6 +87,9 @@ ggplot(
              data = data.frame(x = occurrences_points[, 1],
                                y = occurrences_points[, 2],
                                Occurrences = po_sightings), size = 1) +
+  geom_point(data = data.frame(x = occurrences_points[!po_sightings, 1],
+                               y = occurrences_points[!po_sightings, 2]),
+             size = 1, shape = 1, color = "white") +
   scale_shape_manual(values = c(1, 19), labels = c("Not observed", "Observed"))
 ```
 
@@ -140,7 +143,7 @@ As with any MCMC procedure, the chains need to be checked. The first thing to do
 summary(fit)
 ```
 
-The Rhat columns gives some metric for quality of convergence. It is only provided when there is more than 1 fitted chain. Ideally, the upper limit CI should be below 1.1. Since this is not true for some of the parameters, more iterations should be run. This can be done by recalling the function.
+The Rhat columns gives some metric for quality of convergence. It is only provided when there is more than 1 fitted chain. Ideally, the upper limit CI should be below 1.1. Since this is not true for some of the parameters, more iterations should be run. This can be done by recalling the function on the last fitted object. It starts where the last one left off.
 
 ```{r fit2}
 #### Next is commented to save time. Uncomment to replicate results
