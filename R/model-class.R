@@ -100,4 +100,49 @@ methods::setMethod("$<-","bayesPO_model",function(x, name, value){
   x
 })
 
+#' @rdname bayesPO_model-class
+#' @param object The bayesPO_model object.
+#' @return \strong{\code{show}} and \strong{\code{print}}: The invisible object.
+#' @export
+#' @exportMethod show
+methods::setMethod("show", "bayesPO_model", function(object){
+  s <- function(name) methods::slot(object, name)
+  cat("Model for the bayesPO package.\n\n")
+  cat(nrow(s("po")), "presence-only locations are included.\n")
+  cat(length(s("intensitySelection")), "variables were selected for the intensity set. ")
+  if (length(s("iSelectedColumns"))){
+    cat("They were:\n")
+    cat(s("iSelectedColumns"), sep = ", ")
+  }
+  cat("\nThe intensity link is", s("intensityLink"), "and the effects prior is",
+      methods::slot(methods::slot(s("prior"), "beta"), "family"), "\b.\n")
+  cat(length(s("observabilitySelection")), "variables were selected for the observability set. ")
+  if (length(s("oSelectedColumns"))){
+    cat("They were:\n")
+    cat(s("oSelectedColumns"), sep = ", ")
+  }
+  cat("\nThe observability link is", s("intensityLink"), "and the effects prior is",
+      methods::slot(methods::slot(s("prior"), "delta"), "family"), "\b.\n\n")
+  supplied <- 0; random <- 0
+  for (i in 1:length(s("init"))) {
+    if (methods::slot(s("init")[[i]], "tag") == "supplied") random <- random + 1
+    if (methods::slot(s("init")[[i]], "tag") == "random") random <- random + 1
+  }
+  cat(length(s("init")), " chains were initialized where ",
+      ifelse(supplied, paste(supplied, "are supplied values"), ""),
+      ifelse(supplied * random, " and ", ""),
+      ifelse(random, paste(random, "are random values"), ""), ".\n", sep = "")
+})
+
+#' @export
+#' @exportMethod print
+#' @param ... Currently unused.
+#' @rdname bayesPO_model-class
+methods::setMethod("print", "bayesPO_model", function(x, ...) methods::show(x))
+
+#' @method print bayesPO_model
+#' @export
+#' @rdname bayesPO_model-class
+print.bayesPO_model <- function(x, ...) methods::show(x)
+
 

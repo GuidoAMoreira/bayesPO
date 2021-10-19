@@ -57,6 +57,48 @@ Constructor for \code{bayesPO_model-class} objects, built to facilitate
 the use of the fitting function. The output of this function has the
 necessary signature for the fit_bayesPO function to start the model fit.
 }
+\examples{
+# Let us simulate some data to showcase the creation of the model.
+beta <- c(-1, 2)
+delta <- c(3, 4)
+lambdaStar <- 1000
+
+total_points <- rpois(1, lambdaStar)
+random_points <- cbind(runif(total_points), runif(total_points))
+
+# Find covariate values to explain the species occurrence.
+# We give them a Gaussian spatial structure.
+Z <- MASS::mvrnorm(1, rep(0, total_points), 3 * exp(-as.matrix(dist(random_points)) / 0.2))
+
+# Thin the points by comparing the retaining probabilities with uniforms
+# in the log scale to find the occurrences
+occurrences <- log(runif(total_points)) <= -log1p(exp(-beta[1] - beta[2] * Z))
+n_occurrences <- sum(occurrences)
+occurrences_points <- random_points[occurrences,]
+occurrences_Z <- Z[occurrences]
+
+# Find covariate values to explain the observation bias.
+# Additionally create a regular grid to plot the covariate later.
+W <- MASS::mvrnorm(1, rep(0, n_occurrences), 2 * exp(-as.matrix(dist(occurrences_points)) / 0.3))
+
+# Find the presence-only observations.
+po_sightings <- log(runif(n_occurrences)) <= -log1p(exp(-delta[1] - delta[2] * W))
+n_po <- sum(po_sightings)
+po_points <- occurrences_points[po_sightings, ]
+po_Z <- occurrences_Z[po_sightings]
+po_W <- W[po_sightings]
+
+# Now we create the model
+model <- bayesPO_model(po = cbind(po_Z, po_W),
+  intensitySelection = 1, observabilitySelection = 2,
+  intensityLink = "logit", observabilityLink = "logit",
+  initial_values = 2, joint_prior = prior(
+    NormalPrior(rep(0, 2), 10 * diag(2)),
+    NormalPrior(rep(0, 2), 10 * diag(2)),
+    GammaPrior(1e-4, 1e-4)))
+# Check how it is.
+model
+}
 \seealso{
 \code{\link{initial}}, \code{\link{prior}} and
 \code{\link{fit_bayesPO}}.

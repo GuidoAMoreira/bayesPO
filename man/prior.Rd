@@ -22,6 +22,15 @@ Constructor for \code{bayesPO_prior} objects, which is used in the
 \code{bayesPO_fit} function. The generated prior is so that Beta, Delta
 and LambdaStar are indepdendent a priori.
 }
+\examples{
+# Let us say there are 3 intensity covariates and 4 observability covariates.
+# One more element is included in both sets due to the intercepts.
+new_prior <- prior(
+  NormalPrior(rep(0, 4), 10 * diag(4)),
+  NormalPrior(rep(0, 5), 10 * diag(5)),
+  GammaPrior(0.0001, 0.0001)
+)
+}
 \seealso{
 \code{\link{fit_bayesPO}}, \code{\link{NormalPrior}},
 \code{\link{GammaPrior}} and \code{\link{bayesPO_model}}.

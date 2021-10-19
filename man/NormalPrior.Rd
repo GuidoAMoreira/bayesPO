@@ -21,6 +21,9 @@ Constructor for \code{NormalPrior-class} objects
 Matrix Sigma must be square and positive definite. Its dimensions
 must match mu's length.
 }
+\examples{
+NormalPrior(rep(0, 10), diag(10) * 10)
+}
 \seealso{
 \code{\link{prior}}
 }

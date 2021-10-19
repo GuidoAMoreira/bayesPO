@@ -61,6 +61,8 @@ methods::setClass("NormalPrior", contains="BetaDeltaPrior",
 #' must match mu's length.
 #' @return A \code{NormalPrior} object with adequate slots.
 #' @seealso \code{\link{prior}}
+#' @examples
+#' NormalPrior(rep(0, 10), diag(10) * 10)
 #' @export
 NormalPrior <- function(mu, Sigma){
   mu <- as.numeric(mu)
@@ -161,6 +163,8 @@ methods::setMethod("show", "LambdaStarPrior", function(object){
 #' @field shape The shape parameter of the Gamma distribution.
 #' @field rate The rate parameter of the Gamma distribution.
 #' @seealso \code{\link{prior}}
+#' @examples
+#' GammaPrior(0.0001, 0.0001)
 #' @export
 #' @exportClass GammaPrior
 methods::setClass("GammaPrior", contains="LambdaStarPrior",
@@ -295,6 +299,14 @@ methods::setMethod("$", "bayesPO_prior", function(x,name) methods::slot(x, name)
 #' be included in a model via the \code{bayesPO_model} function.
 #' @seealso \code{\link{fit_bayesPO}}, \code{\link{NormalPrior}},
 #' \code{\link{GammaPrior}} and \code{\link{bayesPO_model}}.
+#' @examples
+#' # Let us say there are 3 intensity covariates and 4 observability covariates.
+#' # One more element is included in both sets due to the intercepts.
+#' new_prior <- prior(
+#'   NormalPrior(rep(0, 4), 10 * diag(4)),
+#'   NormalPrior(rep(0, 5), 10 * diag(5)),
+#'   GammaPrior(0.0001, 0.0001)
+#' )
 #' @export
 prior <- function(beta, delta, lambdaStar){
   methods::new("bayesPO_prior", beta = beta, delta = delta, lambdaStar = lambdaStar)

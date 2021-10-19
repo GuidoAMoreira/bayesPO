@@ -6,8 +6,8 @@
 \alias{names,bayesPO_initial-method}
 \alias{$,bayesPO_initial-method}
 \alias{+,bayesPO_initial,ANY-method}
-\alias{+,bayesPO_initial,list-method}
 \alias{+,list,bayesPO_initial-method}
+\alias{+,bayesPO_initial,list-method}
 \alias{*,bayesPO_initial,numeric-method}
 \alias{*,numeric,bayesPO_initial-method}
 \alias{show,bayesPO_initial-method}
@@ -21,9 +21,9 @@
 
 \S4method{+}{bayesPO_initial,ANY}(e1, e2)
 
-\S4method{+}{bayesPO_initial,list}(e1, e2)
-
 \S4method{+}{list,bayesPO_initial}(e1, e2)
+
+\S4method{+}{bayesPO_initial,list}(e1, e2)
 
 \S4method{*}{bayesPO_initial,numeric}(e1, e2)
 

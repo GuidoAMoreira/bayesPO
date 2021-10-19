@@ -56,6 +56,9 @@ in a model.
 \item{\code{rate}}{The rate parameter of the Gamma distribution.}
 }}
 
+\examples{
+GammaPrior(0.0001, 0.0001)
+}
 \seealso{
 \code{\link{prior}}
 }
