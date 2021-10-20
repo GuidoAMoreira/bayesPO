@@ -1,6 +1,6 @@
 <!-- badges: start -->
-[![CRAN\ Status\ Badge](http://r-pkg.org/badges/version/bayesPO?color=blue)](http://cran.r-project.org/package=bayesPO)
-[![Downloads](http://cranlogs.r-pkg.org/badges/bayesPO?color=blue)](http://cran.rstudio.com/package=bayesPO)
+[![CRAN\ Status\ Badge](http://r-pkg.org/badges/version/bayesPO?color=blue)](https://CRAN.R-project.org/package=bayesPO)
+[![Downloads](http://cranlogs.r-pkg.org/badges/bayesPO?color=blue)](http://CRAN.rstudio.com/package=bayesPO)
 [![R-CMD-check](https://github.com/GuidoAMoreira/bayesPO/workflows/R-CMD-check/badge.svg)](https://github.com/GuidoAMoreira/bayesPO/actions)
 <!-- badges: end -->
 
