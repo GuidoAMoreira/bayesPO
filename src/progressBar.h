@@ -28,7 +28,7 @@ public:
   static void initializer()
   {
     if (!starter)
-      if (hasWarmup) {
+      if (warmup > 0) {
         REprintf("      Warmup 20   40   60   80   100%    Sample 20   40   60   80   100%\n");
         for (int c = 0; c < chains; c++)
           REprintf("Chain %i: [----|----|----|----|----|         [----|----|----|----|----|\n", c + 1);
@@ -197,7 +197,7 @@ private: // ===== INSTANCE VARIABLES ====
   static int _max_ticks;   		// the total number of ticks to print
   static int chains;
   static bool starter;
-  static bool hasWarmup;
+  static long warmup, iter;
   static std::vector<double> progresses;
 };
 
