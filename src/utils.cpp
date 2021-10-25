@@ -29,12 +29,12 @@ mcStep startup_mcmc(Eigen::VectorXd beta, Eigen::VectorXd delta, double lambda,
 
   // Attaching Beta updater
   if (b_updater == "logit_normal")
-    mc.beta = new logit_normal(parB, Eigen::MatrixXd(), new Covariance(false));
+    mc.beta = new logit_normal(parB, Eigen::MatrixXd());
   mc.beta->effects = beta;
 
   // Attaching Delta updater
   if (d_updater == "logit_normal")
-    mc.delta = new logit_normal(parD, Eigen::MatrixXd(), new Covariance(false));
+    mc.delta = new logit_normal(parD, Eigen::MatrixXd());
   mc.delta->effects = delta;
 
   return mc;
