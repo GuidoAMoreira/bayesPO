@@ -29,7 +29,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     oC = std::vector<long>(
       observabilityCovs.data(), observabilityCovs.data() +
         observabilityCovs.size());
-  long i, j = 0;
+  long i;
 
   auto t1 = std::chrono::high_resolution_clock::now(); // Timing variable
   auto t2 = std::chrono::high_resolution_clock::now(); // Timing variable

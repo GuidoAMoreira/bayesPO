@@ -38,6 +38,22 @@ initial values are supplied. Initial values can be combined by adding them
 Helper function to create a valid set of initial values to be used with the
 fit_bayesPO function.
 }
+\examples{
+# Let us create initial values for a model with, say, 3 intensity covariates
+# and 4 observability covariates. We add an initial values for both these
+# cases due to the intercepts.
+
+# This first one is
+in1 <- initial(rep(0, 4), c(0, 2, -1, -2, 3), 100)
+
+# Then we initalize some randomly.
+in2 <- initial(4, 5, 100, random = TRUE)
+
+# We can even multiply the random one to generate more. Let us join them all
+# to include in a model.
+initial_values <- in1 + in2 * 3
+# 4 chains are initialized.
+}
 \seealso{
 \code{\link{bayesPO_initial-class}}.
 }

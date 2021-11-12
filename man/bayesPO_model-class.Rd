@@ -6,6 +6,9 @@
 \alias{names,bayesPO_model-method}
 \alias{$,bayesPO_model-method}
 \alias{$<-,bayesPO_model-method}
+\alias{show,bayesPO_model-method}
+\alias{print,bayesPO_model-method}
+\alias{print.bayesPO_model}
 \title{Class that defines a model for the bayesPO package.}
 \usage{
 \S4method{names}{bayesPO_model}(x)
@@ -13,6 +16,12 @@
 \S4method{$}{bayesPO_model}(x, name)
 
 \S4method{$}{bayesPO_model}(x, name) <- value
+
+\S4method{show}{bayesPO_model}(object)
+
+\S4method{print}{bayesPO_model}(x, ...)
+
+\method{print}{bayesPO_model}(x, ...)
 }
 \arguments{
 \item{x}{The bayesPO_model object.}
@@ -20,6 +29,10 @@
 \item{name}{The requested slot.}
 
 \item{value}{New value.}
+
+\item{object}{The bayesPO_model object.}
+
+\item{...}{Currently unused.}
 }
 \value{
 \strong{\code{names}}: A character vector with possible options
@@ -28,6 +41,8 @@ for the \code{`$`} and \code{`$<-`} methods.
 \strong{\code{`$`}}: The requested slot's value.
 
 \strong{\code{`$<-`}}: The new object with the updated slot.
+
+\strong{\code{show}} and \strong{\code{print}}: The invisible object.
 }
 \description{
 The model includes the presence-only data, all selected variables, the link

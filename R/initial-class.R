@@ -49,25 +49,24 @@ methods::setMethod("+", "bayesPO_initial", function(e1, e2) list(e1, e2))
 #' @rdname bayesPO_initial-class
 #' @export
 #' @exportMethod +
-methods::setMethod("+",methods::signature(e1 = "bayesPO_initial", e2 = "list"),
+methods::setMethod("+", methods::signature(e1 = "list", e2 = "bayesPO_initial"),
                    function(e1, e2){
-                     for (i in 1:length(e2))
-                      if (!methods::is(e2[[i]], "bayesPO_initial"))
+                     for (i in 1:length(e1))
+                      if (!methods::is(e1[[i]], "bayesPO_initial"))
                         stop("Initial values can only be added to a list of other initial values.")
-                     e2[[i + 1]] = e1
-                     e2
+                     e1[[i + 1]] = e2
+                     e1
                    })
 
 #' @export
 #' @exportMethod +
 #' @rdname bayesPO_initial-class
-methods::setMethod("+",methods::signature(e1 = "list", e2 = "bayesPO_initial"),
-                   function(e1,e2){
-                     n = length(e1)
-                     l = list(e2)
-                     for (i in 1:n){
-                       if (!methods::is(e1[[i]],"bayesPO_initial")) stop("Initial values can only be added to a list of other initial values.")
-                       l[[i+1]] = e1[[i]]
+methods::setMethod("+", methods::signature(e1 = "bayesPO_initial", e2 = "list"),
+                   function(e1, e2){
+                     l = list(e1)
+                     for (i in 1:length(e2)){
+                       if (!methods::is(e2[[i]], "bayesPO_initial")) stop("Initial values can only be added to a list of other initial values.")
+                       l[[i + 1]] = e2[[i]]
                      }
                      l
                    })
@@ -151,6 +150,21 @@ print.bayesPO_initial <- function(x, ...) methods::show(x)
 #' initial values are supplied. Initial values can be combined by adding them
 #' (with the use of `+`).
 #' @seealso \code{\link{bayesPO_initial-class}}.
+#' @examples
+#' # Let us create initial values for a model with, say, 3 intensity covariates
+#' # and 4 observability covariates. We add an initial values for both these
+#' # cases due to the intercepts.
+#'
+#' # This first one is
+#' in1 <- initial(rep(0, 4), c(0, 2, -1, -2, 3), 100)
+#'
+#' # Then we initalize some randomly.
+#' in2 <- initial(4, 5, 100, random = TRUE)
+#'
+#' # We can even multiply the random one to generate more. Let us join them all
+#' # to include in a model.
+#' initial_values <- in1 + in2 * 3
+#' # 4 chains are initialized.
 #' @export
 initial <- function(beta = numeric(), delta = numeric(), lambdaStar = numeric(),
                     random = FALSE){
