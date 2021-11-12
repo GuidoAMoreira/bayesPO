@@ -45,48 +45,48 @@ methods::setMethod("show","bayesPO_fit",function(object){
 
   ## data
   cat("Presence-only dataset size:",nrow(methods::slot(methods::slot(object,"original"),"po")),"\n\n")
-  sc <- methods::slot(methods::slot(object,"original"),"iSelectedColumns")
+  sc <- methods::slot(methods::slot(object,"original"), "iSelectedColumns")
   if (length(sc))
-    cat(length(sc)," intensity covariates selected:\n",sc,"\n",sep = "")
+    cat(length(sc), " intensity covariates selected:\n", sc, "\n")
   else{
     sc <- methods::slot(methods::slot(object,"original"),"intensitySelection")
-    cat(length(sc)," intensity covariates selected. Columns: ",sc,"\n",sep = "")
+    cat(length(sc), " intensity covariates selected. Columns: ", sc, "\n")
   }
   sc <- methods::slot(methods::slot(object,"original"),"oSelectedColumns")
   if (length(sc))
-    cat(length(sc)," observability covariates selected:\n",sc,"\n",sep="")
+    cat(length(sc), " observability covariates selected:\n", sc, "\n")
   else{
     sc <- methods::slot(methods::slot(object,"original"),"observabilitySelection")
-    cat(length(sc)," observability covariates selected. Columns: ",sc,"\n",sep = "")
+    cat(length(sc), " observability covariates selected. Columns: ", sc, "\n")
   }
   cat("\n")
 
   ## Link function
-  links <- c(methods::slot(methods::slot(object,"original"),"intensityLink"),
-             methods::slot(methods::slot(object,"original"),"observabilityLink"))
-  names(links) <- c("intensity","observability")
+  links <- c(methods::slot(methods::slot(object,"original"), "intensityLink"),
+             methods::slot(methods::slot(object,"original"), "observabilityLink"))
+  names(links) <- c("intensity", "observability")
   cat("Link functions chosen:\n")
   print(links)
   cat("\n")
 
   ## Prior
   cat("Prior selection:\n")
-  methods::show(methods::slot(methods::slot(object,"original"),"prior"))
+  methods::show(methods::slot(methods::slot(object, "original"), "prior"))
   cat("\n")
 
   ## MCMC configuration
-  chains = length(methods::slot(methods::slot(object,"original"),"init"))
-  setup = methods::slot(object,"mcmc_setup")
-  cat(chains,ifelse(chains>1," chains"," chain")," of MCMC ",
-      ifelse(chains>1,"were","was")," configured with ",
-      format(setup$burnin, scientific = FALSE)," warmup ",
-      ifelse(setup$burnin>1,"iterations","iteration"),
-      " and ", format(setup$iter, scientific = FALSE)," valid ",
-      ifelse(setup$iter>1,"iterations","iteration"),", storing one in every ",
-      ifelse(setup$thin>1,paste(setup$thin,"steps"),"step"),".\n\n",sep="")
+  chains = length(methods::slot(methods::slot(object, "original"), "init"))
+  setup = methods::slot(object, "mcmc_setup")
+  cat(chains,ifelse(chains > 1," chains"," chain"), " of MCMC ",
+      ifelse(chains > 1,"were", "was"), " configured with ",
+      format(setup$burnin, scientific = FALSE), " warmup ",
+      ifelse(setup$burnin > 1, "iterations", "iteration"),
+      " and ", format(setup$iter, scientific = FALSE), " valid ",
+      ifelse(setup$iter>1, "iterations","iteration"), ", storing one in every ",
+      ifelse(setup$thin>1, paste(setup$thin, "steps"), "step"), ".\n\n", sep="")
 
   ## Results
-  print(round(summary(object),digits = 3))
+  print(round(summary(object), digits = 3))
   cat("\n")
 
   ## Comments
