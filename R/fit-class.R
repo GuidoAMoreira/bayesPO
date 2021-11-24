@@ -265,7 +265,7 @@ namesAid <- function(string){
 
   # Find same covariates in both sets
   for (i in 1:(obsStart - 1))
-    searching <- grepl(string[i], string[obsStart:obsEnd])
+    searching <- string[i] == string[obsStart:obsEnd]
     if (any(searching)){
       new_string[i] <- paste0(string[i], ".int")
       new_string[obsStart - 1 + which(searching)] <- paste0(string[i], ".obs")

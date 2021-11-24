@@ -216,7 +216,7 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
    cores <- 1
 
    # Check background differences
-   if (verbose) cat("Performing error check...\n")
+   if (verbose) cat("Checking if everything's ok...")
    stopifnot(all.equal(s("backgroundSummary"), summary(background)),
              "iter" %in% names(mcmc_setup), !is.na(mcmc_setup$iter),
              length(mcmc_setup$iter) == 1,
@@ -229,7 +229,9 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
    else
      mcmc_setup$thin = s("mcmc_setup")$thin
    if ("burnin" %in% names(mcmc_setup) && mcmc_setup$burnin > 0)
-     warning("Burnin is disabled when continuing MCMC procedure.")
+     warning("\nBurnin is disabled when continuing MCMC procedure.")
+   else
+     cat(" Everything seems ok.\n")
 
    # Helper parameters
    betaPos <- 1:length(methods::slot(
