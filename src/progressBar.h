@@ -25,22 +25,7 @@ public:
   #endif
   }
 
-  static void initializer()
-  {
-    if (!starter)
-      if (warmup > 0) {
-        REprintf("      Warmup 20   40   60   80   100%    Sample 20   40   60   80   100%\n");
-        for (int c = 0; c < chains; c++)
-          REprintf("Chain %i: [----|----|----|----|----|         [----|----|----|----|----|\n", c + 1);
-          flush_console();
-      } else {
-        REprintf("    Sampling 10   20   30   40   50   60   70   80   90   100%\n");
-        for (int c = 0; c < chains; c++)
-          REprintf("Chain %i: [----|----|----|----|----|----|----|----|----|----|\n", c + 1);
-        flush_console();
-      }
-    else starter = true;
-  }
+  static void initializer();
 
   static void updater()
   {
@@ -49,15 +34,14 @@ public:
       REprintf("\b");
   }
 
-  /**
+  /*
    * Main constructor
    */
   MultiProgressBar()  {
     _finalized = false;
     _timer_flag = true;
 
-    // Setting multiple chains
-    chains++;
+    // Setting multiple chains in the static variables
     progresses.push_back(0.);
   }
 
@@ -195,14 +179,13 @@ private: // ===== INSTANCE VARIABLES ====
 
   // Static members for displaying
   static int _max_ticks;   		// the total number of ticks to print
-  static int chains;
+  static const int chains;
   static bool starter;
-  static long warmup, iter;
+  static const double warmupPercentage;
   static std::vector<double> progresses;
 };
 
-int MultiProgressBar::_max_ticks = 61;
-int MultiProgressBar::chains = 0;
-bool MultiProgressBar::starter = false;
+int MultiProgressBar::_max_ticks = 63;
+bool MultiProgressBar::starter = true;
 
 #endif
