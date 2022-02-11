@@ -51,6 +51,7 @@ double mcStep::FullConditional_processes()
       p = delta->link(tempObs.transpose(), false)(0);
       if (unif > p + q) { // Accept X'
         temp[nTotal - 1 - iXp++] = candidate;
+        background->addAcceptedXprime(candidate);
       }
     } // If neither U nor X' is accepted, point is discarded
   }

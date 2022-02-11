@@ -23,16 +23,21 @@ public:
   // Universal methods
   virtual long pickRandomPoint();
   virtual Eigen::VectorXi pickRandomPoint(long n);
+  void addAcceptedXprime(long);
 
   // Constructor
   retrievCovs(std::vector<long> si, std::vector<long> so);
   retrievCovs();
+
+  // getters
+  Eigen::VectorXd getUnobservedCounts() {return unObservedCounts;}
 
 protected:
   SEXP covs;
   double *c;
   long nInt;
   long nObs;
+  Eigen::VectorXd unObservedCounts;
 }; // retrievCovs
 
 // When the covariates are in an integer matrix

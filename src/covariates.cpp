@@ -10,18 +10,22 @@ retrievCovs_intMatrix::retrievCovs_intMatrix(SEXP inp, std::vector<long> si,
                                              std::vector<long> so) :
   retrievCovs(si,so)
 {covs = inp; c = INTEGER(covs); SEXP dim = Rf_getAttrib( inp, R_DimSymbol ) ;
- ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];}
+ ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];
+ unObservedCounts = Eigen::MatrixXd::Constant(ncell, 0, 0);}
 
 retrievCovs_doubleMatrix::retrievCovs_doubleMatrix(SEXP inp,
                                                    std::vector<long> si,
                                                    std::vector<long> so) :
   retrievCovs(si,so)
 {covs = inp; c = REAL(covs); SEXP dim = Rf_getAttrib( inp, R_DimSymbol ) ;
- ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];}
+ ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];
+ unObservedCounts = Eigen::MatrixXd::Constant(ncell, 0, 0);}
 
 retrievCovs_normal::retrievCovs_normal(std::vector<long> si,
                                        std::vector<long> so) :
-  retrievCovs(si,so) {}
+  retrievCovs(si,so) {
+    unObservedCounts = Eigen::MatrixXd::Constant(ncell, 0, 0);
+  }
 
 //// Methods ////
 //// Base class ////
@@ -35,6 +39,10 @@ Eigen::VectorXi retrievCovs::pickRandomPoint(long n)
     out[i] = pickRandomPoint();
 
   return out;
+}
+
+void retrievCovs::addAcceptedXprime(long point) {
+  unObservedCounts(point) += 1;
 }
 
 void retrievCovs::putInt(Eigen::MatrixXd& covs, std::vector<long>& ind,
