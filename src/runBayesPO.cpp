@@ -121,5 +121,5 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
                             Rcpp::Named("nXp") = out_nXp,
                             Rcpp::Named("logPost") = outLogPost,
                             Rcpp::Named("xPrimePred") =
-                              MarkovChain.background->getUnobservedCounts();
+                              MarkovChain.background->getUnobservedCounts());
 }
