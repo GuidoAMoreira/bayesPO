@@ -185,7 +185,7 @@ methods::setMethod("fit_bayesPO",
       mcmc_setup$iter, # MCMC iterations
       cores, verbose)
      heatMap <- heatMap + temp$xPrimePred
-     mcmcRun[[c]] <- do.call(cbind, temp[[-length(temp)]])
+     mcmcRun[[c]] <- do.call(cbind, temp[-length(temp)])
      colnames(mcmcRun[[c]]) <- parnames
      mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
      if (chains > 1) cat("Finished chain ",c,".\n\n",sep="")
@@ -289,7 +289,7 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
        cores, verbose)
      heatMap <- heatMap + temp$xPrimePred
      mcmcRun[[c]] <- do.call(cbind,
-   
+
      )
      colnames(mcmcRun[[c]]) <- s("parnames")
      mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
