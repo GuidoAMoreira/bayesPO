@@ -42,7 +42,7 @@ double logit_normal::update(const Eigen::MatrixXd& onesCov,
   PolyaGamma pg(1);
   Eigen::MatrixXd V = Sigma, x1 = Eigen::MatrixXd(n1, s),
     x0 = Eigen::MatrixXd(n0, s);
-  Eigen::VectorXd med = mu, xb1(n1), xb0(n0), emm;
+  Eigen::VectorXd med = Bb, xb1(n1), xb0(n0), emm;
   x1.leftCols(1) = Eigen::MatrixXd::Constant(n1,1,1);
   x1.rightCols(s - 1) = onesCov;
   x0.leftCols(1) = Eigen::MatrixXd::Constant(n0,1,1);

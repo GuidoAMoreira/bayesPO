@@ -19,7 +19,7 @@ retrievCovs_doubleMatrix::retrievCovs_doubleMatrix(SEXP inp,
   retrievCovs(si,so)
 {covs = inp; c = REAL(covs); SEXP dim = Rf_getAttrib( inp, R_DimSymbol ) ;
  ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];
- unObservedCounts = Eigen::MatrixXd::Constant(ncell, 0, 0);}
+ unObservedCounts = Eigen::MatrixXd::Constant(ncell, 1, 0);}
 
 retrievCovs_normal::retrievCovs_normal(std::vector<long> si,
                                        std::vector<long> so) :
