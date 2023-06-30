@@ -145,6 +145,11 @@ much information about the fitted model.
 \item{\code{original}}{The model used to generate the chains, an object with class
 \code{bayesPO_model}.}
 
+\item{\code{heatMap}}{The number of unobserved occurrences predicted at each cell
+by the method. It is a numeric vector containint a non-negative integer.
+Positions are not discriminated by iterations, as this can be very memory
+intensive.}
+
 \item{\code{backgroundSummary}}{A small summary of the original background
 covariates. This is to ensure that continuing the chains will use the
 identical background matrix. Only the summary is kept for storage efficiency.}

@@ -11,7 +11,7 @@ retrievCovs_intMatrix::retrievCovs_intMatrix(SEXP inp, std::vector<long> si,
   retrievCovs(si,so)
 {covs = inp; c = INTEGER(covs); SEXP dim = Rf_getAttrib( inp, R_DimSymbol ) ;
  ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];
- unObservedCounts = Eigen::MatrixXd::Constant(ncell, 0, 0);}
+ unObservedCounts = Eigen::MatrixXd::Constant(ncell, 1, 0);}
 
 retrievCovs_doubleMatrix::retrievCovs_doubleMatrix(SEXP inp,
                                                    std::vector<long> si,
@@ -24,7 +24,7 @@ retrievCovs_doubleMatrix::retrievCovs_doubleMatrix(SEXP inp,
 retrievCovs_normal::retrievCovs_normal(std::vector<long> si,
                                        std::vector<long> so) :
   retrievCovs(si,so) {
-    unObservedCounts = Eigen::MatrixXd::Constant(ncell, 0, 0);
+    unObservedCounts = Eigen::MatrixXd::Constant(ncell, 1, 0);
   }
 
 //// Methods ////
