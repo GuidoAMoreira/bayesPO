@@ -3,3 +3,5 @@
 ^importedTexts$
 ^\.github$
 ^README\.md$
+^doc$
+^Meta$

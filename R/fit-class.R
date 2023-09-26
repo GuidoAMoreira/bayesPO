@@ -13,10 +13,6 @@ NULL
 #' \code{\link[coda]{mcmc.list}}, as generated from the \code{coda} package.
 #' @field original The model used to generate the chains, an object with class
 #' \code{bayesPO_model}.
-#' @field heatMap The number of unobserved occurrences predicted at each cell
-#' by the method. It is a numeric vector containint a non-negative integer.
-#' Positions are not discriminated by iterations, as this can be very memory
-#' intensive.
 #' @field backgroundSummary A small summary of the original background
 #' covariates. This is to ensure that continuing the chains will use the
 #' identical background matrix. Only the summary is kept for storage efficiency.
@@ -31,7 +27,7 @@ NULL
 #' @exportClass bayesPO_fit
 methods::setClass("bayesPO_fit",
                   representation(fit = "mcmc.list",
-                                 heatMap = "numeric",
+                                 # heatMap = "numeric",
                                  original = "bayesPO_model",
                                  backgroundSummary = "table",
                                  area = "numeric",
@@ -170,7 +166,7 @@ summary.bayesPO_fit <- function(object, ...){
 #' @export
 #' @exportMethod names
 methods::setMethod("names", "bayesPO_fit", function(x){
-  nn <- c("parameters", "covariates_importance", "mcmc_chains", "heat_map", "model",
+  nn <- c("parameters", "covariates_importance", "mcmc_chains", "model",
           "log_posterior", "eff_sample_size", "area", "initial_values", "mcmc_setup")
   if (length(methods::slot(methods::slot(x, "original"), "init")) > 1)
     nn <- c(nn, "Rhat", "Rhat_upper_CI")
@@ -222,7 +218,6 @@ methods::setMethod("[[", "bayesPO_fit", function(x, i){
     output <- list(intensity = intensity, observability = observability)
     class(output) <- "covariates_importance"
   } else
-  if (i == "heat_map") output <- s("heatMap") else
   if (i == "eff_sample_size"){
     summ <- summary(x)
     output <- summ[, 6]

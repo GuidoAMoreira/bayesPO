@@ -1,8 +1,8 @@
 Package: bayesPO
 Type: Package
 Title: Bayesian Inference for Presence-Only Data
-Version: 0.4.0
-Date: 2022-02-11
+Version: 0.4.1
+Date: 2023-09-26
 Authors@R: person("Guido", "Alberti Moreira", email = "guidoalber@gmail.com",
     role = c("cre","aut"), comment=c(ORCID="0000-0001-7557-0874"))
 Contact: Guido Alberti Moreira <guidoalber@gmail.com>
@@ -12,7 +12,7 @@ Description: Presence-Only data is best modelled with a Point Process Model.
     inference to model this type of data, which is implemented in this package.
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3
 Depends:
     R (>= 3.5.0)
 LinkingTo: 
@@ -44,5 +44,4 @@ Collate:
     'fit-class.R'
     'bayesPO.R'
     'covariate_importance-class.R'
-URL: <http://www.pg.im.ufrj.br/teses/Estatistica/Doutorado/043.pdf>
 VignetteBuilder: knitr
