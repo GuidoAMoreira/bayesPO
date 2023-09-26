@@ -446,7 +446,7 @@ bayesPO_model = function(po, intensitySelection,
             is.numeric(intensitySelection) || is.character(intensitySelection),
             is.character(intensityLink), length(intensityLink) == 1,
             is.character(observabilityLink), length(observabilityLink) == 1,
-            (is.list(initial_values) && all(do.call(c, lapply(initial_values, is, "bayesPO_initial"))))
+            (is.list(initial_values) || all(do.call(c, lapply(initial_values, is, "bayesPO_initial"))))
             || (is.numeric(initial_values) && length(initial_values) == 1))
 
   if (is.numeric(intensitySelection)) icharSel = character() else

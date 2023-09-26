@@ -77,7 +77,6 @@ Eigen::MatrixXd logit_normal::link(const Eigen::MatrixXd& covs, bool complementa
 {
   Eigen::MatrixXd oneCov(covs.rows(), s);
 
-
   if (covs.cols() < s)
   {
     oneCov.leftCols(1) = Eigen::MatrixXd::Constant(covs.rows(), 1, 1);

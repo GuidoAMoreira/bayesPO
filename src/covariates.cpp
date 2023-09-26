@@ -11,7 +11,7 @@ retrievCovs_intMatrix::retrievCovs_intMatrix(SEXP inp, std::vector<long> si,
   retrievCovs(si,so)
 {covs = inp; c = INTEGER(covs); SEXP dim = Rf_getAttrib( inp, R_DimSymbol ) ;
  ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];
- unObservedCounts = Eigen::MatrixXd::Constant(ncell, 1, 0);}
+ unObservedCounts = Eigen::MatrixXd::Zero(ncell, 1);}
 
 retrievCovs_doubleMatrix::retrievCovs_doubleMatrix(SEXP inp,
                                                    std::vector<long> si,
@@ -19,13 +19,29 @@ retrievCovs_doubleMatrix::retrievCovs_doubleMatrix(SEXP inp,
   retrievCovs(si,so)
 {covs = inp; c = REAL(covs); SEXP dim = Rf_getAttrib( inp, R_DimSymbol ) ;
  ncell = INTEGER(dim)[0]; nvar = INTEGER(dim)[1];
- unObservedCounts = Eigen::MatrixXd::Constant(ncell, 1, 0);}
+ unObservedCounts = Eigen::MatrixXd::Zero(ncell, 1);}
 
 retrievCovs_normal::retrievCovs_normal(std::vector<long> si,
                                        std::vector<long> so) :
   retrievCovs(si,so) {
-    unObservedCounts = Eigen::MatrixXd::Constant(ncell, 1, 0);
+    unObservedCounts = Eigen::MatrixXd::Zero(ncell, 1);
   }
+
+Eigen::MatrixXd retrievCovs::retrieveInt(const Eigen::VectorXi& indices) {
+  Eigen::MatrixXd out(indices.size(), selInt.size());
+  for (long i = 0; i < indices.size(); i++)
+    out.row(i) = retrieveInt(indices(i)).transpose();
+
+  return out;
+}
+
+Eigen::MatrixXd retrievCovs::retrieveObs(const Eigen::VectorXi& indices) {
+  Eigen::MatrixXd out(indices.size(), selObs.size());
+  for (long i = 0; i < indices.size(); i++)
+    out.row(i) = retrieveObs(indices(i)).transpose();
+
+  return out;
+}
 
 //// Methods ////
 //// Base class ////
@@ -35,8 +51,8 @@ long retrievCovs::pickRandomPoint()
 Eigen::VectorXi retrievCovs::pickRandomPoint(long n)
 {
   Eigen::VectorXi out(n);
-  for (R_xlen_t i = 0; i < n; i++)
-    out[i] = pickRandomPoint();
+  for (int i = 0; i < n; i++)
+    out(i) = pickRandomPoint();
 
   return out;
 }

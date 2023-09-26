@@ -24,6 +24,12 @@ public:
   virtual long pickRandomPoint();
   virtual Eigen::VectorXi pickRandomPoint(long n);
   void addAcceptedXprime(long);
+  void addAcceptedXprime(Eigen::VectorXi points) {
+    for (int i = 0; i < points.size(); i++)
+      addAcceptedXprime(points(i));
+  }
+  Eigen::MatrixXd retrieveInt(const Eigen::VectorXi&);
+  Eigen::MatrixXd retrieveObs(const Eigen::VectorXi&);
 
   // Constructor
   retrievCovs(std::vector<long> si, std::vector<long> so);
