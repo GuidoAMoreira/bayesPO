@@ -13,7 +13,7 @@ inline double runif(double a = 0, double b = 1) {
   return output;
 }
 
-inline Eigen::VectorXd runif(long n, double a = 0, double b = 1) {
+inline Eigen::VectorXd runif(int n, double a = 0, double b = 1) {
   Eigen::VectorXd output(n);
 #pragma omp critical
   output = Rcpp::as<Eigen::Map<Eigen::VectorXd> >(Rcpp::runif(n, a, b));

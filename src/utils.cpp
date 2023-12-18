@@ -10,7 +10,7 @@ mcStep startup_mcmc(Eigen::VectorXd beta, Eigen::VectorXd delta, double lambda,
 {
 
   // Data structures
-  std::vector<long> x;
+  std::vector<int> x;
   Eigen::MatrixXd zx, wx;
 
   // Data matrix
@@ -42,14 +42,14 @@ mcStep startup_mcmc(Eigen::VectorXd beta, Eigen::VectorXd delta, double lambda,
 
 // Functions to determine data X when it comes with a matrix with the same number of columns as
 // the background
-void importX_double(Eigen::MatrixXd x, long nb, long nd,
+void importX_double(Eigen::MatrixXd x, int nb, int nd,
                     Eigen::VectorXi xI, Eigen::VectorXi xO,
-                    std::vector<long> &x_data, Eigen::MatrixXd &zx_data,
+                    std::vector<int> &x_data, Eigen::MatrixXd &zx_data,
                     Eigen::MatrixXd &wx_data)
 {
-  x_data = std::vector<long>(x.rows());
+  x_data = std::vector<int>(x.rows());
   Eigen::MatrixXd zX(x.rows(), nb - 1), wX(x.rows(), nd - 1);
-  long i, j;
+  int i, j;
   for (i = 0;i<x.rows();i++)
   {
     for (j = 0; j < (nb - 1); j++)
@@ -66,14 +66,14 @@ void importX_double(Eigen::MatrixXd x, long nb, long nd,
   wx_data = wX;
 }
 
-void importX_int(Eigen::VectorXi x, long nb, long nd,
+void importX_int(Eigen::VectorXi x, int nb, int nd,
                  Eigen::VectorXi xI, Eigen::VectorXi xO,
-                 std::vector<long> &x_data, Eigen::MatrixXd &zx_data,
+                 std::vector<int> &x_data, Eigen::MatrixXd &zx_data,
                  Eigen::MatrixXd &wx_data)
 {
-  x_data = std::vector<long>(x.rows());
+  x_data = std::vector<int>(x.rows());
   Eigen::MatrixXd zX(x.rows(),nb-1), wX(x.rows(),nd-1);
-  long i, j;
+  int i, j;
   for (i = 0; i < x.rows(); i++)
   {
     for (j = 0; j < (nb - 1); j++)
@@ -92,18 +92,18 @@ void importX_int(Eigen::VectorXi x, long nb, long nd,
 
 // Function to determine data X when it comes with a vector of indexes relative
 // to the background cells
-void determineX(Eigen::VectorXd x, long nb,
-                      long nd, retrievCovs *b,
-                      std::vector<long> &x_data, Eigen::MatrixXd &zx_data,
+void determineX(Eigen::VectorXd x, int nb,
+                      int nd, retrievCovs *b,
+                      std::vector<int> &x_data, Eigen::MatrixXd &zx_data,
                       Eigen::MatrixXd &wx_data)
 {
-  std::vector<long> X(x.size());
+  std::vector<int> X(x.size());
   Eigen::MatrixXd zX(x.size(),nb - 1), wX(x.size(), nd - 1);
-  long i;
+  int i;
   for (i=0; i < x.size() ; i++) {
     X.push_back(x[i]);
-    zX.row(i) = (*b).retrieveInt(long(x[i]));
-    wX.row(i) = (*b).retrieveObs(long(x[i]));
+    zX.row(i) = (*b).retrieveInt(int(x[i]));
+    wX.row(i) = (*b).retrieveObs(int(x[i]));
   }
 
   x_data = X;

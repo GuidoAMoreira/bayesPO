@@ -12,11 +12,11 @@ class mcStep
 public:
   //// Unchanging attributes
   const double area;
-  const std::vector<long> X;
+  const std::vector<int> X;
   const Eigen::MatrixXd zX;
 
   //// Attributes
-  std::vector<long> U, Xprime; // vectors of indexes
+  std::vector<int> U, Xprime; // vectors of indexes
   double logPosterior;
   //mat zX, zU, wX, wXp, zXXp;
   Eigen::MatrixXd zXXp, wXp, zU, wX;
@@ -33,12 +33,12 @@ public:
 
   // Constructor
   mcStep(Eigen::VectorXd b, Eigen::VectorXd d, double l, retrievCovs *bb,
-         double a, std::vector<long> x, Eigen::MatrixXd zx,
+         double a, std::vector<int> x, Eigen::MatrixXd zx,
          Eigen::MatrixXd wx);
 
   // Methods
   void update();
-  void update(long times);
+  void update(int times);
 
 protected:
   void applyTransitionKernel(); // Markov chain transition kernel
@@ -55,7 +55,7 @@ public:
   Eigen::VectorXd Zi;
 
   mcStep_GP_int(Eigen::VectorXd b, Eigen::VectorXd d, double l, retrievCovs *bb,
-                double a, std::vector<long> x, Eigen::MatrixXd zx,
+                double a, std::vector<int> x, Eigen::MatrixXd zx,
                 Eigen::MatrixXd wx);
 
 private:

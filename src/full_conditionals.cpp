@@ -23,7 +23,7 @@ BetaDelta::BetaDelta(Eigen::MatrixXd x) :
   xPositions(x) {}
 
 // updaters
-double gamma_prior::update(long ns, double area)
+double gamma_prior::update(int ns, double area)
 {
   double out, a = shape + ns, b = rate + area;
   l = R::rgamma(a, 1 / b);
@@ -38,7 +38,7 @@ double gamma_prior::update(long ns, double area)
 double logit_normal::update(const Eigen::MatrixXd& onesCov,
                             const Eigen::MatrixXd& zerosCov)
 {
-  unsigned long i, n1 = onesCov.rows(), n0 = zerosCov.rows();
+  unsigned int i, n1 = onesCov.rows(), n0 = zerosCov.rows();
   PolyaGamma pg(1);
   Eigen::MatrixXd V = Sigma, x1 = Eigen::MatrixXd(n1, s),
     x0 = Eigen::MatrixXd(n0, s);

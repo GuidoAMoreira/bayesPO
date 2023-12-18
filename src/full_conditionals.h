@@ -11,14 +11,14 @@ class LambdaStar {
 public:
   double l;
 
-  virtual double update(long ns, double area) = 0;
+  virtual double update(int ns, double area) = 0;
 }; // LambdaStar
 
 class BetaDelta {
 protected:
   Eigen::MatrixXd xPositions;
 public:
-  long s;
+  int s;
   Eigen::VectorXd effects;
 
   virtual double update(const Eigen::MatrixXd&,
@@ -36,7 +36,7 @@ class gamma_prior : public LambdaStar {
 public:
   gamma_prior(Rcpp::List);
 
-  double update(long ns, double area);
+  double update(int ns, double area);
 }; // gamma_prior
 
 class logit_normal : public BetaDelta {

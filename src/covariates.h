@@ -11,19 +11,19 @@ class retrievCovs
 {
 public:
   // Attributes
-  const std::vector<long> selInt, selObs;
-  long ncell, nvar;
+  const std::vector<int> selInt, selObs;
+  int ncell, nvar;
 
   // Virtual methods
-  virtual Eigen::VectorXd retrieveInt(long) = 0;
-  virtual Eigen::VectorXd retrieveObs(long) = 0;
-  void putInt(Eigen::MatrixXd&, std::vector<long>&, long, long, long);
-  void putObs(Eigen::MatrixXd&, std::vector<long>&, long, long, long);
+  virtual Eigen::VectorXd retrieveInt(int) = 0;
+  virtual Eigen::VectorXd retrieveObs(int) = 0;
+  void putInt(Eigen::MatrixXd&, std::vector<int>&, int, int, int);
+  void putObs(Eigen::MatrixXd&, std::vector<int>&, int, int, int);
 
   // Universal methods
-  virtual long pickRandomPoint();
-  virtual Eigen::VectorXi pickRandomPoint(long n);
-  void addAcceptedXprime(long);
+  virtual int pickRandomPoint();
+  virtual Eigen::VectorXi pickRandomPoint(int n);
+  void addAcceptedXprime(int);
   void addAcceptedXprime(Eigen::VectorXi points) {
     for (int i = 0; i < points.size(); i++)
       addAcceptedXprime(points(i));
@@ -32,7 +32,7 @@ public:
   Eigen::MatrixXd retrieveObs(const Eigen::VectorXi&);
 
   // Constructor
-  retrievCovs(std::vector<long> si, std::vector<long> so);
+  retrievCovs(std::vector<int> si, std::vector<int> so);
   retrievCovs();
 
   // getters
@@ -41,8 +41,8 @@ public:
 protected:
   SEXP covs;
   double *c;
-  long nInt;
-  long nObs;
+  int nInt;
+  int nObs;
   Eigen::VectorXd unObservedCounts;
 }; // retrievCovs
 
@@ -51,12 +51,12 @@ class retrievCovs_intMatrix : public retrievCovs
 {
 public:
   // Methods
-  Eigen::VectorXd retrieveInt(long ind);
-  Eigen::VectorXd retrieveObs(long ind);
+  Eigen::VectorXd retrieveInt(int ind);
+  Eigen::VectorXd retrieveObs(int ind);
 
   // Constructor
-  retrievCovs_intMatrix(SEXP inp, std::vector<long> si,
-                        std::vector<long> so);
+  retrievCovs_intMatrix(SEXP inp, std::vector<int> si,
+                        std::vector<int> so);
 
 private:
   int *c;
@@ -68,12 +68,12 @@ class retrievCovs_doubleMatrix : public retrievCovs
 public:
 
   // Methods
-  Eigen::VectorXd retrieveInt(long ind);
-  Eigen::VectorXd retrieveObs(long ind);
+  Eigen::VectorXd retrieveInt(int ind);
+  Eigen::VectorXd retrieveObs(int ind);
 
   // Constructor
-  retrievCovs_doubleMatrix(SEXP inp, std::vector<long> si,
-                           std::vector<long> so);
+  retrievCovs_doubleMatrix(SEXP inp, std::vector<int> si,
+                           std::vector<int> so);
 }; // retrievCovs_doubleMatrix
 
 // When the covariates are standard normal
@@ -81,11 +81,11 @@ class retrievCovs_normal : public retrievCovs
 {
 public:
   // Methods
-  Eigen::VectorXd retrieveInt(long ind);
-  Eigen::VectorXd retrieveObs(long ind);
+  Eigen::VectorXd retrieveInt(int ind);
+  Eigen::VectorXd retrieveObs(int ind);
 
   // Constructor
-  retrievCovs_normal(std::vector<long> si, std::vector<long> so);
+  retrievCovs_normal(std::vector<int> si, std::vector<int> so);
 }; // retrievCovs_normal
 
 #endif
