@@ -8,8 +8,9 @@ Authors@R: person("Guido", "Alberti Moreira", email = "guidoalber@gmail.com",
 Contact: Guido Alberti Moreira <guidoalber@gmail.com>
 Maintainer: Guido Alberti Moreira <guidoalber@gmail.com>
 Description: Presence-Only data is best modelled with a Point Process Model.
-    The work of Moreira (2020) provides a way to use exact Bayesian
-    inference to model this type of data, which is implemented in this package.
+    The work of Moreira and Gamerman (2022) <doi:10.1214/21-AOAS1569> provides
+    a way to use exact Bayesian inference to model this type of data, which is
+    implemented in this package.
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.3.1
