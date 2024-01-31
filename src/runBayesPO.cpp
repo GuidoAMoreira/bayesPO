@@ -23,13 +23,13 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     outDeltas(iter/thin, delta.size());
   Eigen::VectorXd outLambdas(iter/thin), outLogPost(iter/thin),
     out_nU(iter/thin), out_nXp(iter/thin);
-  std::vector<long> iC = std::vector<long>(
+  std::vector<int> iC = std::vector<int>(
     intensityCovs.data(), intensityCovs.data() +
     intensityCovs.size()),
-    oC = std::vector<long>(
+    oC = std::vector<int>(
       observabilityCovs.data(), observabilityCovs.data() +
         observabilityCovs.size());
-  long i;
+  int i;
 
 
   auto t1 = std::chrono::high_resolution_clock::now(); // Timing variable

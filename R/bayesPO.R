@@ -288,9 +288,7 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
        mcmc_setup$iter, # MCMC iterations
        cores, verbose)
      heatMap <- heatMap + temp$xPrimePred
-     mcmcRun[[c]] <- do.call(cbind,
-
-     )
+     mcmcRun[[c]] <- do.call(cbind, temp[-length(temp)])
      colnames(mcmcRun[[c]]) <- s("parnames")
      mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
      if (chains > 1) cat("Finished chain ",c,".\n\n",sep="")
@@ -446,7 +444,7 @@ bayesPO_model = function(po, intensitySelection,
             is.numeric(intensitySelection) || is.character(intensitySelection),
             is.character(intensityLink), length(intensityLink) == 1,
             is.character(observabilityLink), length(observabilityLink) == 1,
-            (is.list(initial_values) && all(do.call(c, lapply(initial_values, is, "bayesPO_initial"))))
+            (is.list(initial_values) || all(do.call(c, lapply(initial_values, is, "bayesPO_initial"))))
             || (is.numeric(initial_values) && length(initial_values) == 1))
 
   if (is.numeric(intensitySelection)) icharSel = character() else
