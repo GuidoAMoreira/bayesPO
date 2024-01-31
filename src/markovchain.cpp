@@ -1,5 +1,5 @@
 #include "markovchain.h"
-#include "safeR.hpp"
+#include "safeR.h"
 
 // Constructor
 mcStep::mcStep(Eigen::VectorXd b, Eigen::VectorXd d, double l, retrievCovs *bb,
