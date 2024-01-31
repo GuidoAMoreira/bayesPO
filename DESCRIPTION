@@ -12,7 +12,7 @@ Description: Presence-Only data is best modelled with a Point Process Model.
     inference to model this type of data, which is implemented in this package.
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Depends:
     R (>= 3.5.0)
 LinkingTo: 
