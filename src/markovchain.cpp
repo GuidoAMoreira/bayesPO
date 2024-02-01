@@ -5,7 +5,7 @@
 mcStep::mcStep(Eigen::VectorXd b, Eigen::VectorXd d, double l, retrievCovs *bb,
                double a, std::vector<int> x, Eigen::MatrixXd zx,
                Eigen::MatrixXd wx) :
-  area(a), X(x), zX(zx), wX(wx), zXXp(zx), iteration(1), background(bb),
+  area(a), X(x), zX(zx), zXXp(zx), wX(wx), iteration(1), background(bb),
   ibeta(b), idelta(d), ilambdaStar(l) {}
 
 

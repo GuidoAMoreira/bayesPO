@@ -2,7 +2,7 @@ Package: bayesPO
 Type: Package
 Title: Bayesian Inference for Presence-Only Data
 Version: 0.5.0
-Date: 2024-01-31
+Date: 2024-02-01
 Authors@R: person("Guido", "Alberti Moreira", email = "guidoalber@gmail.com",
     role = c("cre","aut"), comment=c(ORCID="0000-0001-7557-0874"))
 Contact: Guido Alberti Moreira <guidoalber@gmail.com>
