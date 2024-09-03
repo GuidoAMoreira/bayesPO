@@ -196,7 +196,7 @@ methods::setMethod("fit_bayesPO",
 
   return(methods::new("bayesPO_fit",
                       fit = do.call(coda::mcmc.list, mcmcRun),
-                      heatMap = heatMap,
+                      # heatMap = heatMap,
                       original = object,
                       backgroundSummary = summary(background),
                       area = area,
@@ -249,7 +249,7 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
 
    time <- Sys.time()
    mcmcRun <- list()
-   heatMap <- s("heatMap")
+   # heatMap <- s("heatMap")
    for (c in 1:chains){
      if (chains > 1 && verbose) cat("Starting chain ",c,".\n",sep="")
      temp <- runBayesPO(
@@ -287,7 +287,7 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
        mcmc_setup$thin, # MCMC thin
        mcmc_setup$iter, # MCMC iterations
        cores, verbose)
-     heatMap <- heatMap + temp$xPrimePred
+     # heatMap <- heatMap + temp$xPrimePred
      mcmcRun[[c]] <- do.call(cbind, temp[-length(temp)])
      colnames(mcmcRun[[c]]) <- s("parnames")
      mcmcRun[[c]] <- coda::mcmc(mcmcRun[[c]], thin = mcmc_setup$thin)
@@ -303,7 +303,7 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
                            coda::mcmc(rbind(s("fit")[[i]],
                                             mcmcRun[[i]])))
                        ),
-                       heatMap = heatMap,
+                       # heatMap = heatMap,
                        original = s("original"),
                        backgroundSummary = s("backgroundSummary"),
                        area = s("area"),
