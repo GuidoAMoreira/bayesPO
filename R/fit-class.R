@@ -169,7 +169,7 @@ summary.bayesPO_fit <- function(object, ...){
 #' @export
 #' @exportMethod names
 methods::setMethod("names", "bayesPO_fit", function(x){
-  nn <- c("parameters", "covariates_importance", "mcmc_chains", "model",
+  nn <- c("parameters", "covariates_importance", "heatMap", "mcmc_chains", "model",
           "log_posterior", "eff_sample_size", "area", "initial_values", "mcmc_setup")
   if (length(methods::slot(methods::slot(x, "original"), "init")) > 1)
     nn <- c(nn, "Rhat", "Rhat_upper_CI")
@@ -220,6 +220,9 @@ methods::setMethod("[[", "bayesPO_fit", function(x, i){
     colnames(observability) <- names(data)[(which(names(data) == obsInterceptName) + 1):(which(names(data) == "lambdaStar") - 1)]
     output <- list(intensity = intensity, observability = observability)
     class(output) <- "covariates_importance"
+  } else
+  if (i == "heatMap") {
+    output <- s(i)
   } else
   if (i == "eff_sample_size"){
     summ <- summary(x)
