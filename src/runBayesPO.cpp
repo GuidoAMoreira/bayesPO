@@ -69,6 +69,8 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
       progr_Burnin.increment();
       MarkovChain.update();
       }
+    // Reset unObservedCounts after burn-in
+    covs->resetUnobservedCounts();
     t2 = std::chrono::high_resolution_clock::now();
     if (verbose) Rcpp::Rcout << "Warm up complete. ";
     if (verbose) Rcpp::Rcout << "Warmup took " <<

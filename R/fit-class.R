@@ -22,12 +22,15 @@ NULL
 #' covariates with column names, they are replicated here. If they are the
 #' column indexes, names are generated for identification.
 #' @field mcmc_setup The original mcmc setup used.
+#' @field heatMap A list of numeric vectors, where each vector corresponds to a
+#' chain in the MCMC run. Each vector contains the predicted unobserved points,
+#' with values ranging from 0 to the total number of iterations \code{iter}.
 #' @seealso \code{\link{fit_bayesPO}}
 #' @export
 #' @exportClass bayesPO_fit
 methods::setClass("bayesPO_fit",
                   representation(fit = "mcmc.list",
-                                 # heatMap = "numeric",
+                                 heatMap = "list",
                                  original = "bayesPO_model",
                                  backgroundSummary = "table",
                                  area = "numeric",

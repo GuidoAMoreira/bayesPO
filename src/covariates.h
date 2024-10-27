@@ -30,6 +30,9 @@ public:
   }
   Eigen::MatrixXd retrieveInt(const Eigen::VectorXi&);
   Eigen::MatrixXd retrieveObs(const Eigen::VectorXi&);
+  void resetUnobservedCounts() {
+    unObservedCounts.setZero();
+  };
 
   // Constructor
   retrievCovs(std::vector<int> si, std::vector<int> so);
