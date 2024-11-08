@@ -205,17 +205,17 @@ methods::setMethod("[[", "bayesPO_fit", function(x, i){
   } else
   if (i == "covariates_importance"){
     data <- as.data.frame(x)
-    names(data) <- namesAid(names(data))
+    # names(data) <- namesAid(names(data))
     obsInterceptName <- names(data)[nb + 1]
 
-    intensity <- as.matrix(apply(
+    intensity <- t(as.matrix(apply(
       data[2:(which(names(data) == obsInterceptName) - 1)], 1,
       function(chain) {c2 <- chain * chain; c2 / sum(c2)}
-    ))
-    observability <- as.matrix(apply(
+    )))
+    observability <- t(as.matrix(apply(
       data[(which(names(data) == obsInterceptName) + 1):(which(names(data) == "lambdaStar") - 1)], 1,
       function(chain) {c2 <- chain * chain; c2 / sum(c2)}
-    ))
+    )))
     colnames(intensity) <- names(data)[2:(which(names(data) == obsInterceptName) - 1)]
     colnames(observability) <- names(data)[(which(names(data) == obsInterceptName) + 1):(which(names(data) == "lambdaStar") - 1)]
     output <- list(intensity = intensity, observability = observability)
@@ -267,9 +267,9 @@ methods::setMethod("as.array", "bayesPO_fit", function(x, ...) as.array.bayesPO_
 namesAid <- function(string){
   new_string <- string
 
-  intInt <- "(Intensity intercept)"
-  obsInt <- "(Observability intercept)"
-  obsStart <- grep("\\(?Observability intercept\\)?|delta_0", colnames(chains))
+  intInt <- "\\(?Intensity intercept\\)?"
+  obsInt <- "\\(?Observability intercept\\)?"
+  obsStart <- grep("\\(?Observability intercept\\)?|delta_0", string)
   obsEnd <- which(string == "lambdaStar") - 1L
 
   # Find same covariates in both sets
@@ -280,8 +280,6 @@ namesAid <- function(string){
       new_string[obsStart - 1L + which(searching)] <- paste0(string[i], ".obs")
     }
   }
-  new_string[1L] <- ifelse(string[1L] == intInt, "Intensity_Intercept", "beta_0")
-  new_string[obsStart] <- ifelse(string[obsStart] == obsInt, "Observability_Intercept", "delta_0")
 
   new_string
 }
@@ -387,6 +385,7 @@ as.data.frame.bayesPO_fit = function(x, row.names = NULL, optional = FALSE, ...)
   output <- do.call(data.frame, c(colsList, list(check.names = TRUE,
                                                  fix.empty.names = TRUE),
                                   list(row.names = row_names)))
+  names(output) <- parnames
   output$chain <- factor(rep(1:nchains, each=iterations))
   output$iteration <- rep(1:iterations, nchains)
 
