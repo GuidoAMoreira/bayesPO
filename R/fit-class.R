@@ -269,17 +269,18 @@ namesAid <- function(string){
 
   intInt <- "(Intensity intercept)"
   obsInt <- "(Observability intercept)"
-  obsStart <- max(which(string == obsInt), which(string == "delta_0"))
-  obsEnd <- which(string == "lambdaStar") - 1
+  obsStart <- grep("\\(?Observability intercept\\)?|delta_0", colnames(chains))
+  obsEnd <- which(string == "lambdaStar") - 1L
 
   # Find same covariates in both sets
-  for (i in 1:(obsStart - 1))
+  for (i in 1:(obsStart - 1)) {
     searching <- string[i] == string[obsStart:obsEnd]
     if (any(searching)){
       new_string[i] <- paste0(string[i], ".int")
-      new_string[obsStart - 1 + which(searching)] <- paste0(string[i], ".obs")
+      new_string[obsStart - 1L + which(searching)] <- paste0(string[i], ".obs")
     }
-  new_string[1] <- ifelse(string[1] == intInt, "Intensity_Intercept", "beta_0")
+  }
+  new_string[1L] <- ifelse(string[1L] == intInt, "Intensity_Intercept", "beta_0")
   new_string[obsStart] <- ifelse(string[obsStart] == obsInt, "Observability_Intercept", "delta_0")
 
   new_string
