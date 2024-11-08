@@ -3,6 +3,9 @@
 #include "markovchain.h"
 #include <chrono>
 #include <progress.hpp>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 // [[Rcpp::export]]
 Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
@@ -18,6 +21,10 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
                       Eigen::VectorXi xObservabilityCovs,
                       int burnin, int thin, int iter, int threads, bool verbose)
 {
+
+#ifdef _OPENMP
+  omp_set_num_threads( threads );
+#endif
 
   Eigen::MatrixXd outBetas(iter/thin, beta.size()),
     outDeltas(iter/thin, delta.size());

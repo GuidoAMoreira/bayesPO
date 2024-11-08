@@ -1,51 +1,36 @@
-#ifndef __SAFER_HPP__
-#define __SAFER_HPP__
+#ifndef __SAFER_H__
+#define __SAFER_H__
 
-#include <RcppEigen.h>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+/*
+ * Code here is used to sample from the truncated normal distribution while being
+ * thread safe.
+ */
 
-inline double runif(double a = 0, double b = 1) {
-  double output;
-#pragma omp critical
-  output = R::runif(a, b);
-  return output;
+// #define M_SQRT_32 5.656854249492380195206754896838792314276 // 128 bits to be safeR
+#define M_1_SQRT_2PI 0.398942280401432677939946059934 // from R source
+// #define M_SQRT2		1.414213562373095048801688724210 // from R source
+#define M_2PI		6.283185307179586476925286766559 // from R source
+
+#define R_D_Lval(p)	(lower_tail ? (p) : (0.5 - (p) + 0.5))
+// #define R_DT_qIv(p)	(log_p ? (lower_tail ? exp(p) : - expm1(p)) : R_D_Lval(p))
+
+#define R_D_Cval(p)	(lower_tail ? (0.5 - (p) + 0.5) : (p))
+// #define R_DT_CIv(p)	(log_p ? (lower_tail ? -expm1(p) : exp(p)) : R_D_Cval(p))
+
+
+// Shamelessly copied from R source.
+// All thread unsafe code was (safely) removed.
+void pnorm_both(double x, double *cum, double *ccum, int i_tail, int log_p);
+
+static inline double safe_pnorm(double x, double mu, double sigma, double lower, double log_p) {
+  double p, cp;
+  p = (x - mu) / sigma;
+  x = p;
+  pnorm_both(x, &p, &cp, (lower ? 0 : 1), log_p);
+
+  return(lower ? p : cp);
 }
 
-inline Eigen::VectorXd runif(int n, double a = 0, double b = 1) {
-  Eigen::VectorXd output(n);
-#pragma omp critical
-  output = Rcpp::as<Eigen::Map<Eigen::VectorXd> >(Rcpp::runif(n, a, b));
-  return output;
-}
-
-inline double rnorm(double m, double sd) {
-  double output;
-#pragma omp critical
-  output = R::rnorm(m, sd);
-  return output;
-}
-
-inline double rgamma(double shape, double scale) {
-  double output;
-#pragma omp critical
-  output = R::rgamma(shape, scale);
-  return output;
-}
-
-inline double rpois(double rate) {
-  double output;
-#pragma omp critical
-  output = R::rpois(rate);
-  return output;
-}
-
-inline Eigen::VectorXd rnorm(int n, double m = 0, double sd = 1) {
-  Eigen::VectorXd output(n);
-#pragma omp critical
-  output = Rcpp::as<Eigen::Map<Eigen::VectorXd> >(Rcpp::rnorm(n, m, sd));
-  return output;
-}
+double safe_qnorm(double p, double mu, double sigma, int lower_tail, int log_p);
 
 #endif
