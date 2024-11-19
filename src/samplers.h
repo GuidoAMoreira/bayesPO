@@ -1,3 +1,6 @@
+#ifndef __SAMPLERS_BAYESPO_H__
+#define __SAMPLERS_BAYESPO_H__
+
 #include <RcppEigen.h>
 extern "C" {
 #include "safeR.h"
@@ -6,7 +9,7 @@ extern "C" {
 #include <omp.h>
 #endif
 
-inline double runif(double a = 0, double b = 1) {
+inline double runif(double a = 0., double b = 1.) {
   double output;
 #pragma omp critical
   output = R::runif(a, b);
@@ -54,5 +57,5 @@ inline double rtnorm(double mu, double sd, bool positive) {
   return safe_qnorm(runif(0., zero), mu, sd, 1, 0);
 }
 
-
+#endif
 

@@ -12,24 +12,21 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // runBayesPO
-Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta, double lambda, Rcpp::String b_updater, Rcpp::String d_updater, Rcpp::String l_updater, Rcpp::List parB, Rcpp::List parD, Rcpp::List parL, Rcpp::String covsClass, SEXP covariates, double areaD, Rcpp::String xClass, Eigen::MatrixXd xValues, Eigen::VectorXi intensityCovs, Eigen::VectorXi observabilityCovs, Eigen::VectorXi xIntensityCovs, Eigen::VectorXi xObservabilityCovs, int burnin, int thin, int iter, int threads, bool verbose);
-RcppExport SEXP _bayesPO_runBayesPO(SEXP betaSEXP, SEXP deltaSEXP, SEXP lambdaSEXP, SEXP b_updaterSEXP, SEXP d_updaterSEXP, SEXP l_updaterSEXP, SEXP parBSEXP, SEXP parDSEXP, SEXP parLSEXP, SEXP covsClassSEXP, SEXP covariatesSEXP, SEXP areaDSEXP, SEXP xClassSEXP, SEXP xValuesSEXP, SEXP intensityCovsSEXP, SEXP observabilityCovsSEXP, SEXP xIntensityCovsSEXP, SEXP xObservabilityCovsSEXP, SEXP burninSEXP, SEXP thinSEXP, SEXP iterSEXP, SEXP threadsSEXP, SEXP verboseSEXP) {
+Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta, double lambda, Rcpp::List parB, Rcpp::List parD, Rcpp::List parL, SEXP covariates, int intensityLink, int observabilityLink, double areaD, Eigen::MatrixXd xValues, Eigen::VectorXi intensityCovs, Eigen::VectorXi observabilityCovs, Eigen::VectorXi xIntensityCovs, Eigen::VectorXi xObservabilityCovs, int burnin, int thin, int iter, int threads, bool verbose);
+RcppExport SEXP _bayesPO_runBayesPO(SEXP betaSEXP, SEXP deltaSEXP, SEXP lambdaSEXP, SEXP parBSEXP, SEXP parDSEXP, SEXP parLSEXP, SEXP covariatesSEXP, SEXP intensityLinkSEXP, SEXP observabilityLinkSEXP, SEXP areaDSEXP, SEXP xValuesSEXP, SEXP intensityCovsSEXP, SEXP observabilityCovsSEXP, SEXP xIntensityCovsSEXP, SEXP xObservabilityCovsSEXP, SEXP burninSEXP, SEXP thinSEXP, SEXP iterSEXP, SEXP threadsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Eigen::VectorXd >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< Eigen::VectorXd >::type delta(deltaSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< Rcpp::String >::type b_updater(b_updaterSEXP);
-    Rcpp::traits::input_parameter< Rcpp::String >::type d_updater(d_updaterSEXP);
-    Rcpp::traits::input_parameter< Rcpp::String >::type l_updater(l_updaterSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type parB(parBSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type parD(parDSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type parL(parLSEXP);
-    Rcpp::traits::input_parameter< Rcpp::String >::type covsClass(covsClassSEXP);
     Rcpp::traits::input_parameter< SEXP >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< int >::type intensityLink(intensityLinkSEXP);
+    Rcpp::traits::input_parameter< int >::type observabilityLink(observabilityLinkSEXP);
     Rcpp::traits::input_parameter< double >::type areaD(areaDSEXP);
-    Rcpp::traits::input_parameter< Rcpp::String >::type xClass(xClassSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type xValues(xValuesSEXP);
     Rcpp::traits::input_parameter< Eigen::VectorXi >::type intensityCovs(intensityCovsSEXP);
     Rcpp::traits::input_parameter< Eigen::VectorXi >::type observabilityCovs(observabilityCovsSEXP);
@@ -40,13 +37,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type iter(iterSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(runBayesPO(beta, delta, lambda, b_updater, d_updater, l_updater, parB, parD, parL, covsClass, covariates, areaD, xClass, xValues, intensityCovs, observabilityCovs, xIntensityCovs, xObservabilityCovs, burnin, thin, iter, threads, verbose));
+    rcpp_result_gen = Rcpp::wrap(runBayesPO(beta, delta, lambda, parB, parD, parL, covariates, intensityLink, observabilityLink, areaD, xValues, intensityCovs, observabilityCovs, xIntensityCovs, xObservabilityCovs, burnin, thin, iter, threads, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_bayesPO_runBayesPO", (DL_FUNC) &_bayesPO_runBayesPO, 23},
+    {"_bayesPO_runBayesPO", (DL_FUNC) &_bayesPO_runBayesPO, 20},
     {NULL, NULL, 0}
 };
 

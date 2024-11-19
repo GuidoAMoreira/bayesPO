@@ -4,12 +4,8 @@
 #include <RcppEigen.h>
 #include "covariates.h"
 #include "binary_regression.h"
-#include "full_conditionals.h"
 
-// Generic Markov Chain step class
-// Parametric form for q(.) and p(.) are attached before MC procedure begins
-class MarkovChain
-{
+class MarkovChain {
   //// Unchanging attributes
   const double area;
   const std::vector<int> X;
@@ -23,31 +19,41 @@ class MarkovChain
   retrievCovs *background;
 
   // Parameters
-  Eigen::VectorXd beta, delta;
-  double lambda;
+  const double lambdaA, lambdaB;
+  double lambdaStar;
+  BinaryRegression* intensityRegression;
+  BinaryRegression* observabilityRegression;
 
-  // Prior
-  RegressionPrior* betaPrior, deltaPrior;
+  double updateLambdaStar();
 
-  void applyTransitionKernel(); // Markov chain transition kernel
+  void applyTransitionKernel();
+  virtual double fullConditionals();
 public:
-  // Constructor
-  MarkovChain(Eigen::VectorXd b, Eigen::VectorXd d, double l, retrievCovs *bb,
-              double a, std::vector<int>& x, Eigen::MatrixXd& zx,
-              Eigen::MatrixXd& wx) : area(a), X(x), zX(zx), wX(wx),
-              iteration(0), background(bb), beta(b), delta(d), lambda(l) {}
+  // Constructor & destructor
+  MarkovChain(double a, std::vector<int> x, Eigen::MatrixXd& zx,
+              Eigen::MatrixXd& wx, retrievCovs* bg, double la, double lb,
+              double lambda, BinaryRegression* Int, BinaryRegression* Obs) :
+  area(a), X(x), zX(zx), wX(wx), background(bg), lambdaA(la), lambdaB(lb),
+  lambdaStar(lambda), intensityRegression(Int), observabilityRegression(Obs) {}
+  ~MarkovChain() {
+    delete background;
+    delete intensityRegression;
+    delete observabilityRegression;
+  }
 
   // Methods
   void update();
   void update(int times);
 
-protected:
-  virtual double FullConditionals();
+  // Getters
+  Eigen::VectorXd getBeta() {return intensityRegression->getParameters();}
+  Eigen::VectorXd getDelta() {return observabilityRegression->getParameters();}
+  double getLambda() {return lambdaStar;}
+  double getLogPosterior() {return logPosterior;}
+  int getUsize() {return U.size();}
+  int getXprimeSize() {return Xprime.size();}
+  Eigen::VectorXd getHeatMap() {return background->getUnobservedCounts();}
 };
 
-
-class LogisticLogistic : public MarkovChain {
-  double FullConditionals();
-};
 
 #endif

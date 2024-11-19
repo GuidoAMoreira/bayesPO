@@ -153,15 +153,6 @@ methods::setMethod("fit_bayesPO",
       methods::slot(s("init")[[c]], "beta"),
       methods::slot(s("init")[[c]], "delta"), # Init delta
       methods::slot(s("init")[[c]], "lambdaStar"), # Init lambdaStar
-      paste0(s("intensityLink"), "_", # intenisty Link + prior
-             methods::slot(
-                methods::slot(s("prior"), "beta"), "family")),
-      paste0(s("observabilityLink"),"_", # observability Link + prior
-             methods::slot(
-                methods::slot(s("prior"), "delta"), "family")),
-      methods::slot( # lambdaStar prior
-         methods::slot(
-            s("prior"),"lambdaStar"), "family"),
       retrievePars(methods::slot( # beta prior parameters
          s("prior"),"beta")),
       retrievePars(methods::slot( # delta prior parameters
@@ -169,12 +160,10 @@ methods::setMethod("fit_bayesPO",
       retrievePars( # lambdaStar prior parameters
          methods::slot(
             s("prior"),"lambdaStar")),
-      ifelse(is.integer(background), # background class
-             "int_mat", "num_mat"),
       background, # background data
+      (s("intensityLink") == "probit") * 1,
+      (s("observabilityLink") == "probit") * 1,
       area, # region area
-      ifelse(is.integer(s("po")),
-             "int_mat", "num_mat"), # po data class
       s("po"), # po data
       backConfig$bIS - 1, # background intensity columns
       backConfig$bOS - 1, # background observability colmns
@@ -256,15 +245,6 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
        lastPoint[betaPos], # Starting at last stored point
        lastPoint[deltaPos], # Starting at last stored point
        lastPoint[lambdaPos], # Starting at last stored point
-       paste0(so("intensityLink"), "_", # intenisty Link + prior
-              methods::slot(
-  	        methods::slot(so("prior"), "beta"), "family")),
-       paste0(so("observabilityLink"),"_", # observability Link + prior
-	      methods::slot(
-	        methods::slot(so("prior"), "delta"), "family")),
-       methods::slot( # lambdaStar prior
-         methods::slot(
-	   so("prior"),"lambdaStar"), "family"),
        retrievePars(methods::slot( # beta prior parameters
          so("prior"),"beta")),
        retrievePars(methods::slot( # delta prior parameters
@@ -272,12 +252,10 @@ methods::setMethod("fit_bayesPO", signature(object = "bayesPO_fit",
        retrievePars( # lambdaStar prior parameters
          methods::slot(
 	   so("prior"),"lambdaStar")),
-       ifelse(is.integer(background), # background class
-              "int_mat", "num_mat"),
        background, # background data
+	   (so("intensityLink") == "probit") * 1,
+	   (so("observabilityLink") == "probit") * 1,
        s("area"), # region area
-       ifelse(is.integer(so("po")),
-	      "int_mat", "num_mat"), # po data class
        so("po"), # po data
        backConfig$bIS - 1, # background intensity columns
        backConfig$bOS - 1, # background observability colmns

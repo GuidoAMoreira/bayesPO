@@ -45,7 +45,7 @@ methods::setClass("bayesPO_model",
              stop("Argument intensityLink must have length 1.")
            if (length(s("observabilityLink"))>1)
              stop("Argument observabilityLink must have length 1.")
-           validLinks = c("logit")
+           validLinks = c("logit", "probit")
            if (!(s("intensityLink") %in% validLinks))
              stop(paste0(s("intensityLink")," is not a valid link. Accepted options for current version are\n",validLinks))
            if (!(s("observabilityLink") %in% validLinks)) stop(paste0(s("observabilityLink")," is not a valid link. Accepted options for current version are\n", validLinks))

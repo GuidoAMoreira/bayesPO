@@ -157,6 +157,10 @@ covariates with column names, they are replicated here. If they are the
 column indexes, names are generated for identification.}
 
 \item{\code{mcmc_setup}}{The original mcmc setup used.}
+
+\item{\code{heatMap}}{A list of numeric vectors, where each vector corresponds to a
+chain in the MCMC run. Each vector contains the predicted unobserved points,
+with values ranging from 0 to the total number of iterations \code{iter}.}
 }}
 
 \seealso{

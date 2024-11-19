@@ -34,9 +34,10 @@ public:
     unObservedCounts.setZero();
   };
 
-  // Constructor
+  // Constructor & destructor
   retrievCovs(std::vector<int> si, std::vector<int> so);
   retrievCovs();
+  virtual ~retrievCovs() = default;
 
   // getters
   Eigen::VectorXd getUnobservedCounts() {return unObservedCounts;}

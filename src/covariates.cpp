@@ -1,4 +1,5 @@
 #include "covariates.h"
+#include "samplers.h"
 
 //// Constructors ////
 retrievCovs::retrievCovs(std::vector<int> si,
@@ -46,7 +47,7 @@ Eigen::MatrixXd retrievCovs::retrieveObs(const Eigen::VectorXi& indices) {
 //// Methods ////
 //// Base class ////
 int retrievCovs::pickRandomPoint()
-{return int(R::runif(0,1) * ncell);}
+{return int(runif(0., 1.) * ncell);}
 
 Eigen::VectorXi retrievCovs::pickRandomPoint(int n)
 {
