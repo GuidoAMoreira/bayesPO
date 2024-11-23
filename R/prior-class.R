@@ -134,7 +134,7 @@ print.NormalPrior <- function(x, ...) methods::show(x)
 
 methods::setMethod("retrievePars", "NormalPrior", function(object){
   list(mean = methods::slot(object, "mu"),
-       covariance = solve(methods::slot(object, "Sigma")))
+       covariance = methods::slot(object, "Sigma"))
 })
 
 #### LambdaStar priors ####

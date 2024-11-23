@@ -15,14 +15,13 @@
 // regression or, say, a BART.
 class BinaryRegression {
   double logPost;
-  double transformedLP;
+  double transformedLP; // Should be in the log scale
   virtual Eigen::VectorXd getLP(const Eigen::MatrixXd&) = 0; // LP = Linear Predictor
 
   Prior* prior;
   LinkFunction* linkFunction;
 protected:
   Eigen::VectorXd parameters;
-  double candidateLP; // LP = Linear Predictor. Not sure why this is not private. Maybe someday I'll know.
 public:
   /*
    * These functions deal with receiving covariates, considering (and storing)
@@ -32,12 +31,12 @@ public:
    * Candidates are handled differently depending on link function, so it is
    * passed on to them.
    */
-  void startup(const Eigen::MatrixXd& X, int maxN) {
-    linkFunction->startup(getLP(X), maxN);
+  void startup(const Eigen::MatrixXd& X) {
+    linkFunction->startup(getLP(X));
     logPost = 0.;
   }
   double considerCandidate(Eigen::VectorXd& c) {
-    double lp = getLP(c)(0);
+    double lp = getLP(c.transpose())(0);
     linkFunction->setCandidate(lp, &c);
     transformedLP = (*linkFunction)(lp, true);
     return transformedLP;
@@ -49,7 +48,7 @@ public:
   }
   // Returns the log-posterior contribution
   double wrapup() {
-    parameters = linkFunction->wrapup(prior);
+    parameters = linkFunction->wrapup(prior); // Prior is the class that does the actual sampling.
     return logPost + prior->logDensity(parameters);
   }
 
@@ -58,7 +57,7 @@ public:
 
   // Constructors & destructor
   BinaryRegression() {}
-  BinaryRegression(Prior* p, LinkFunction* lf, Eigen::VectorXd init) :
+  BinaryRegression(Prior* p, LinkFunction* lf, Eigen::VectorXd& init) :
     prior(p), linkFunction(lf), parameters(init) {}
   virtual ~BinaryRegression() {
     delete prior;
@@ -71,7 +70,7 @@ class LinearRegression : public BinaryRegression {
     return covariates * parameters;
   }
 public:
-  LinearRegression(Prior* p, LinkFunction* lf, Eigen::VectorXd init) :
+  LinearRegression(Prior* p, LinkFunction* lf, Eigen::VectorXd& init) :
   BinaryRegression(p, lf, init) {}
 };
 

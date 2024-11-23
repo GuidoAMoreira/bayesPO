@@ -13,8 +13,9 @@ void MarkovChain::update()
   iteration++;
 }
 
-void MarkovChain::update(int times)
-  {for (int i=0; i < times; i++) {update();}}
+void MarkovChain::update(int times) {
+  for (int i = 0; i < times; i++) update();
+}
 
 void MarkovChain::applyTransitionKernel()
 {
@@ -36,38 +37,40 @@ double MarkovChain::updateLambdaStar()
 double MarkovChain::fullConditionals()
 {
   // Selecting candidate cells and associating them with processes
-  int nTotal = R::rpois(area * lambdaStar), iXp = 0, iU = 0, candidate;
+  int nTotal = R::rpois(area * lambdaStar);
+
+  intensityRegression->startup(zX);
+  observabilityRegression->startup(wX);
+
   if (!nTotal) {
     U.resize(0);
     Xprime.resize(0);
-    return 0.;
+    return intensityRegression->wrapup() + observabilityRegression->wrapup();
   }
 
+  int iXp = 0, iU = 0, candidate;
   U.resize(nTotal);
   Xprime.resize(nTotal);
   Eigen::VectorXd candidateInt, candidateObs;
   double q, unif;
 
-  intensityRegression->startup(zX, nTotal);
-  observabilityRegression->startup(wX, nTotal);
-
-#pragma omp parallel for private(candidate, candidateInt, q, unif)
+#pragma omp parallel for private(candidate, candidateInt, candidateObs, q, unif)
   for (int i = 0; i < nTotal; i++) {
     candidate = background->pickRandomPoint();
     candidateInt = background->retrieveInt(candidate);
     unif = std::log(runif(0., 1.));
     q = intensityRegression->considerCandidate(candidateInt);
-    if (unif > q) { // Accept U
+    if (unif > q) { // Accept U.
 #pragma omp critical
       U[iU++] = candidate;
-      intensityRegression->acceptCandidate(false);
+      intensityRegression->acceptCandidate(false); // bool is binomial success.
     } else {
-      candidateObs = background->retrieveObs(candidate); // Stored because pointer is passed inside
-      if (unif > q + observabilityRegression->considerCandidate(candidateObs)) { // Accept Xprime
+      candidateObs = background->retrieveObs(candidate); // Stored because pointer is passed inside.
+      if (unif > q + observabilityRegression->considerCandidate(candidateObs)) { // Accept Xprime.
 #pragma omp critical
         Xprime[iXp++] = candidate;
-        intensityRegression->acceptCandidate(true);
-        observabilityRegression->acceptCandidate(false);
+        intensityRegression->acceptCandidate(true); // bool is binomial success.
+        observabilityRegression->acceptCandidate(false); // bool is binomial success.
         background->addAcceptedXprime(candidate); // Add 1 to the respective cell counter. This is for the heat map.
       }
     }

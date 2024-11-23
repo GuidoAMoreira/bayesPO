@@ -43,14 +43,14 @@ public:
 #pragma omp critical
     stdNormal = Rcpp::as<Eigen::Map<Eigen::VectorXd> >(Rcpp::rnorm(v.rows(), 0, 1));
 
-    return solver.matrixU().transpose().solve(stdNormal) +
+    return solver.matrixL().transpose().solve(stdNormal) +
       solver.solve(meanVec + pm);
   }
 
   NormalPrior(Eigen::VectorXd mu, Eigen::MatrixXd Sigma) :
     m(mu), v(Sigma), vChol(Sigma.llt()),
     p(vChol.solve(Eigen::MatrixXd::Identity(Sigma.rows(), Sigma.cols()))),
-    pm(p * m), halflog_pDet(vChol.matrixLLT().diagonal().array().log().sum()) {}
+    pm(vChol.solve(m)), halflog_pDet(vChol.matrixLLT().diagonal().array().log().sum()) {}
 };
 
 

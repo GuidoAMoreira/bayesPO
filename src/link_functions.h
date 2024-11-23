@@ -33,7 +33,7 @@ public:
   }
 
   // This should generate/process the data augmentation for X
-  virtual void startup(const Eigen::VectorXd& Xlp, int maxN) = 0;
+  virtual void startup(const Eigen::VectorXd& Xlp) = 0;
   // This should sample the parameters. The prior should have the sampler
   virtual Eigen::VectorXd wrapup(Prior* prior) = 0;
 
@@ -81,8 +81,8 @@ public:
     med += (success ? 1. : -1.) * *tempCovariates * 0.5;
   }
 
-  void startup(const Eigen::VectorXd& startLP, int maxN) {
-    V = Eigen::MatrixXd::Zero(xOuterProds[0].rows(), xOuterProds[0].rows());
+  void startup(const Eigen::VectorXd& startLP) {
+    V = Eigen::MatrixXd::Zero(xOuterProds[0].rows(), xOuterProds[0].cols());
     med = xMed;
     for (int i = 0; i < startLP.size(); i++) {
       V += xOuterProds[i] * pg.draw_like_devroye(startLP(i));
@@ -97,9 +97,6 @@ public:
 };
 
 class Probit : public LinkFunction {
-  Eigen::VectorXd augmentation;
-  int currentIdx;
-
   Eigen::MatrixXd XtX;
   Eigen::VectorXd Xty;
 
@@ -119,27 +116,23 @@ public:
   }
 
   void acceptCandidate(bool success) {
-    augmentation(currentIdx) = rtnorm(candidateLP, 1., success);
     XtX += *tempCovariates * tempCovariates->transpose();
-    Xty += *tempCovariates * augmentation(currentIdx++);
+    Xty += *tempCovariates * rtnorm(candidateLP, 1., success);
   }
 
-  void startup(const Eigen::VectorXd& startLP, int maxN) {
-    augmentation.resize(maxN);
-    Xty = Eigen::VectorXd::Zero(XtX.rows(), 1);
-    for (currentIdx = 0; currentIdx < startLP.size(); currentIdx++) {
-      augmentation(currentIdx) = rtnorm(startLP(currentIdx), 1., true);
-      Xty += X.row(currentIdx) * augmentation(currentIdx);
-    }
+  void startup(const Eigen::VectorXd& startLP) {
     XtX = XtXog;
+    Xty = Eigen::VectorXd::Zero(XtX.rows(), 1);
+    for (int i = 0; i < startLP.size(); i++) {
+      Xty += X.row(i) * rtnorm(startLP(i), 1., true);
+    }
   }
   Eigen::VectorXd wrapup(Prior* prior) {
-    augmentation.resize(currentIdx);
-    return prior->sampleMP(XtX.llt().solve(Xty), XtX);
+    return prior->sampleMP(Xty, XtX);
   }
 
-  Probit(const Eigen::MatrixXd& x) : LinkFunction(), X(x),
-  XtXog(x.transpose() * x) {}
+  Probit(const Eigen::MatrixXd& x) : LinkFunction(),
+  X(x), XtXog(x.transpose() * x) {}
 };
 
 #endif

@@ -165,10 +165,10 @@ methods::setMethod("fit_bayesPO",
       (s("observabilityLink") == "probit") * 1,
       area, # region area
       s("po"), # po data
-      backConfig$bIS - 1, # background intensity columns
-      backConfig$bOS - 1, # background observability colmns
-      s("intensitySelection") - 1, # po intensity columns
-      s("observabilitySelection") - 1, # po obserability columns
+      backConfig$bIS - 1, # background intensity columns. Intercept added in the C++ code (retrieveCovs).
+      backConfig$bOS - 1, # background observability colmns. Intercept added in the C++ code (retrieveCovs).
+      s("intensitySelection") - 1, # po intensity columns. Intercept added in the C++ code (ImportX function).
+      s("observabilitySelection") - 1, # po obserability columns. Intercept added in the C++ code (ImportX function).
       mcmc_setup$burnin, # MCMC burn-in
       mcmc_setup$thin, # MCMC thin
       mcmc_setup$iter, # MCMC iterations

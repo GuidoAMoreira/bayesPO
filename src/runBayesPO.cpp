@@ -38,14 +38,11 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
     outDeltas(iter/thin, delta.size());
   Eigen::VectorXd outLambdas(iter/thin), outLogPost(iter/thin),
     out_nU(iter/thin), out_nXp(iter/thin);
-  std::vector<int> iC = std::vector<int>(
-    intensityCovs.data(), intensityCovs.data() +
-    intensityCovs.size()),
-    oC = std::vector<int>(
-      observabilityCovs.data(), observabilityCovs.data() +
-        observabilityCovs.size());
+  std::vector<int> iC = std::vector<int>(intensityCovs.data(),
+                                         intensityCovs.data() + intensityCovs.size()),
+    oC = std::vector<int>(observabilityCovs.data(),
+                          observabilityCovs.data() + observabilityCovs.size());
   int i;
-
 
   // Let user know it's working
   if (verbose) Rcpp::Rcout << "Building MCMC model.\n";
@@ -64,7 +61,7 @@ Rcpp::List runBayesPO(Eigen::VectorXd beta, Eigen::VectorXd delta,
   // Create lean X matrices for efficient use.
   std::vector<int> x;
   Eigen::MatrixXd zx, wx;
-  importX(xValues, intensityCovs.size(), observabilityCovs.size(),
+  importX(xValues, intensityCovs.size() + 1, observabilityCovs.size() + 1,
           xIntensityCovs, xObservabilityCovs, x, zx, wx);
 
   // Get priors

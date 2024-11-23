@@ -29,7 +29,7 @@ retrievCovs_normal::retrievCovs_normal(std::vector<int> si,
   }
 
 Eigen::MatrixXd retrievCovs::retrieveInt(const Eigen::VectorXi& indices) {
-  Eigen::MatrixXd out(indices.size(), selInt.size());
+  Eigen::MatrixXd out(indices.size(), selInt.size() + 1);
   for (int i = 0; i < indices.size(); i++)
     out.row(i) = retrieveInt(indices(i)).transpose();
 
@@ -37,7 +37,7 @@ Eigen::MatrixXd retrievCovs::retrieveInt(const Eigen::VectorXi& indices) {
 }
 
 Eigen::MatrixXd retrievCovs::retrieveObs(const Eigen::VectorXi& indices) {
-  Eigen::MatrixXd out(indices.size(), selObs.size());
+  Eigen::MatrixXd out(indices.size(), selObs.size() + 1);
   for (int i = 0; i < indices.size(); i++)
     out.row(i) = retrieveObs(indices(i)).transpose();
 
@@ -100,18 +100,20 @@ Eigen::VectorXd retrievCovs_intMatrix::retrieveObs(int ind)
 // Double Matrix
 Eigen::VectorXd retrievCovs_doubleMatrix::retrieveInt(int ind)
 {
-  Eigen::VectorXd output(nInt);
-  for (R_xlen_t i = 0; i < selInt.size(); ++i)
-    output[i] = c[selInt[i]*ncell + ind];
+  Eigen::VectorXd output(nInt + 1);
+  output(0) = 1.;
+  for (R_xlen_t i = 1; i < nInt + 1; ++i)
+    output[i] = c[selInt[i - 1] * ncell + ind];
 
   return output;
 }
 
 Eigen::VectorXd retrievCovs_doubleMatrix::retrieveObs(int ind)
 {
-  Eigen::VectorXd output(nObs);
-  for (R_xlen_t i = 0; i < selObs.size(); ++i)
-    output[i] = c[selObs[i] * ncell + ind];
+  Eigen::VectorXd output(nObs + 1);
+  output(0) = 1.;
+  for (R_xlen_t i = 1; i < nObs + 1; ++i)
+    output[i] = c[selObs[i - 1] * ncell + ind];
 
   return output;
 }

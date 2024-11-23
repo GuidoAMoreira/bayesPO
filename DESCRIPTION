@@ -45,4 +45,6 @@ Collate:
     'fit-class.R'
     'bayesPO.R'
     'covariate_importance-class.R'
+    'data.R'
 VignetteBuilder: knitr
+LazyData: true

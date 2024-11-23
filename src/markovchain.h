@@ -33,8 +33,9 @@ public:
   MarkovChain(double a, std::vector<int> x, Eigen::MatrixXd& zx,
               Eigen::MatrixXd& wx, retrievCovs* bg, double la, double lb,
               double lambda, BinaryRegression* Int, BinaryRegression* Obs) :
-  area(a), X(x), zX(zx), wX(wx), background(bg), lambdaA(la), lambdaB(lb),
-  lambdaStar(lambda), intensityRegression(Int), observabilityRegression(Obs) {}
+  area(a), X(x), zX(zx), wX(wx), iteration(0), background(bg), lambdaA(la),
+  lambdaB(lb), lambdaStar(lambda), intensityRegression(Int),
+  observabilityRegression(Obs) {}
   ~MarkovChain() {
     delete background;
     delete intensityRegression;

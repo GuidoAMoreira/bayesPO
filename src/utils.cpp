@@ -14,14 +14,13 @@ void importX(Eigen::MatrixXd x, int nb, int nd,
   {
     for (j = 0; j < (nb); j++)
     {
-      if (j == 0) zX(i, 0) = 1.; else zX(i, j) = x(i, xI[j]);
+      if (j == 0) zX(i, 0) = 1.; else zX(i, j) = x(i, xI[j - 1]);
     }
     for (j = 0; j < (nd); j++)
     {
-      if (j == 0) wX(i, 0) = 1.; else wX(i, j) = x(i, xO[j]);
+      if (j == 0) wX(i, 0) = 1.; else wX(i, j) = x(i, xO[j - 1]);
     }
   }
-
   zx_data = zX;
   wx_data = wX;
 }
