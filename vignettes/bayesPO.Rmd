@@ -72,7 +72,7 @@ The next step is creating the model.
 ```{r create_model}
 model <- bayesPO_model(po = cbind(bayesPO_sim$po[, 1], bayesPO_sim$po[, 2]),
                        intensitySelection = 1, observabilitySelection = 2,
-                       intensityLink = "probit", observabilityLink = "probit",
+                       intensityLink = "logit", observabilityLink = "logit",
                        initial_values = 2, joint_prior = jointPrior)
 ```
 
@@ -85,8 +85,6 @@ The instruction `initial_values = 2` informs the model that it is supposed to ru
 Only one piece is needed for the model, namely the matrix with the background variables. Note that this is usually a very large matrix, which is why it is not included in the model, that is, to keep it a small object. Afterwards, only fitting the model remains.
 
 ```{r fit}
-bkg <- cbind(Z2, W2) # Create background
-
 fit <- fit_bayesPO(model, bayesPO_sim$bkg, area = 1, mcmc_setup = list(burnin = 200, iter = 2000))
 ```
 
@@ -102,31 +100,25 @@ The Rhat columns gives some metric for quality of convergence. It is only provid
 
 ```{r fit2}
 #### Next is commented to save time. Uncomment to replicate results
-# fit2 <- fit_bayesPO(fit, bkg, mcmc_setup = list(iter = 10000))
+fit2 <- fit_bayesPO(fit, bayesPO_sim$bkg, mcmc_setup = list(iter = 10000))
 ```
 
 Checking the new fit...
 
 ```{r print_fit2}
-if (!d) {
-  summary(fit2)
-} else warning("Data failed to download from drive. Please check internet connection and try again.")
+summary(fit2)
 ```
 
 ... and it looks better. To see the traceplots, package bayesplot is very useful. It automatically calls the `as.array()` method, and the fitted object is readied for the bayesplot functions.
 
 ```{r bayesplot, fig.width = 5, fig.width = 5, fig.align = 'center'}
-if (!d) {
-  mcmc_trace(fit2)
-} else warning("Data failed to download from drive. Please check internet connection and try again.")
+mcmc_trace(fit2)
 ```
 
 Satisfied with convergence, the marginal distributions can be checked.
 
 ```{r marginals, fig.width = 5, fig.width = 5, fig.align = 'center'}
-if (!d) {
-  mcmc_dens(fit2)
-} else warning("Data failed to download from drive. Please check internet connection and try again.")
+mcmc_dens(fit2)
 ```
 
 There is high posterior density close to the parameters true values, which is good!
