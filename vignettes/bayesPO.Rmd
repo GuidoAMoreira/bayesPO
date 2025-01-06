@@ -100,6 +100,10 @@ summary(fit)
 The Rhat columns gives some metric for quality of convergence. It is only provided when there is more than 1 fitted chain. Ideally, the upper limit CI should be below 1.1. Since this is not true for some of the parameters, more iterations should be run. This can be done by recalling the function on the last fitted object. It starts where the last one left off.
 
 ```{r fit2}
+<<<<<<< HEAD
+=======
+#### Next is commented to save time. Uncomment to replicate results
+>>>>>>> 4de4a54875ff2ec65fe9e868b4e9f5309e5420e2
 fit2 <- fit_bayesPO(fit, bayesPO_sim$bkg, mcmc_setup = list(iter = 10000))
 ```
 
