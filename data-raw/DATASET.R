@@ -45,4 +45,4 @@ po_W <- W1[po_sightings]
 bayesPO_sim <- list(po = cbind(po_Z, po_W), bkg = cbind(Z2, W2), grid = reg_grid,
                     po_sightings = po_sightings,
                     occurrences_points = occurrences_points)
-usethis::use_data(DATASET, overwrite = TRUE)
+# usethis::use_data(bayesPO_sim, overwrite = TRUE)
